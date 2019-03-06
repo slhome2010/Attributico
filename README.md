@@ -1,5 +1,5 @@
 # Attribut&co
-Attribute service for OC
+Tools for Opencart attributes maintenance
 
 Некоторые модули имеют защиту от нелегального использования. Используется кодировщик ioncube. 
 Модули закодированы для Ioncube Version 5.0 или выше.
