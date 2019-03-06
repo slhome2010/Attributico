@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Attributico</name>
+    <code>attributico</code>
+     <version>3.0.4(oc v1.5.x)</version>
+    <author>comtronics@mail.ru</author>
+	<link>http://www.servenus.com</link>
+
+    <file path="admin/view/template/common/header.tpl">
+        <operation error="skip">
+            <search position="replace"><![CDATA[jquery-ui-1.8.16.custom.min.js]]></search>
+            <add><![CDATA[jquery-ui.min.js]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="replace"><![CDATA[<link type="text/css" href="view/javascript/jquery/ui/themes/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />]]></search>
+            <add><![CDATA[
+                      <link type="text/css" href="view/stylesheet/jquery-ui.css" rel="stylesheet" />
+                    ]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="after"><![CDATA[<li><a href="<?php echo $attribute_group; ?>"><?php echo $text_attribute_group; ?></a></li>]]></search>
+            <add><![CDATA[
+                      <?php if(isset($text_attributico)) { ?>
+						<li><a href="<?php echo $attributico; ?>"><span><?php echo $text_attributico; ?></span></a></li>
+					  <?php } ?>
+                    ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/language/*/common/header.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[// Text]]></search>
+            <add><![CDATA[$_['text_attributico']  = '<span> Attribut<b style="color: #2199C7;">&</b>co</span>';]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/common/header.php">
+        <operation>
+            <search position="after"><![CDATA[$this->data['attribute_group'] = $this->url->link('catalog/attribute_group', 'token=' . $this->session->data['token'], 'SSL');]]></search>
+            <add><![CDATA[$this->data['attributico'] = $this->url->link('module/attributico', 'token=' . $this->session->data['token'], 'SSL');]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$this->data['text_dashboard'] = $this->language->get('text_dashboard');]]></search>
+            <add><![CDATA[$this->data['text_attributico'] = $this->language->get('text_attributico');]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/catalog/category_form.tpl">
+        <operation>
+            <search position="replace"><![CDATA[
+                    <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $tab_general; ?></a><a href="#tab-data"><?php echo $tab_data; ?></a><a href="#tab-design"><?php echo $tab_design; ?></a></div>
+            ]]></search>
+            <add><![CDATA[
+					<div id="tabs" class="htabs"><a href="#tab-general"><?php echo $tab_general; ?></a><a href="#tab-data"><?php echo $tab_data; ?></a><a href="#tab-attributes"><?php echo $tab_attribute; ?></a><a href="#tab-design"><?php echo $tab_design; ?></a></div>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<div id="tab-design">]]></search>
+            <add><![CDATA[
+			<div id="tab-attributes">
+              <table id="attribute" class="list">
+			   <tbody>
+			    <tr>
+				<td>
+                <label for="input-attribute"><span><?php echo $entry_attribute; ?></span>
+
+                  <input type="text" name="attribute" value="" placeholder="<?php echo $entry_attribute; ?>" style="width: 70%" />
+				</label>
+				</td>
+				<td>
+                  <div id="category-attribute" class = "scrollbox" style="height: 150px; width: 100%">
+                    <?php foreach ($category_attributes as $category_attribute) { ?>
+                    <div id="category-attribute<?php echo $category_attribute['attribute_id']; ?>"><?php echo $category_attribute['name']; ?><img src="view/image/delete.png" alt="" />
+                      <input type="hidden" name="category_attribute[]" value="<?php echo $category_attribute['attribute_id']; ?>" />
+                    </div>
+                    <?php } ?>
+                  </div>
+				  </td>
+				  </tr>
+                </tbody>
+              </table>
+            </div>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after" index="2"><![CDATA[//--></script>]]></search>
+            <add><![CDATA[
+			<script type="text/javascript"><!--
+				$('input[name=\'attribute\']').autocomplete({
+					'source': function(request, response) {
+							$.ajax({
+								url: 'index.php?route=catalog/attribute/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+								dataType: 'json',
+								success: function(json) {
+									response($.map(json, function(item) {
+										return {
+											category: item.attribute_group,
+											label: item.name,
+											value: item.attribute_id
+										}
+									}));
+								}
+							});
+						},
+						select: function(event, ui) {
+					    	return false;
+	                    },
+	                    focus: function(event, ui) {
+                           return false;
+                        }
+					});
+			//--></script>
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/catalog/category.php">
+        <operation>
+            <search position="after"><![CDATA[protected function getForm() {]]>
+            </search>
+            <add>
+				<![CDATA[
+					$this->document->addScript('view/javascript/jquery/jquery.ui-contextmenu.min.js');
+					$this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');      ;
+					$this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
+					$this->document->addScript('view/javascript/attributico.min.js');
+					$this->document->addStyle('view/stylesheet/attributico.css');
+				]]>
+            </add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$this->load->model('catalog/category');]]></search>
+            <add><![CDATA[$this->load->model('catalog/attributico');]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$this->data['tab_design'] = $this->language->get('tab_design');]]></search>
+            <add><![CDATA[$this->data['tab_attribute'] = $this->language->get('tab_attribute');]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$this->data['entry_filter'] = $this->language->get('entry_filter');]]></search>
+            <add><![CDATA[$this->data['entry_attribute'] = $this->language->get('tab_attribute');]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[$this->load->model('setting/store');]]></search>
+            <add>
+				<![CDATA[
+					$this->load->model('catalog/attribute');
+					$this->load->model('catalog/attributico');
+
+					if (isset($this->request->post['category_attribute'])) {
+						$attributes = $this->request->post['category_attribute'];
+					} elseif (isset($this->request->get['category_id'])) {
+						$sortOrder = $this->config->get('attributico_sortorder') == '1' ? true : false;
+                        $filter_data = array(
+                            'category_id' => (int) $this->request->get['category_id'],
+                            'sort' => $sortOrder ? 'attribute_group, a.sort_order' : ''
+                        );
+						$attributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
+					} else {
+						$attributes = array();
+					}
+
+					$this->data['category_attributes'] = array();
+
+					foreach ($attributes as $result) {
+						$attribute_info = $this->model_catalog_attribute->getAttribute($result['attribute_id']);
+
+						if ($attribute_info) {
+							$this->data['category_attributes'][] = array(
+								'attribute_id' => $attribute_info['attribute_id'],
+								'name'      => $attribute_info['name']
+							);
+						}
+					}
+				]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/catalog/product_form.tpl">
+        <operation error="skip">
+            <search position="after"><![CDATA[<input type="hidden" name="product_category[]" value="' + ui.item.value + '" /></div>');]]></search>
+            <add><![CDATA[newCategory(ui.item.value);]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="before"><![CDATA[<?php if ($error_warning) { ?>]]></search>
+            <add><![CDATA[
+                <?php if ($redirect_options) { ?>
+                    <div class="alert alert-info attention"><i class="fa fa-exclamation-circle"></i> <?php echo $redirect_options; ?>
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                <?php } ?>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[function addAttribute() {]]></search>
+            <add><![CDATA[
+				var product_attribute_id = new Array();
+                var extension = ''; // для v2.3 другая структура каталогов
+                var method;
+                var getMethod = $.ajax({
+                    url: 'index.php?route=' + extension + 'module/attributico/getMethod&token=<?php echo $token; ?>',
+                    dataType: "text",
+                    success: function (txt) {
+                      method = txt;
+                    }
+                });
+                
+				$('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function(e) {
+					if($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
+						newCategory($(this).val())
+					}
+				});
+
+				function newCategory(category_id) {
+                    $.each(product_attribute_id, function (key, attribute_id) { 
+                        addAttributeDuty(attribute_id, key);
+                    });
+                    $.ajax({
+                        url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes&token=<?php echo $token; ?>&category_id='+category_id,
+                        dataType: 'json',
+                        success: function (json) {
+                            $.each(json, function (key, attribute) {
+                                if (!in_array(attribute['attribute_id'], product_attribute_id)) {
+                                    var row = attribute_row;
+                                    addAttribute(); 
+                                    $('input[name="product_attribute[' + row + '][name]"]').val(attribute['name']); 
+                                    $('input[name="product_attribute[' + row + '][attribute_id]"]').val(attribute['attribute_id']);
+                                    makeValuesList(attribute['attribute_id'], row);
+                                    addAttributeDuty(attribute['attribute_id'], row);
+                                    product_attribute_id.push(attribute['attribute_id']);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                function in_array(value, array) {
+                    for (var i = 0; i < array.length; i++) {
+                        if (array[i] == value) return true;
+                    }
+                    return false;
+                }
+
+                function getSelectedCategories() {
+                    var selKeys = []; $('input[name=\'product_category[]\']').each(function (indx, element) {
+                        if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
+                            //   console.log($(this).val());
+                            selKeys.push($(this).val());
+                        }
+                    });
+                    return selKeys;
+                }
+
+                function makeValuesList(attribute_id, attribute_row) {
+                    $.ajax({
+                        data: {
+                            'token': '<?php echo $token;?>',
+                            'attribute_id': attribute_id,
+                            'view_mode': localStorage.getItem('display_attribute'),
+                            'categories': $('input[id=\'filter-category\']').is(":checked") ? getSelectedCategories() : [],
+                            'duty': $('input[id=\'filter-duty\']').is(":checked") ? 'true' : ''
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getValuesList',
+                        dataType: 'json',
+                        success: function (json) {
+                            $.each(json, function (language_id, select) {
+                                var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]'); 
+                                $('select[language_id="' + language_id + '"]', textarea.parent()).remove();
+                                textarea.before(select);
+                                textarea.attr('rows', 3);
+                            });
+                        }
+                    });
+                }
+
+                function addAttributeDuty(attribute_id, attribute_row) {
+                    $.ajax({
+                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeDuty&token=<?php echo $token; ?>&attribute_id=' + attribute_id,
+                        dataType: 'json',
+                        success: function (json) {
+                            $.each(json, function (language_id, duty) {
+                                var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]');
+                                if (method=='4') {                                 
+                                  if(textarea.val()=='')                                   
+                                    textarea.val(duty);
+                                } else 
+                                  textarea.val(duty); 
+                            });
+                        }
+                    });
+                }
+
+				$('#attribute').on('change', 'select.attribute_select',function(){
+					var select = $(this);
+					var textarea_val = select.next('textarea').val();
+					textarea_val = (textarea_val == '') ? textarea_val : textarea_val + '<?php echo $attributico_splitter; ?>';
+
+					if (localStorage.getItem('display_attribute') == 'template') {
+						select.next('textarea').val(select.val());
+					} else {
+						select.next('textarea').val(textarea_val + select.val());
+					}
+				});
+
+				$('input[value ='+localStorage.getItem("display_attribute")+']').prop("checked",true);
+
+				function attributeDisplayMode(element) {
+					localStorage.setItem('display_attribute', element.value);
+
+					$('#attribute tbody tr').each(function(index, element) {
+						var	attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
+						makeValuesList(attribute_id, index);
+					});
+				}
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$('#attribute tbody').each(function(index, element) {]]></search>
+            <add><![CDATA[
+				var	attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
+				makeValuesList(attribute_id, index);
+				product_attribute_id.push(attribute_id);
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[
+					$('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').attr('value', ui.item.value);
+                    ]]></search>
+            <add><![CDATA[
+				makeValuesList($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
+                addAttributeDuty($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$('input[name=\'product_attribute[' + attribute_row + '][name]\']').catcomplete({
+			]]></search>
+            <add><![CDATA[$('input[name=\'product_attribute[' + attribute_row + '][name]\']').autocomplete({]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$('input[name=\'option\']').catcomplete({
+			]]></search>
+            <add><![CDATA[$('input[name=\'option\']').autocomplete({]]></add>
+        </operation>
+        <operation>
+            <search position="replace" offset="1"><![CDATA[<td class="left"><?php echo $entry_text; ?></td>]]></search>
+            <add><![CDATA[
+				<td class="left"><?php echo $entry_text; ?></td>
+				<td class="right">
+					<input type="radio" name="display_attribute" onchange="attributeDisplayMode(this)" value="template"><?php echo $entry_attribute_template; ?></input>
+					<input type="radio" name="display_attribute" onchange="attributeDisplayMode(this)" value="values"><?php echo $entry_attribute_values; ?></input>
+				</td>
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/language/russian/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[// Entry]]></search>
+            <add><![CDATA[
+				$_['entry_attribute_template'] = 'Шаблоны';
+				$_['entry_attribute_values'] = 'Значения';
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/language/english/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[// Entry]]></search>
+            <add><![CDATA[
+				$_['entry_attribute_template'] = 'Templates';
+				$_['entry_attribute_values'] = 'Values';
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$this->data['entry_layout'] = $this->language->get('entry_layout');]]></search>
+            <add><![CDATA[
+				$this->data['entry_attribute_template'] = $this->language->get('entry_attribute_template');
+				$this->data['entry_attribute_values'] = $this->language->get('entry_attribute_values');
+				if ($this->config->get('attributico_splitter')) {
+					$this->data['attributico_splitter'] = $this->config->get('attributico_splitter');
+				} else {
+					$this->data['attributico_splitter'] = '/';
+				}
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="before"><![CDATA[if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {]]></search>
+            <add><![CDATA[
+                if (isset($this->request->get['attribute_id'])) {
+					$this->load->model('catalog/attributico');
+					$attribute_info = $this->model_catalog_attributico->getAttributeInfo($this->request->get['attribute_id']);
+					$this->data['redirect_options'] = $this->language->get('entry_attribute') . " " . $attribute_info[$this->config->get('config_language_id')]['name'] . "  /  "
+					.  $this->language->get('entry_attribute_group') . " " . $attribute_info[$this->config->get('config_language_id')]['group_name'];
+				} else {
+					$this->data['redirect_options'] = '';
+				}
+            ]]></add>
+        </operation>
+    </file>
+   
+</modification>
