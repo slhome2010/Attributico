@@ -1,0 +1,4 @@
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\PHP5.4-5.6\upload_v2.3.x-3.x\system\library\attributico G:\WebDesign\OpenCart\Develops\Attributico\PHP5.4-5.6\upload_v1.5.x-2.2\system\library\attributico\ attributico.php /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\PHP7.0\upload_v2.3.x-3.x\system\library\attributico G:\WebDesign\OpenCart\Develops\Attributico\PHP7.0\upload_v1.5.x-2.2\system\library\attributico\ attributico.php /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\PHP7.1\upload_v2.3.x-3.x\system\library\attributico G:\WebDesign\OpenCart\Develops\Attributico\PHP7.1\upload_v1.5.x-2.2\system\library\attributico\ attributico.php /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\PHP7.2\upload_v2.3.x-3.x\system\library\attributico G:\WebDesign\OpenCart\Develops\Attributico\PHP7.2\upload_v1.5.x-2.2\system\library\attributico\ attributico.php /S

@@ -1,0 +1,8 @@
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP5.4-5.6\upload_v1.5.x-2.2\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP5.4-5.6\upload_v2.3.x-3.x\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.0\upload_v1.5.x-2.2\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.0\upload_v2.3.x-3.x\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.1\upload_v1.5.x-2.2\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.1\upload_v2.3.x-3.x\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.2\upload_v1.5.x-2.2\admin\view\javascript\ attributico.min.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\PHP7.2\upload_v2.3.x-3.x\admin\view\javascript\ attributico.min.js /S
