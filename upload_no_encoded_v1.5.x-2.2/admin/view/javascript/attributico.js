@@ -1765,6 +1765,9 @@ function initTrees() {
                 console.log(error.responseText);
             },
             dblclick: function (event, data) {
+                if (data.node.getLevel() <= 2) {
+                    return false;
+                }
                 var about_blank = $('input[id = "input-attributico_about_blank"]:checkbox').is(":checked");
                 if (about_blank) {
                     $("#reload.alert-danger").show();

@@ -27,7 +27,6 @@ class Tree
     {
         return json_encode($this->rootNode);
     }
-
 }
 class Node
 {
@@ -44,7 +43,11 @@ class Node
     public function __get($property)
     {
         if ($property == "nodeData") {
-            return $this->nodeData[0];
+            if ($this->nodeData) {
+                return $this->nodeData[0];
+            } else {
+                return array();
+            }
         } else {
             foreach ($this->nodeData[0] as $data) {
                 if (array_key_exists($property, $data)) {
@@ -89,5 +92,4 @@ class Node
     {
         return $this->nodeData;
     }
-
 }
