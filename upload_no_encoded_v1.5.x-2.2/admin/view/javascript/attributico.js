@@ -1798,40 +1798,29 @@ function initTrees() {
             }
         });
 
-        product_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                product_tree.contextmenu("enableEntry", "remove", false);
-                product_tree.contextmenu("enableEntry", "rename", false);
-                product_tree.contextmenu("enableEntry", "addSibling", false);
-                product_tree.contextmenu("enableEntry", "addChild", false);
-                product_tree.contextmenu("enableEntry", "copy", false);
-                product_tree.contextmenu("enableEntry", "paste", false);
-                node.setActive();
-            },
-            select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_product_tree" + lng_id).dialog("open");
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
+       
+        product_tree.contextMenuCommon({
+            selector: "span.fancytree-title",
+            items: {
+              download: {
+                label: label,
+                icon: 'fa fa-download',
+                callback: function() {
+                  if (isLoading) {
+                    isLoading = false;
+                    label.text('Restart Download');
+                    item.stop();
+                  } else {
+                    isLoading = true;
+                    label.text('Stop Download');
+                    if (rate === 0 && span === 0) { item.css('backgroundSize', '0'); } // next
+                    progress();
+                  }
+                  return false;
                 }
+              }
             }
-        });
+          });
     });
 }
 

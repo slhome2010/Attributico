@@ -1798,40 +1798,49 @@ function initTrees() {
             }
         });
 
-        product_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                product_tree.contextmenu("enableEntry", "remove", false);
-                product_tree.contextmenu("enableEntry", "rename", false);
-                product_tree.contextmenu("enableEntry", "addSibling", false);
-                product_tree.contextmenu("enableEntry", "addChild", false);
-                product_tree.contextmenu("enableEntry", "copy", false);
-                product_tree.contextmenu("enableEntry", "paste", false);
-                node.setActive();
-            },
-            select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_product_tree" + lng_id).dialog("open");
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
+       
+        product_tree.contextMenuCommon({
+            selector: "span.fancytree-title",
+            var items = {
+
+                fontWeight: {
+                  label: 'Bold Font',
+                  type: 'checkbox',
+                  value: ['normal', 'bold']
+                  // For user: "Do you want Bold Font?" -> "Yes" or "No"
+                  // For your app: Current value of `fontWeight` -> 'bold' or 'normal'
+                },
+              
+                fontSize: {
+                  label: 'Font Size',
+                  items: {
+                    size1: {
+                      label: 'Small',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '8pt'
+                    },
+                    size2: {
+                      label: 'Medium',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '12pt',
+                      checked: true
+                    },
+                    size3: {
+                      label: 'Large',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '16pt'
+                    }
+                  }
+                  // For user: "Please choose Font Size" -> "Small", "Medium" or "Large"
+                  // For your app: Current value of `fontSize` -> '8pt', '12pt' or '16pt'
                 }
+              
+              };
             }
-        });
+          });
     });
 }
 
