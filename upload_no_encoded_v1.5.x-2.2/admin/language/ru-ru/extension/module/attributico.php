@@ -47,6 +47,7 @@ $_['text_Sort'] = 'Сортировка (А-Я)';
 $_['text_sortOrder'] = 'Порядок сортировки';
 $_['text_multiSelect'] = 'Учитывать иерархию';
 $_['text_lazyLoad'] = 'Ленивая загрузка';
+$_['text_Diver'] = 'Расхождения';
 
 // Info & alert message
 $_['text_attention'] = 'Внимание!';

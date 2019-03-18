@@ -1616,7 +1616,8 @@ function initTrees() {
                         'language_id': lng_id,
                         'attribute_id': currentAttributeID,
                         'title': data.node.title,
-                        'sortOrder': sortOrder
+                        'sortOrder': sortOrder,
+                        'invert': $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked")
                     },
                     url: 'index.php?route=' + extension + 'module/attributico/getProductTree'
                 });
@@ -1737,6 +1738,8 @@ function initTrees() {
         var product_tree = $("#product_tree" + lng_id);
         var collapse = true;
         var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
+        var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
+        var attribute_id = currentAttributeID;
 
         product_tree.fancytree({
             autoCollapse: true,
@@ -1747,8 +1750,9 @@ function initTrees() {
                     'user_token': user_token,
                     'token': token,
                     'language_id': lng_id,
-                    'attribute_id': currentAttributeID,
-                    'sortOrder': sortOrder
+                    'attribute_id': attribute_id,
+                    'sortOrder': sortOrder,
+                    'invert': diver
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getProductTree'
             },
@@ -2213,6 +2217,16 @@ $(function () { // document ready actions
             tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
+
+    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence  TODO save position before reload
+        var id = $(this).attr("id"),
+            tree = $("#" + id.replace("diver_", "")).fancytree("getTree"),
+            diver = $(this).is(":checked");
+        tree.options.source.data.invert = diver;
+        tree.options.source.data.attribute_id = currentAttributeID;
+        tree.reload();        
+    });
+
     /**
      * Build deduplicate tree (and detach tree)
      *

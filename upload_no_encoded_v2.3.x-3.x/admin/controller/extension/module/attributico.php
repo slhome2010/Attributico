@@ -262,6 +262,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_Expande'][$language['language_id']] = $lng->get('text_Expande');
             $this->data['text_Collapse'][$language['language_id']] = $lng->get('text_Collapse');
             $this->data['text_sortOrder'][$language['language_id']] = $lng->get('text_sortOrder');
+            $this->data['text_Diver'][$language['language_id']] = $lng->get('text_Diver');
             $this->data['text_Edit'][$language['language_id']] = $lng->get('text_Edit');
             $this->data['text_Delete'][$language['language_id']] = $lng->get('text_Delete');
             $this->data['text_Copy'][$language['language_id']] = $lng->get('text_Copy');
@@ -401,6 +402,13 @@ class ControllerModuleAttributico extends Controller
             $this->data['attributico_multistore'] = $this->config->get('attributico_multistore');
         } else {
             $this->data['attributico_multistore'] = 0;
+        }
+        if (isset($this->request->post['attributico_diver'])) {
+            $this->data['attributico_diver'] = $this->request->post['attributico_diver'];
+        } elseif (($this->config->get('attributico_diver'))) {
+            $this->data['attributico_diver'] = $this->config->get('attributico_diver');
+        } else {
+            $this->data['attributico_diver'] = 0;
         }
 
         if (version_compare(VERSION, '2.0.1', '>=')) {

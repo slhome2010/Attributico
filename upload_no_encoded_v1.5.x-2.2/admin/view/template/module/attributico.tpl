@@ -903,15 +903,10 @@
                                                                     <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
                                                                 </label>
                                                                 <br>
-                                                                <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="sortOrder_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="lazyLoad_product_attribute_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_lazyload == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_lazyLoad[$language['language_id']]; ?></b>
-                                                                </label>
+                                                                <label class="checkbox-inline" for="diver<?php echo $language['language_id']; ?>">
+                                                                    <input type="checkbox" id="diver_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_diver == '1' ? 'checked="checked"' : ''); ?>>
+                                                                    <b><?php echo $text_Diver[$language['language_id']]; ?></b>
+                                                                </label>                                                                
                                                             </div>
                                                         </td>
                                                     </tr>
