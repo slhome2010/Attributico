@@ -1,5 +1,5 @@
 ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\system\library\attributico G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\system\library\attributico\ * /S
-ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\admin\view\javascript\ attributico*.js /S
+ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\javascript G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\admin\view\javascript\ * /S
 ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\stylesheet G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\admin\view\stylesheet\ * /S
 ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\view\template\extension\module G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\admin\view\template\module\ attributico.tpl /S
 ROBOCOPY G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v2.3.x-3.x\admin\model G:\WebDesign\OpenCart\Develops\Attributico\upload_no_encoded_v1.5.x-2.2\admin\model\ * /S

@@ -1604,17 +1604,21 @@ function initTrees() {
                 console.log(data);
                 console.log(error.responseText);
             },
-            beforeActivate: function (event, data) {},
+            beforeActivate: function (event, data) {
+                if (data.node.getLevel() === 4) {
+                    return false;
+                }
+            },
             activate: function (event, data) {
                 // var node = data.node;
                 var tree = $("#product_tree" + lng_id).fancytree("getTree");
-                currentAttributeID = data.node.key;
+                //currentAttributeID = data.node.key;
                 tree.reload({
                     data: {
                         'user_token': user_token,
                         'token': token,
                         'language_id': lng_id,
-                        'attribute_id': currentAttributeID,
+                        'attribute_id': data.node.key,
                         'title': data.node.title,
                         'sortOrder': sortOrder,
                         'invert': $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked")
@@ -1737,9 +1741,9 @@ function initTrees() {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var product_tree = $("#product_tree" + lng_id);
         var collapse = true;
-        var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
+        //var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
-        var attribute_id = currentAttributeID;
+        //var attribute_id = currentAttributeID;
 
         product_tree.fancytree({
             autoCollapse: true,
@@ -1750,8 +1754,8 @@ function initTrees() {
                     'user_token': user_token,
                     'token': token,
                     'language_id': lng_id,
-                    'attribute_id': attribute_id,
-                    'sortOrder': sortOrder,
+                    //'attribute_id': attribute_id,
+                    //'sortOrder': sortOrder,
                     'invert': diver
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getProductTree'
@@ -1770,14 +1774,17 @@ function initTrees() {
             },
             dblclick: function (event, data) {
                 if (data.node.getLevel() <= 2) {
+                    data.node.setExpanded(!data.node.isExpanded());
                     return false;
                 }
                 var about_blank = $('input[id = "input-attributico_about_blank"]:checkbox').is(":checked");
+                var attribute_product_tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
+                var attribute_node = attribute_product_tree.getActiveNode();
                 if (about_blank) {
                     $("#reload.alert-danger").show();
-                    window.open("index.php?route=catalog/product/" + edit + '&user_token=' + user_token + '&token=' + token + "&product_id=" + data.node.key.split('_')[1] + "&attribute_id=" + currentAttributeID.split('_')[1], '_blank');
+                    window.open("index.php?route=catalog/product/" + edit + '&user_token=' + user_token + '&token=' + token + "&product_id=" + data.node.key.split('_')[1] + "&attribute_id=" + attribute_node.key.split('_')[1], '_blank');
                 } else {
-                    window.location.href = "index.php?route=catalog/product/" + edit + '&user_token=' + user_token + '&token=' + token + "&product_id=" + data.node.key.split('_')[1] + "&attribute_id=" + currentAttributeID.split('_')[1];
+                    window.location.href = "index.php?route=catalog/product/" + edit + '&user_token=' + user_token + '&token=' + token + "&product_id=" + data.node.key.split('_')[1] + "&attribute_id=" + attribute_node.key.split('_')[1];
                 }
                 // index.php?route=catalog/product/update for 1.5.5
             },
@@ -2218,13 +2225,11 @@ $(function () { // document ready actions
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
 
-    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence  TODO save position before reload
-        var id = $(this).attr("id"),
-            tree = $("#" + id.replace("diver_", "")).fancytree("getTree"),
-            diver = $(this).is(":checked");
-        tree.options.source.data.invert = diver;
-        tree.options.source.data.attribute_id = currentAttributeID;
-        tree.reload();        
+    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence 
+        var id = $(this).attr("id");
+        var lng_id = parseInt(id.replace(/\D+/ig, ''));
+        var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");       
+        tree.reactivate();
     });
 
     /**

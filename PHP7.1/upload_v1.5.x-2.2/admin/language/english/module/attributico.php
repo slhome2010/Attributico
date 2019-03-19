@@ -47,6 +47,7 @@ $_['text_Sort'] = 'Sort (ASC)';
 $_['text_sortOrder'] = 'Sort order';
 $_['text_multiSelect'] = 'Hierarchical multiselect';
 $_['text_lazyLoad'] = 'Lazy load';
+$_['text_Diver'] = 'Divergence';
 
 // Info & alert message
 $_['text_attention'] = 'Attention!';

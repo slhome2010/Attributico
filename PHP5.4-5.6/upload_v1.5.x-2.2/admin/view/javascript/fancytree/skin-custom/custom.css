@@ -23,3 +23,8 @@ span.fancytree-node.custom3 > span.fancytree-title {
 .fancytree-has-children.fancytree-ico-cf span.fancytree-icon:hover {
     background-position: 0 0;
 }
+
+span.fancytree-node.custom4 > span.fancytree-icon {
+	background-position: 0 0;
+	background-image: url("folder-classic-blue-icon.png");
+}

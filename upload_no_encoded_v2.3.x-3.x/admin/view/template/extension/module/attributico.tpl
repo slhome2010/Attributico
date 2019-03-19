@@ -1241,8 +1241,7 @@ var contextmenu = [];
 var textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
 var textNewGroup = <?php echo json_encode($text_New_group) ?>;
 var textConfirm = <?php echo json_encode($text_confirm) ?>;
-var currentCategory = 0,
-    currentAttributeID = 0;
+var currentCategory = 0;
 
 $attribute_group_tree.each(function(indx, element) {
     var lng_id = parseInt(element.id.replace(/\D+/ig, ''));

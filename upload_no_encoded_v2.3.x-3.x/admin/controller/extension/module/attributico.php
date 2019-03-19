@@ -940,7 +940,7 @@ class ControllerModuleAttributico extends Controller
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
         $key = isset($this->request->get['attribute_id']) ? explode("_", $this->request->get['attribute_id']) : array('0', '0');
         $title = isset($this->request->get['title']) ? htmlspecialchars_decode($this->request->get['title']) : '';
-        $invert = isset($this->request->get['invert']) ? $this->request->get['invert'] : false;
+        $invert = isset($this->request->get['invert']) ? filter_var($this->request->get['invert'], FILTER_VALIDATE_BOOLEAN) : false;
 
         if (($key[0] == 'template' || $key[0] == 'value' || $key[0] == 'duty') && $invert) {
             $invert = false;
@@ -1028,7 +1028,8 @@ class ControllerModuleAttributico extends Controller
                     $categoryNode->addSibling(new Node(array(
                         "title" => $category['name'] . $debug_category,
                         "key" => "category_" . (string) $category['category_id'],
-                        "folder" => true,
+                        "folder" => $diver || $invert ? false : true,
+                        "extraClasses" => $diver || $invert ? "custom4" : "",
                         "children" => $productNode->render()
                     )));
                 }
@@ -1037,7 +1038,8 @@ class ControllerModuleAttributico extends Controller
             $debug_attribute = $this->debug_mode ? " (id=" . $attribute_id . ")" : '';
             $rootData = array(
                 "title" => $this->session->data['entry_products'][$language_id] . ' (' . $attribute_descriptions[(int) $language_id]['name'] . ')' . $debug_attribute,
-                "folder" => true,
+                "folder" => $diver || $invert ? false : true,
+                "extraClasses" => $diver || $invert ? "custom4" : "",
                 "expanded" => true,
                 "children" => $categoryNode->render(),
                 "key" => "attribute_" . (string) $attribute_id,
