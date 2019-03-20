@@ -822,21 +822,13 @@
                                                             <div id="options_product_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
                                                                 <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
                                                                     <input type="checkbox" id="autoCollapse_product_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label>
+                                                                </label> 
                                                                 <br>
-                                                                <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                                    {% if attributico_sortorder == '1' %}
-                                                                    <input type="checkbox" id="sortOrder_product_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
+                                                                <label class="checkbox-inline" for="diver{{language.language_id}}">
+                                                                    {% if attributico_diver == '1' %}
+                                                                    <input type="checkbox" id="diver_product_tree{{language.language_id}}" checked="checked"> <b>{{text_Diver[ language.language_id]}}</b>
                                                                     {% else %}
-                                                                    <input type="checkbox" id="sortOrder_product_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad{{language.language_id}}">
-                                                                    {% if attributico_lazyload == '1' %}
-                                                                    <input type="checkbox" id="lazyLoad_product_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="lazyLoad_product_attribute_tree{{language.language_id}}"> <b>{{text_lazyLoad[ language.language_id]}}</b>
+                                                                    <input type="checkbox" id="diver_product_tree{{language.language_id}}"> <b>{{text_Diver[ language.language_id]}}</b>
                                                                     {% endif %}
                                                                 </label>
                                                             </div>
@@ -1141,8 +1133,7 @@
     var textNewAttribute = {{text_New_attribute|json_encode()}};
     var textNewGroup = {{text_New_group|json_encode()}};
     var textConfirm = {{text_confirm|json_encode()}};
-    var currentCategory = 0,
-        currentAttributeID = 0;
+    var currentCategory = 0;
 
     $attribute_group_tree.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));

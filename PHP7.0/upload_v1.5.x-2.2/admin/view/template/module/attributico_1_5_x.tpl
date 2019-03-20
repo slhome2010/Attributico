@@ -731,9 +731,9 @@
                                                 <input type="checkbox" id="autoCollapse_product_tree<?php echo $language['language_id']; ?>" checked> <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
                                             </label>
                                             <br>
-                                            <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="sortOrder_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
+                                            <label class="checkbox-inline" for="diver<?php echo $language['language_id']; ?>">
+                                                <input type="checkbox" id="diver_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_diver == '1' ? 'checked="checked"' : ''); ?>>
+                                                <b><?php echo $text_Diver[$language['language_id']]; ?></b>
                                             </label>
                                         </div>
                                     </td>
@@ -985,29 +985,28 @@ var contextmenu = [];
 var textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
 var textNewGroup = <?php echo json_encode($text_New_group) ?>;
 var textConfirm = <?php echo json_encode($text_confirm) ?>;
-var currentCategory = 0,
-    currentAttributeID = 0;
+var currentCategory = 0;
 
 $attribute_group_tree.each(function(indx, element) {
     var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
     contextmenu[lng_id] = [{
-            title: <?php echo json_encode($text_Edit) ?> [lng_id] + "<kbd>[Shift+Click]</kbd>",
+            title: <?php echo json_encode($text_Edit) ?>[lng_id] + "<kbd>[Shift+Click]</kbd>",
             cmd: "rename",
             uiIcon: "ui-icon-pencil"
         },
         {
-            title: <?php echo json_encode($text_Delete) ?> [lng_id] + "<kbd>[Del]</kbd>",
+            title: <?php echo json_encode($text_Delete) ?>[lng_id] + "<kbd>[Del]</kbd>",
             cmd: "remove",
             uiIcon: "ui-icon-trash"
         },
         {
-            title: <?php echo json_encode($text_Copy) ?> [lng_id] + "<kbd>Ctrl+C</kbd>",
+            title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>Ctrl+C</kbd>",
             cmd: "copy",
             uiIcon: "ui-icon-copy",
             disabled: true
         },
         {
-            title: <?php echo json_encode($text_Paste) ?> [lng_id] + "<kbd>Ctrl+V</kbd>",
+            title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>Ctrl+V</kbd>",
             cmd: "paste",
             uiIcon: "ui-icon-clipboard",
             disabled: true
@@ -1016,17 +1015,17 @@ $attribute_group_tree.each(function(indx, element) {
             title: "----"
         },
         {
-            title: <?php echo json_encode($text_Expande) ?> [lng_id] + "<kbd>Ctrl+B</kbd>",
+            title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
             cmd: "expande",
             uiIcon: "ui-icon-folder-open"
         },
         {
-            title: <?php echo json_encode($text_Collapse) ?> [lng_id] + "<kbd>Ctrl+B</kbd>",
+            title: <?php echo json_encode($text_Collapse) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
             cmd: "collapse",
             uiIcon: "ui-icon-folder-collapsed"
         },
         {
-            title: <?php echo json_encode($text_Options) ?> [lng_id],
+            title: <?php echo json_encode($text_Options) ?>[lng_id],
             cmd: "options",
             uiIcon: "ui-icon-gear"
         },
@@ -1034,12 +1033,12 @@ $attribute_group_tree.each(function(indx, element) {
             title: "----"
         },
         {
-            title: <?php echo json_encode($text_New_group) ?> [lng_id] + "<kbd>[Ctrl+M]</kbd>",
+            title: <?php echo json_encode($text_New_group) ?>[lng_id] + "<kbd>[Ctrl+M]</kbd>",
             cmd: "addSibling",
             uiIcon: "ui-icon-plus"
         },
         {
-            title: <?php echo json_encode($text_New_attribute) ?> [lng_id] + "<kbd>[Ctrl+Q]</kbd>",
+            title: <?php echo json_encode($text_New_attribute) ?>[lng_id] + "<kbd>[Ctrl+Q]</kbd>",
             cmd: "addChild",
             uiIcon: "ui-icon-arrowreturn-1-e"
         }
