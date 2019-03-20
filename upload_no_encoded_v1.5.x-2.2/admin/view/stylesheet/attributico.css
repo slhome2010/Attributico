@@ -8,6 +8,11 @@
     font-size: 65%;
     /* background-color: white; */
 }
+.contextmenu-size {
+    width: 250px;
+    min-height: 150px;
+    z-index: 3; /* over ext-wide titles */
+}
 mark {
     background: #ff0;
     color: #000; }

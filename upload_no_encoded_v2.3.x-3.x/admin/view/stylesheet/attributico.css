@@ -8,6 +8,13 @@
     font-size: 65%;
     /* background-color: white; */
 }
+.context-menu-size {
+    width: 250px;
+    min-height: 150px;
+    z-index: 3; /* over ext-wide titles */
+    font-family: Verdana,Arial,sans-serif;
+	font-size: 1.1em;
+}
 mark {
     background: #ff0;
     color: #000; }

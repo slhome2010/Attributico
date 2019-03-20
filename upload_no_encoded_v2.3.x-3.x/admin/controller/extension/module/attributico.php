@@ -23,11 +23,11 @@ class ControllerModuleAttributico extends Controller
         $this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');
         $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
         $this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
-        $this->document->addStyle('view/stylesheet/jquery.contextMenuCommon.min.css');
-        $this->document->addScript('view/javascript/jquery/jquery.contextMenuCommon.min.js');
         $this->document->addStyle('view/stylesheet/jquery.contextMenu.min.css');
         $this->document->addScript('view/javascript/jquery/jquery.contextMenu.min.js');
-
+        $this->document->addStyle('view/stylesheet/jquery.contextMenuCommon.min.css');
+        $this->document->addScript('view/javascript/jquery/jquery.contextMenuCommon.min.js');
+        
         if (!in_array($_SERVER['HTTP_HOST'], array('hozmag', 'ocstore23', 'radiocity', 'radiocity.kz', 'demo.radiocity.kz', 'opencart30'))) {
             $this->document->addScript('view/javascript/attributico.min.js');
         } else {

@@ -1801,7 +1801,8 @@ function initTrees() {
        
         product_tree.contextMenuCommon({
             selector: "span.fancytree-title",
-            var items = {
+            className: "context-menu-size",
+            items: {
 
                 fontWeight: {
                   label: 'Bold Font',
@@ -1837,8 +1838,6 @@ function initTrees() {
                   // For user: "Please choose Font Size" -> "Small", "Medium" or "Large"
                   // For your app: Current value of `fontSize` -> '8pt', '12pt' or '16pt'
                 }
-              
-              };
             }
           });
     });

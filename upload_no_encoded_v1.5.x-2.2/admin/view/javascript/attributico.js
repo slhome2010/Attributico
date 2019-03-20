@@ -1801,24 +1801,43 @@ function initTrees() {
        
         product_tree.contextMenuCommon({
             selector: "span.fancytree-title",
+            className: "contextmenu-size",
             items: {
-              download: {
-                label: label,
-                icon: 'fa fa-download',
-                callback: function() {
-                  if (isLoading) {
-                    isLoading = false;
-                    label.text('Restart Download');
-                    item.stop();
-                  } else {
-                    isLoading = true;
-                    label.text('Stop Download');
-                    if (rate === 0 && span === 0) { item.css('backgroundSize', '0'); } // next
-                    progress();
+
+                fontWeight: {
+                  label: 'Bold Font',
+                  type: 'checkbox',
+                  value: ['normal', 'bold']
+                  // For user: "Do you want Bold Font?" -> "Yes" or "No"
+                  // For your app: Current value of `fontWeight` -> 'bold' or 'normal'
+                },
+              
+                fontSize: {
+                  label: 'Font Size',
+                  items: {
+                    size1: {
+                      label: 'Small',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '8pt'
+                    },
+                    size2: {
+                      label: 'Medium',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '12pt',
+                      checked: true
+                    },
+                    size3: {
+                      label: 'Large',
+                      type: 'radio',
+                      radiogroup: 'fontSize',
+                      value: '16pt'
+                    }
                   }
-                  return false;
+                  // For user: "Please choose Font Size" -> "Small", "Medium" or "Large"
+                  // For your app: Current value of `fontSize` -> '8pt', '12pt' or '16pt'
                 }
-              }
             }
           });
     });
