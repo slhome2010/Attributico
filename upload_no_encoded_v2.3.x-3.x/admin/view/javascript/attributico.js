@@ -1,6 +1,8 @@
 /** http://servenus.com © 2015-2019 All Rights Reserved **/
-/** For Attribut&co v.3.0.1  **/
+/** For Attribut&co v.3.0.5  **/
 //var $jq = jQuery.noConflict(true);
+
+/* Add methods to _FancytreeNodeClass */
 /**
  * Return first parent node with key_prefix by key or null if not found
  * @returns {FancytreeNode}
@@ -30,6 +32,60 @@ $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function ()
     }
     return siblingNode;
 };
+
+/* Classes and constants */
+/**
+ * Handling contextmenu commands
+ * @returns {none}
+ *
+ **/
+/**
+ * Handling contextmenu commands
+ * @returns {none}
+ *
+ **/
+function contextmenuActions(ui) {
+    let node = $.ui.fancytree.getNode(ui.target);
+    let tree = $.ui.fancytree.getTree(ui.target);
+    let selector = tree.$div.context.id;
+    let lng_id = parseInt(selector.replace(/\D+/ig, ''));
+   
+    switch (ui.cmd) {
+        case "expande":
+        case "collapse":
+            tree.visit(function (node) {
+                node.setExpanded(!node.isExpanded());
+            });
+            break;
+        case "options":
+            $("#options_" + selector).dialog("open");
+            break;
+        case "rename":
+            node.editStart();
+            break;
+        case "remove":
+            deleteAttribute(node);
+            break;
+        case "addChild":
+            if (node.getLevel() !== 1) {
+                addAttribute(node, 'attribute', lng_id);
+            }
+            break;
+        case "addSibling":
+            addAttribute(node, 'group', lng_id);
+            break;
+            // case "cut":
+        case "copy":
+            copyPaste(ui.cmd, node);
+            break;
+        case "paste":
+            copyPaste(ui.cmd, node);
+            deSelectNodes(node);
+            break;
+        default:
+            alert("Todo: appply action '" + ui.cmd + "' to node " + node);
+    }
+}
 
 function reactivateCategory() {
     var node = null;
@@ -769,49 +825,8 @@ function initTrees() {
                 attribute_group_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                 node.setActive();
             },
-            select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        currentTree.visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        collapse = !collapse;
-                        break;
-                    case "collapse":
-                        currentTree.visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        collapse = !collapse;
-                        break;
-                    case "options":
-                        $("#options_attribute_group_tree" + lng_id).dialog("open");
-                        break;
-                    case "rename":
-                        node.editStart();
-                        break;
-                    case "remove":
-                        deleteAttribute(node);
-                        break;
-                    case "addChild":
-                        if (node.getLevel() !== 1) {
-                            addAttribute(node, 'attribute', lng_id);
-                        }
-                        break;
-                    case "addSibling":
-                        addAttribute(node, 'group', lng_id);
-                        break;
-                        // case "cut":
-                    case "copy":
-                        copyPaste(ui.cmd, node);
-                        break;
-                    case "paste":
-                        copyPaste(ui.cmd, node);
-                        deSelectNodes(node);
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+            select: function(event,ui) {         
+                contextmenuActions(ui);
             }
         });
     });
