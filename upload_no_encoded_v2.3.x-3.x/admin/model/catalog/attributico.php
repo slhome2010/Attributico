@@ -156,7 +156,6 @@ class ModelCatalogAttributico extends Model
         if ($non_hierarchical) {
 
             return $query->rows;
-
         } else {
             $category_data = array();
             foreach ($query->rows as $row) {
@@ -271,8 +270,8 @@ class ModelCatalogAttributico extends Model
         return $product->rows;
     }
 
-    public function getProductsByAttribute($category_id, $attribute_id, $language_id, $invert=false) 
-     {
+    public function getProductsByAttribute($category_id, $attribute_id, $language_id, $invert = false)
+    {
         if (!$invert) {
             $query = $this->db->query("SELECT p.product_id, p.`model`, `pd`.`name` as product_name, p2a.text, `ad`.`name` as attribute_name, p2c.category_id FROM " . DB_PREFIX . "product p
                         LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)
@@ -379,8 +378,32 @@ class ModelCatalogAttributico extends Model
         $this->cache->delete('attributico');
 
         if (isset($data['attribute'])) {
-            foreach ($data['attribute'] as $attribute_id) {
-                $this->deleteAttribute($attribute_id);
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE attribute_id IN (" . implode(",", $data['attribute']) . ")");
+            $this->db->query("DELETE FROM " . DB_PREFIX . "category_attribute WHERE attribute_id IN (" . implode(",", $data['attribute']) . ")");
+            $this->db->query("DELETE FROM " . DB_PREFIX . "attribute WHERE attribute_id IN (" . implode(",", $data['attribute']) . ")");
+            $this->db->query("DELETE FROM " . DB_PREFIX . "attribute_description WHERE attribute_id IN (" . implode(",", $data['attribute']) . ")");
+        }
+    }
+
+    public function deleteValues($data, $language_id)
+    {
+        $this->cache->delete('attributico');
+
+        if (isset($data['value'])) {
+            foreach ($data['value'] as $instance) {
+                $this->db->query("DELETE FROM hm_product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
+                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
+                 ");
+                // AND language_id = '" . (int)$language_id . "'");
+            }
+        }
+
+        if (isset($data['template'])) {
+            foreach ($data['template'] as $instance) {
+                $this->db->query("DELETE FROM hm_product_attribute  WHERE text LIKE '" . $instance['value'] . "'
+                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
+                 ");
+                // AND language_id = '" . (int)$language_id . "'");
             }
         }
     }

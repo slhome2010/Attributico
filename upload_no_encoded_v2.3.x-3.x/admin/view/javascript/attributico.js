@@ -32,6 +32,16 @@ $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function ()
     }
     return siblingNode;
 };
+/**
+ * Return language_id from node.tree.selector
+ * @returns (int){id}
+ *
+ **/
+$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {   
+    var selector = this.tree.$div.context.id;
+    var lng_id = parseInt(selector.replace(/\D+/ig, ''));
+    return lng_id;
+};
 
 /* Classes and constants */
 /**
@@ -39,54 +49,197 @@ $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function ()
  * @returns {none}
  *
  **/
-/**
- * Handling contextmenu commands
- * @returns {none}
- *
- **/
-function contextmenuActions(ui) {
-    let node = $.ui.fancytree.getNode(ui.target);
-    let tree = $.ui.fancytree.getTree(ui.target);
-    let selector = tree.$div.context.id;
-    let lng_id = parseInt(selector.replace(/\D+/ig, ''));
-   
-    switch (ui.cmd) {
-        case "expande":
-        case "collapse":
-            tree.visit(function (node) {
-                node.setExpanded(!node.isExpanded());
-            });
-            break;
-        case "options":
-            $("#options_" + selector).dialog("open");
-            break;
-        case "rename":
-            node.editStart();
-            break;
-        case "remove":
-            deleteAttribute(node);
-            break;
-        case "addChild":
-            if (node.getLevel() !== 1) {
-                addAttribute(node, 'attribute', lng_id);
-            }
-            break;
-        case "addSibling":
-            addAttribute(node, 'group', lng_id);
-            break;
-            // case "cut":
-        case "copy":
-            copyPaste(ui.cmd, node);
-            break;
-        case "paste":
-            copyPaste(ui.cmd, node);
-            deSelectNodes(node);
-            break;
-        default:
-            alert("Todo: appply action '" + ui.cmd + "' to node " + node);
+class ContextmenuCommand {
+    constructor(ui) {
+        this.ui = ui;
+        this.node = $.ui.fancytree.getNode(ui.target);
+        this.tree = $.ui.fancytree.getTree(ui.target);
+        this.selector = this.tree.$div.context.id;
+        this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
+    }
+
+    execute() {
+        switch (this.ui.cmd) {
+            case "expande":
+            case "collapse":
+                this.tree.visit(function (node) {
+                    node.setExpanded(!node.isExpanded());
+                });
+                break;
+            case "options":
+                $("#options_" + this.selector).dialog("open");
+                break;
+            case "rename":
+                this.node.editStart();
+                break;
+            case "remove":
+                if (!confirm(textConfirm)) {
+                    break;
+                }
+                this.remove();
+                break;
+            case "addChild":
+                if (this.node.getLevel() !== 1) {
+                    this.addChild();
+                }
+                break;
+            case "addSibling":
+                this.addSibling();
+                break;
+                // case "cut":
+            case "copy":
+                copyPaste(this.ui.cmd, this.node);
+                break;
+            case "paste":
+                copyPaste(this.ui.cmd, this.node);
+                deSelectNodes(this.node);
+                break;
+            default:
+                alert("Todo: appply action '" + this.ui.cmd + "' to node " + this.node);
+        }
+    }
+
+    remove() {
+        deleteAttribute(this.node)
+    }
+
+    addChild() {
+        addAttribute(this.node, 'attribute', this.lng_id);
+    }
+
+    addSibling() {
+        addAttribute(this.node, 'group', this.lng_id);
     }
 }
 
+/* Override methods for CategoryattributeTree*/
+class ContextmenuCommandCategory extends ContextmenuCommand {
+
+    remove() {
+        deleteAttributesFromCategory(this.node, this.node);
+    }
+
+    addChild() {
+        this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+/**
+ * Handling shortcut click commands
+ * @returns {none}
+ *
+ **/
+class KeydownCommand {
+    constructor(event, data) {
+        this.e = event;
+        this.node = data.node;
+        this.tree = data.tree;
+        this.selector = this.tree.$div.context.id;
+        this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
+        this.access = {
+            remove: true,
+            addChild: true,
+            addSibling: true,
+            copy: true,
+            paste: true
+        };
+    }
+
+    set permissions(newPermissions) {
+        this.access = newPermissions;
+    }
+
+    execute() {
+        switch (this.e.which) {
+            case 68:
+                //     alt+D  cmd = "debug mode";
+                if (this.e.altKey) {
+                    console.log("Debug mode: ");
+                    $.ajax({
+                        data: {
+                            'user_token': user_token,
+                            'token': token,
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/debugSwitch',
+                        success: function (message) {
+                            console.log(message);
+                        }
+                    });
+                }
+                break;
+            case 66:
+                //     ctrl+B  cmd = "expande/collapse";
+                if (this.e.ctrlKey) {
+                    this.tree.visit(function (node) {
+                        node.setExpanded(!node.isExpanded());
+                    });
+                }
+                break;
+            case 46:
+                //   del   cmd = "remove";                
+                if (this.access.remove && confirm(textConfirm))
+                    this.remove();
+                break;
+            case 77:
+                //   ctrl+M    cmd = "addSibling";
+                if (this.access.addSibling && this.e.ctrlKey) {
+                    this.addSibling();
+                }
+                break;
+            case 81:
+                //  ctrl+Q  cmd = "addChild";
+                if (this.access.addChild && this.e.ctrlKey) {
+                    this.addChild();
+                }
+                break;
+            case 67:
+                // Ctrl-C copy
+                if (this.access.copy && this.e.ctrlKey) {
+                    copyPaste("copy", this.node);
+                    return false;
+                }
+                break;
+            case 86:
+                // Ctrl-V paste
+                if (this.access.paste && this.e.ctrlKey) {
+                    copyPaste("paste", this.node);
+                    deSelectNodes(this.node);
+                    return false;
+                }
+                break;
+                //  case 88:
+                //   if( event.ctrlKey ) { // Ctrl-X
+                //      copyPaste("cut", node);
+                //      return false;
+                //    }
+                //    break;
+        }
+    }
+
+    remove() {
+        deleteAttribute(this.node)
+    }
+
+    addChild() {
+        addAttribute(this.node, 'attribute', this.lng_id);
+    }
+
+    addSibling() {
+        addAttribute(this.node, 'group', this.lng_id);
+    }
+}
+/* Override methods for CategoryattributeTree*/
+class KeydownCommandCategory extends KeydownCommand {
+
+    remove() {
+        deleteAttributesFromCategory(this.node, this.node);
+    }
+
+    addChild() {
+        this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+
+/* Functions */
 function reactivateCategory() {
     var node = null;
     if (arguments.length !== 0) {
@@ -137,8 +290,8 @@ function reloadAttribute() {
     }
 }
 
-function ClearFilter(tree, tab, lng_id) {
-    if (tree.isFilterActive()) {
+function ClearFilter(tree, tab, lng_id) { 
+    if (tree.isFilterActive() ) {
         tree.clearFilter();
         if (arguments.length === 3) {
             $('input[name *= ' + tab + '_search' + lng_id + ']').val("");
@@ -267,7 +420,7 @@ function getSelectedKeys(selNodes) {
     return selKeys;
 }
 
-function getSelectedTitles() {
+function getSelectedTitles(selNodes) {
     var selTitles = [];
     if (selNodes) {
         selNodes.forEach(function (node) {
@@ -326,16 +479,16 @@ function addAttribute(activeNode, activeKey, lng_id) {
 }
 
 function deleteAttribute(node) {
-    if (!confirm(textConfirm)) {
-        return;
-    }
-    if (node.getLevel() === 2 || node.getLevel() === 3) {
+    let level = node.getLevel();
+    if (level === 2 || level === 3 || level === 5) {
         var siblingNode = node.findUnselectedSibling();
         $.ajax({
             data: {
                 'user_token': user_token,
                 'token': token,
-                'keys': selNodes ? getSelectedKeys(selNodes) : [node.key]
+                'keys': selNodes ? getSelectedKeys(selNodes) : [node.key],
+                'titles': selNodes ? getSelectedTitles(selNodes) : [node.title],
+                'language_id' : node.getLanguageId()
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
@@ -346,7 +499,7 @@ function deleteAttribute(node) {
                 } else {
                     node.remove();
                 }
-                reloadAttribute(siblingNode, false);
+                reloadAttribute(siblingNode, level === 5 ? true : false);
                 //   siblingNode.setActive(true);
                 selNodes = null;
             }
@@ -492,7 +645,7 @@ function initTrees() {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var currentTab = 'tab-attribute';
         var attribute_group_tree = $("#attribute_group_tree" + lng_id);
-        //  var isReloaded = false;
+       // var currentTree = attribute_group_tree.fancytree("getTree");
         var sortOrder = $('input[id = "sortOrder_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -718,70 +871,8 @@ function initTrees() {
                 }
             },
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 68:
-                        //     alt+D  cmd = "debug mode";
-                        if (e.altKey) {
-                            console.log("Debug mode: ");
-                            $.ajax({
-                                data: {
-                                    'user_token': user_token,
-                                    'token': token,
-                                },
-                                url: 'index.php?route=' + extension + 'module/attributico/debugSwitch',
-                                success: function (m) {
-                                    console.log(m);
-                                }
-                            });
-                        }
-                        break;
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                    case 46:
-                        //   del   cmd = "remove";
-                        deleteAttribute(node);
-                        break;
-                    case 77:
-                        //   ctrl+M    cmd = "addSibling";
-                        if (e.ctrlKey) {
-                            addAttribute(node, 'group', lng_id);
-                        }
-                        break;
-                    case 81:
-                        //  ctrl+Q  cmd = "addChild";
-                        if (e.ctrlKey) {
-                            addAttribute(node, 'attribute', lng_id);
-                        }
-                        break;
-                    case 67:
-                        if (e.ctrlKey) { // Ctrl-C
-                            copyPaste("copy", node);
-                            return false;
-                        }
-                        break;
-                    case 86:
-                        if (e.ctrlKey) { // Ctrl-V
-                            copyPaste("paste", node);
-                            deSelectNodes(node);
-                            return false;
-                        }
-                        break;
-                        //  case 88:
-                        //   if( event.ctrlKey ) { // Ctrl-X
-                        //      copyPaste("cut", node);
-                        //      return false;
-                        //    }
-                        //    break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.execute();
             },
             filter: {
                 autoApply: true, // Re-apply last filter if lazy data is loaded
@@ -793,8 +884,8 @@ function initTrees() {
             }
         });
 
-        var currentTree = attribute_group_tree.fancytree("getTree");
-        var collapse = true;
+       var currentTree = attribute_group_tree.fancytree("getTree");
+       // var collapse = true;
 
         $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
             tree: currentTree,
@@ -821,12 +912,14 @@ function initTrees() {
             menu: contextmenu[lng_id],
             beforeOpen: function (event, ui) {
                 var node = $.ui.fancytree.getNode(ui.target);
+               // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
                 attribute_group_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                 attribute_group_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                 node.setActive();
             },
-            select: function(event,ui) {         
-                contextmenuActions(ui);
+            select: function (event, ui) {
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -835,7 +928,7 @@ function initTrees() {
     $category_tree.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_tree = $("#category_tree" + lng_id);
-        var collapse = true;
+       // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_tree' + lng_id + '"]:checkbox').is(":checked");
         //var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
         //  var selectMode = $('input[id = "multiSelect_category_tree' + lng_id + '"]:checkbox').is(":checked");
@@ -896,26 +989,15 @@ function initTrees() {
                 data.node.setExpanded(!(data.node.expanded && !selCategories.length));
             },
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                    case 86:
-                        if (e.ctrlKey) { // Ctrl-V
-                            copyPaste("paste", node);
-                            deSelectNodes(node);
-                            return false;
-                        }
-                        break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: true
+                };
+                command.execute();
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
@@ -935,28 +1017,8 @@ function initTrees() {
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        category_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        category_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_category_tree" + lng_id).dialog("open");
-                        break;
-                    case "paste":
-                        copyPaste(ui.cmd, node);
-                        deSelectNodes(node);
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -965,7 +1027,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_attribute_tree = $("#category_attribute_tree" + lng_id);
-        var collapse = true;
+       // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
         category_attribute_tree.fancytree({
@@ -1109,45 +1171,15 @@ function initTrees() {
                 }
             },
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                    case 46:
-                        //   del   cmd = "remove";
-                        if (!confirm(textConfirm)) {
-                            break;
-                        }
-                        deleteAttributesFromCategory(node, node);
-                        break;
-                    case 81:
-                        //  ctrl+Q  cmd = "addChild";
-                        if (e.ctrlKey) {
-                            node.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
-                        }
-                        break;
-                    case 67:
-                        if (e.ctrlKey) { // Ctrl-C
-                            copyPaste("copy", node);
-                            return false;
-                        }
-                        break;
-                    case 86:
-                        if (e.ctrlKey) { // Ctrl-V
-                            copyPaste("paste", node);
-                            deSelectNodes(node);
-                            return false;
-                        }
-                        break;
-                }
+                let command = new KeydownCommandCategory(e, data);
+                command.permissions = {
+                    remove: true,
+                    addChild: true,
+                    addSibling: false,
+                    copy: true,
+                    paste: true
+                };
+                command.execute();
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
@@ -1167,40 +1199,8 @@ function initTrees() {
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        category_attribute_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        category_attribute_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "remove":
-                        if (!confirm(textConfirm)) {
-                            break;
-                        }
-                        deleteAttributesFromCategory(node, node);
-                        break;
-                    case "addChild":
-                        node.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
-                        break;
-                    case "options":
-                        $("#options_category_attribute_tree" + lng_id).dialog("open");
-                        break;
-                    case "copy":
-                        copyPaste(ui.cmd, node);
-                        break;
-                    case "paste":
-                        copyPaste(ui.cmd, node);
-                        deSelectNodes(node);
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommandCategory(ui);
+                command.execute();
             }
         });
     });
@@ -1209,7 +1209,7 @@ function initTrees() {
         var currentTab = 'tab-category';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_tree = $("#attribute_tree" + lng_id);
-        var collapse = true;
+        //var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1294,25 +1294,15 @@ function initTrees() {
                 }
             },
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                    case 67:
-                        if (e.ctrlKey) { // Ctrl-C
-                            copyPaste("copy", node);
-                            return false;
-                        }
-                        break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: true,
+                    paste: false
+                };
+                command.execute();
             },
             filter: {
                 autoApply: true, // Re-apply last filter if lazy data is loaded
@@ -1358,27 +1348,8 @@ function initTrees() {
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        attribute_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        attribute_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_attribute_tree" + lng_id).dialog("open");
-                        break;
-                    case "copy":
-                        copyPaste(ui.cmd, node);
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -1493,19 +1464,15 @@ function initTrees() {
                 return false;
             },
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             filter: {
                 autoApply: true, // Re-apply last filter if lazy data is loaded
@@ -1518,7 +1485,7 @@ function initTrees() {
         });
 
         var currentTree = duty_attribute_tree.fancytree("getTree");
-        var collapse = true;
+        //var collapse = true;
 
         $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
             tree: currentTree,
@@ -1551,29 +1518,8 @@ function initTrees() {
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        currentTree.visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        collapse = !collapse;
-                        break;
-                    case "collapse":
-                        currentTree.visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        collapse = !collapse;
-                        break;
-                    case "options":
-                        $("#options_duty_attribute_tree" + lng_id).dialog("open");
-                        break;
-                    case "rename":
-                        node.editStart();
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -1583,7 +1529,7 @@ function initTrees() {
         var currentTab = 'tab-products';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_product_tree = $("#attribute_product_tree" + lng_id);
-        var collapse = true;
+       // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_duty_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1662,25 +1608,15 @@ function initTrees() {
             },
             click: function (event, data) {},
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                    case 67:
-                        if (e.ctrlKey) { // Ctrl-C
-                            copyPaste("copy", node);
-                            return false;
-                        }
-                        break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             filter: {
                 autoApply: true, // Re-apply last filter if lazy data is loaded
@@ -1722,31 +1658,13 @@ function initTrees() {
                 attribute_product_tree.contextmenu("enableEntry", "rename", false);
                 attribute_product_tree.contextmenu("enableEntry", "addSibling", false);
                 attribute_product_tree.contextmenu("enableEntry", "addChild", false);
-                attribute_product_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                attribute_product_tree.contextmenu("enableEntry", "copy", false);
+                attribute_product_tree.contextmenu("enableEntry", "paste", false);
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        attribute_product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        attribute_product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_attribute_product_tree" + lng_id).dialog("open");
-                        break;
-                    case "copy":
-                        copyPaste(ui.cmd, node);
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -1755,7 +1673,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var product_tree = $("#product_tree" + lng_id);
-        var collapse = true;
+       // var collapse = true;
         //var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
         //var attribute_id = currentAttributeID;
@@ -1805,19 +1723,15 @@ function initTrees() {
             },
             click: function (event, data) {},
             keydown: function (e, data) {
-                var node = data.node;
-
-                switch (e.which) {
-                    case 66:
-                        //     ctrl+B  cmd = "expande/collapse";
-                        if (e.ctrlKey) {
-                            node.tree.visit(function (node) {
-                                node.setExpanded(collapse);
-                            });
-                            collapse = !collapse;
-                        }
-                        break;
-                }
+                let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
@@ -1838,24 +1752,8 @@ function initTrees() {
                 node.setActive();
             },
             select: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                switch (ui.cmd) {
-                    case "expande":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(true);
-                        });
-                        break;
-                    case "collapse":
-                        product_tree.fancytree("getTree").visit(function (node) {
-                            node.setExpanded(false);
-                        });
-                        break;
-                    case "options":
-                        $("#options_product_tree" + lng_id).dialog("open");
-                        break;
-                    default:
-                        alert("Todo: appply action '" + ui.cmd + "' to node " + node);
-                }
+                let command = new ContextmenuCommand(ui);
+                command.execute();
             }
         });
     });
@@ -2243,7 +2141,7 @@ $(function () { // document ready actions
     $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence 
         var id = $(this).attr("id");
         var lng_id = parseInt(id.replace(/\D+/ig, ''));
-        var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");       
+        var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
         tree.reactivate();
     });
 

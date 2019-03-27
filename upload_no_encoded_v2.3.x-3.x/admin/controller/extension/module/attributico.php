@@ -709,7 +709,7 @@ class ControllerModuleAttributico extends Controller
                 if ($mode == 'template') {
                     if ($value['text'] != "" || $empty) { // сделать проверку на пустой текст
                         $nodeValues->addSibling(new Node(array(
-                            "title" => $value['text'], "key" => "template_" . (string)$attribute_id . "_" . $index, "unselectable" => true,
+                            "title" => $value['text'], "key" => "template_" . (string)$attribute_id . "_" . $index, "unselectable" => false,
                             //  "extraClasses" => $value['text'] == $duty ? "custom1" : ""
                         )));
                     }
@@ -726,7 +726,7 @@ class ControllerModuleAttributico extends Controller
                 $values = array_unique($all_elements);
                 array_multisort($values);
                 foreach ($values as $index => $value) {
-                    $nodeValues->addSibling(new Node(array("title" => $value, "key" => "value_" . (string)$attribute_id . "_" . $index, "unselectable" => true)));
+                    $nodeValues->addSibling(new Node(array("title" => $value, "key" => "value_" . (string)$attribute_id . "_" . $index, "unselectable" => false)));
                 }
             }
         }
@@ -1013,7 +1013,7 @@ class ControllerModuleAttributico extends Controller
                                 }
                                 break;
                             case 'value':
-                                if (stripos($product['text'], $title) == false) {
+                                if (stripos($product['text'], $title) === false) {
                                     $productNode->addSibling($product_item);
                                 }
                                 break;
@@ -1181,8 +1181,12 @@ class ControllerModuleAttributico extends Controller
     {
         $data = array();
         $keys = isset($this->request->get['keys']) ? $this->request->get['keys'] : array('0', '0');
+        $titles = isset($this->request->get['titles']) ? $this->request->get['titles'] : array('', '');
+        $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
 
-        foreach ($keys as $key) {
+        $combine = array_combine ( $keys, $titles );
+
+        foreach ($combine as $key => $value) {
             $d = explode("_", $key);
             if ($d[0] == 'group') {
                 $data['group'][] = $d[1];
@@ -1190,13 +1194,22 @@ class ControllerModuleAttributico extends Controller
             if ($d[0] == 'attribute') {
                 $data['attribute'][] = $d[1];
             }
+            if ($d[0] == 'template') {
+                $data['template'][] = ['attribute_id'=>$d[1], 'value'=>$value];
+            }
+            if ($d[0] == 'value') {
+                $data['value'][] = ['attribute_id'=>$d[1], 'value'=>$value];
+            }
         }
+
         if ($this->session->data['free']) {
             return;
         }
+
         $this->load->model('catalog/attributico');
         $this->model_catalog_attributico->deleteAttributeGroups($data);
         $this->model_catalog_attributico->deleteAttributes($data);
+        $this->model_catalog_attributico->deleteValues($data, $language_id);
     }
 
     public function replaceAttributeGroup()
