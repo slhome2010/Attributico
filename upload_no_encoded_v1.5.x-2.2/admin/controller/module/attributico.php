@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.0.4');
+define('MODULE_VERSION', 'v3.0.5');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -23,7 +23,7 @@ class ControllerModuleAttributico extends Controller
         $this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');
         $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
         $this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
-       
+
         if (!in_array($_SERVER['HTTP_HOST'], array('hozmag', 'ocstore23', 'radiocity', 'radiocity.kz', 'demo.radiocity.kz', 'opencart30'))) {
             $this->document->addScript('view/javascript/attributico.min.js');
         } else {
@@ -35,10 +35,10 @@ class ControllerModuleAttributico extends Controller
         $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
         $edit = version_compare(VERSION, '2.0.0', '>=') ? "edit" : "update";
         $link = version_compare(VERSION, '2.3.0', '>=') ? "extension/extension" : "extension/module";
-        
+
         if (version_compare(VERSION, '3.0.0', '>=')) {
             $link = "marketplace/extension";
-        }        
+        }
 
         if (version_compare(VERSION, '2.2.0', '>=')) {
             $this->load->language($extension . 'module/attributico');
@@ -262,6 +262,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_Expande'][$language['language_id']] = $lng->get('text_Expande');
             $this->data['text_Collapse'][$language['language_id']] = $lng->get('text_Collapse');
             $this->data['text_sortOrder'][$language['language_id']] = $lng->get('text_sortOrder');
+            $this->data['text_Diver'][$language['language_id']] = $lng->get('text_Diver');
             $this->data['text_Edit'][$language['language_id']] = $lng->get('text_Edit');
             $this->data['text_Delete'][$language['language_id']] = $lng->get('text_Delete');
             $this->data['text_Copy'][$language['language_id']] = $lng->get('text_Copy');
@@ -401,6 +402,13 @@ class ControllerModuleAttributico extends Controller
             $this->data['attributico_multistore'] = $this->config->get('attributico_multistore');
         } else {
             $this->data['attributico_multistore'] = 0;
+        }
+        if (isset($this->request->post['attributico_diver'])) {
+            $this->data['attributico_diver'] = $this->request->post['attributico_diver'];
+        } elseif (($this->config->get('attributico_diver'))) {
+            $this->data['attributico_diver'] = $this->config->get('attributico_diver');
+        } else {
+            $this->data['attributico_diver'] = 0;
         }
 
         if (version_compare(VERSION, '2.0.1', '>=')) {
@@ -544,12 +552,12 @@ class ControllerModuleAttributico extends Controller
 
             if ($method == '3' || $method == '4')
                 foreach ($languages as $language) {
-                $json[$language['language_id']][] = $this->model_catalog_attributico->whoisOnDuty($attribute_id, $language);
-            }
+                    $json[$language['language_id']][] = $this->model_catalog_attributico->whoisOnDuty($attribute_id, $language);
+                }
             if ($method == '1')
                 foreach ($languages as $language) {
-                $json[$language['language_id']][] = '';
-            }
+                    $json[$language['language_id']][] = '';
+                }
         }
 
         $this->response->addHeader('Content-Type: application/json');
@@ -557,7 +565,7 @@ class ControllerModuleAttributico extends Controller
     }
 
     public function getMethod()
-    {       
+    {
         $method = $this->config->get('attributico_product_text');
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput($method);
@@ -598,7 +606,7 @@ class ControllerModuleAttributico extends Controller
         }
 
         if (!$cache_tree_data) {
-           
+
             $this->load->model('catalog/attributico');
 
             $filter_data = array(
@@ -615,8 +623,11 @@ class ControllerModuleAttributico extends Controller
             foreach ($attribute_groups as $attribute_group) {
                 $debug_group = $this->debug_mode ? " (id=" . $attribute_group['attribute_group_id'] . ")" : '';
                 $groupNode->addSibling(new Node(array(
-                    "title" => $attribute_group['name'] . $debug_group, "key" => "group_" . (string)$attribute_group['attribute_group_id'], "folder" => true,
-                    "extraClasses" => $attribute_group['attribute_group_id'] == '1' ? "custom3" : '', "children" => $onlyGroup ? '' : $this->getAttributeNodes($attribute_group['attribute_group_id'], $language_id, $sortOrder, $children, $lazyLoad)
+                    "title" => $attribute_group['name'] . $debug_group,
+                    "key" => "group_" . (string)$attribute_group['attribute_group_id'],
+                    "folder" => true,
+                    "extraClasses" => $attribute_group['attribute_group_id'] == '1' ? "custom3" : '',
+                    "children" => $onlyGroup ? '' : $this->getAttributeNodes($attribute_group['attribute_group_id'], $language_id, $sortOrder, $children, $lazyLoad)
                 )));
             }
 
@@ -671,7 +682,10 @@ class ControllerModuleAttributico extends Controller
                 $childNode->addSibling($valueNode);
             }
             $debug_attribute = $this->debug_mode ? " (id=" . $attribute['attribute_id'] . ")" : '';
-            $attributeNode->addSibling(new Node(array("title" => $attribute['name'] . $debug_attribute, "key" => "attribute_" . (string)$attribute['attribute_id'], "children" => $childNode->render())));
+            $attributeNode->addSibling(new Node(array(
+                "title" => $attribute['name'] . $debug_attribute,
+                "key" => "attribute_" . (string)$attribute['attribute_id'], "children" => $childNode->render()
+            )));
         }
 
         return $attributeNode->render();
@@ -693,9 +707,10 @@ class ControllerModuleAttributico extends Controller
         if (array_key_exists($language_id, $attribute_values)) {
             foreach ($attribute_values[$language_id] as $index => $value) {
                 if ($mode == 'template') {
-                    if ($value['text'] != "" || $empty) {// сделать проверку на пустой текст
-                        $nodeValues->addSibling(new Node(array("title" => $value['text'], "key" => "template_" . (string)$attribute_id . "_" . $index, "unselectable" => true,
-                                //  "extraClasses" => $value['text'] == $duty ? "custom1" : ""
+                    if ($value['text'] != "" || $empty) { // сделать проверку на пустой текст
+                        $nodeValues->addSibling(new Node(array(
+                            "title" => $value['text'], "key" => "template_" . (string)$attribute_id . "_" . $index, "unselectable" => false,
+                            //  "extraClasses" => $value['text'] == $duty ? "custom1" : ""
                         )));
                     }
                 } else {
@@ -711,7 +726,7 @@ class ControllerModuleAttributico extends Controller
                 $values = array_unique($all_elements);
                 array_multisort($values);
                 foreach ($values as $index => $value) {
-                    $nodeValues->addSibling(new Node(array("title" => $value, "key" => "value_" . (string)$attribute_id . "_" . $index, "unselectable" => true)));
+                    $nodeValues->addSibling(new Node(array("title" => $value, "key" => "value_" . (string)$attribute_id . "_" . $index, "unselectable" => false)));
                 }
             }
         }
@@ -773,7 +788,10 @@ class ControllerModuleAttributico extends Controller
             foreach ($all_categories[0] as $main_category) {
                 $categories_recursive = $this->getCategoriesRecursive($all_categories, $language_id, $main_category['category_id'], $sortOrder);
                 $debug_category = $this->debug_mode ? " (id=" . $main_category['category_id'] . ")" : '';
-                $mainCategory->addSibling(new Node(array("title" => $main_category['name'] . $debug_category, "folder" => true, "key" => "category_" . (string)$main_category['category_id'], "children" => $categories_recursive)));
+                $mainCategory->addSibling(new Node(array(
+                    "title" => $main_category['name'] . $debug_category, "folder" => true,
+                    "key" => "category_" . (string)$main_category['category_id'], "children" => $categories_recursive
+                )));
             }
 
             if (!$sortOrder) {
@@ -804,7 +822,10 @@ class ControllerModuleAttributico extends Controller
             foreach ($categories[$parent_id] as $category) {
                 $categories_recursive = $this->getCategoriesRecursive($categories, $language_id, $category['category_id'], $sortOrder);
                 $debug_category = $this->debug_mode ? " (id=" . $category['category_id'] . ")" : '';
-                $categoryNode->addSibling(new Node(array("title" => $category['name'] . $debug_category, "key" => "category_" . (string)$category['category_id'], "folder" => true, "children" => $categories_recursive)));
+                $categoryNode->addSibling(new Node(array(
+                    "title" => $category['name'] . $debug_category,
+                    "key" => "category_" . (string)$category['category_id'], "folder" => true, "children" => $categories_recursive
+                )));
             }
         }
 
@@ -868,8 +889,14 @@ class ControllerModuleAttributico extends Controller
             foreach ($categoryAttributes as $attribute) {
                 $attribute_group = $this->model_catalog_attributico->getAttributeGroup($attribute['attribute_id'], $language_id);
                 $dutyNode = new Node(array("title" => $attribute['duty'], "key" => "duty_" . (string)$attribute['attribute_id'], "extraClasses" => "custom1", ));
-                $templateNode = new Node(array("title" => $this->session->data['entry_attribute_template'][$language_id], "unselectable" => true, "key" => "template_" . (string)$attribute['attribute_id'], "lazy" => true, ));
-                $valueNode = new Node(array("title" => $this->session->data['entry_attribute_values'][$language_id], "unselectable" => true, "key" => "value_" . (string)$attribute['attribute_id'], "lazy" => true, ));
+                $templateNode = new Node(array(
+                    "title" => $this->session->data['entry_attribute_template'][$language_id], "unselectable" => true,
+                    "key" => "template_" . (string)$attribute['attribute_id'], "lazy" => true,
+                ));
+                $valueNode = new Node(array(
+                    "title" => $this->session->data['entry_attribute_values'][$language_id], "unselectable" => true,
+                    "key" => "value_" . (string)$attribute['attribute_id'], "lazy" => true,
+                ));
                 $childNode = new Node();
 
                 if ($children['duty']) {
@@ -909,11 +936,18 @@ class ControllerModuleAttributico extends Controller
     }
 
     //------------------------------------------------ProductTree-------------------------------------------------------
-    public function getProductTree()
-    {
+    public function getProductTree() {
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
         $key = isset($this->request->get['attribute_id']) ? explode("_", $this->request->get['attribute_id']) : array('0', '0');
         $title = isset($this->request->get['title']) ? htmlspecialchars_decode($this->request->get['title']) : '';
+        $invert = isset($this->request->get['invert']) ? filter_var($this->request->get['invert'], FILTER_VALIDATE_BOOLEAN) : false;
+
+        if (($key[0] == 'template' || $key[0] == 'value' || $key[0] == 'duty') && $invert) {
+            $invert = false;
+            $diver = true;
+        } else {
+            $diver = false;
+        }
 
         if (isset($this->session->data['a_debug_mode'])) {
             $this->debug_mode = $this->session->data['a_debug_mode'];
@@ -924,48 +958,91 @@ class ControllerModuleAttributico extends Controller
         } else {
             $attribute_id = '0';
         }
-        //$language = $this->getLanguage($language_id);
+
+        $non_hierarchical = true;
+        $rootData = array("title" => $this->session->data['error_not_attribute'][$language_id]);
 
         $this->load->model('catalog/attributico');
-        $rootData = array("title" => $this->session->data['error_not_attribute'][$language_id]);
+        $all_categories = $this->model_catalog_attributico->getAllCategories($non_hierarchical);
+        $sort_order = array();
+
+        foreach ($all_categories as $k => $value) {
+            $sort_order[$k] = $value['name'];
+        }
+
+        array_multisort($sort_order, SORT_ASC, $all_categories);
+
         $attribute_descriptions = $this->model_catalog_attributico->getAttributeDescriptions($attribute_id);
-        $productNode = new Node();
+
         if (is_numeric($attribute_id) && $attribute_id !== '0') {
-            $products = $this->model_catalog_attributico->getProductsByAttribute($attribute_id, $language_id);
-            foreach ($products as $product) {
-                $debug_category = $this->debug_mode ? " (cat=" . $product['category_id'] . ")" : '';
-                //  $childNode = new Node();
-                $product_item = new Node(array(
-                    "title" => $product['product_name'] . ' (id=' . $product['product_id'] . ', model=' . $product['model'] . ')' . $debug_category,
-                    "key" => "product_" . (string)$product['product_id'], "extraClasses" => "custom2"
-                ));
-                switch ($key[0]) {
-                    case 'template':
-                        if ($product['text'] == $title) {
-                            $productNode->addSibling($product_item);
+            $categoryNode = new Node();
+            foreach ($all_categories as $category) {
+                $productNode = new Node();
+                $category_id = $category['category_id'];
+                $products = $this->model_catalog_attributico->getProductsByAttribute($category_id, $attribute_id, $language_id, $invert);
+                foreach ($products as $product) {
+                    $debug_category = $this->debug_mode ? " (cat=" . $product['category_id'] . ")" : '';
+                    //  $childNode = new Node();
+                    $product_item = new Node(array(
+                        "title" => $product['product_name'] . ' (id=' . $product['product_id'] . ', model=' . $product['model'] . ')' . $debug_category,
+                        "key" => "product_" . (string) $product['product_id'],
+                        "extraClasses" => "custom2"
+                    ));
+                    if (!$diver) {
+                        switch ($key[0]) {
+                            case 'template':
+                            case 'duty':
+                                if ($product['text'] == $title) {
+                                    $productNode->addSibling($product_item);
+                                }
+                                break;
+                            case 'value':
+                                if (stripos($product['text'], $title) !== false) {
+                                    $productNode->addSibling($product_item);
+                                }
+                                break;
+                            default:
+                                $productNode->addSibling($product_item);
                         }
-                        break;
-                    case 'value':
-                        if (stripos($product['text'], $title) !== false) {
-                            $productNode->addSibling($product_item);
+                    } else {
+                        switch ($key[0]) {
+                            case 'template':
+                            case 'duty':
+                                if ($product['text'] != $title) {
+                                    $productNode->addSibling($product_item);
+                                }
+                                break;
+                            case 'value':
+                                if (stripos($product['text'], $title) === false) {
+                                    $productNode->addSibling($product_item);
+                                }
+                                break;
+                            default:
+                                $productNode->addSibling($product_item);
                         }
-                        break;
-                    case 'duty':
-                        if ($product['text'] == $title) {
-                            $productNode->addSibling($product_item);
-                        }
-                        break;
-                    default:
-                        $productNode->addSibling($product_item);
+                    }
+                }
+
+                $debug_category = $this->debug_mode ? " (id=" . $category['category_id'] . ")" : '';
+                if ($productNode->nodeData) {
+                    $categoryNode->addSibling(new Node(array(
+                        "title" => $category['name'] . $debug_category,
+                        "key" => "category_" . (string) $category['category_id'],
+                        "folder" => $diver || $invert ? false : true,
+                        "extraClasses" => $diver || $invert ? "custom4" : "",
+                        "children" => $productNode->render()
+                    )));
                 }
             }
+
             $debug_attribute = $this->debug_mode ? " (id=" . $attribute_id . ")" : '';
             $rootData = array(
-                "title" => $this->session->data['entry_products'][$language_id] . ' (' . $attribute_descriptions[(int)$language_id]['name'] . ')' . $debug_attribute,
-                "folder" => true,
+                "title" => $this->session->data['entry_products'][$language_id] . ' (' . $attribute_descriptions[(int) $language_id]['name'] . ')' . $debug_attribute,
+                "folder" => $diver || $invert ? false : true,
+                "extraClasses" => $diver || $invert ? "custom4" : "",
                 "expanded" => true,
-                "children" => $productNode->render(),
-                "key" => "attribute_" . (string)$attribute_id,
+                "children" => $categoryNode->render(),
+                "key" => "attribute_" . (string) $attribute_id,
             );
         }
 
@@ -974,7 +1051,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($ProductTree->render()));
     }
 
-// ----------------------- The end of getTree functions ------------------------
+    // ----------------------- The end of getTree functions ------------------------
     public function editAttribute()
     {
         $data = array();
@@ -1104,8 +1181,12 @@ class ControllerModuleAttributico extends Controller
     {
         $data = array();
         $keys = isset($this->request->get['keys']) ? $this->request->get['keys'] : array('0', '0');
+        $titles = isset($this->request->get['titles']) ? $this->request->get['titles'] : array('', '');
+        $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
 
-        foreach ($keys as $key) {
+        $combine = array_combine ( $keys, $titles );
+
+        foreach ($combine as $key => $value) {
             $d = explode("_", $key);
             if ($d[0] == 'group') {
                 $data['group'][] = $d[1];
@@ -1113,13 +1194,22 @@ class ControllerModuleAttributico extends Controller
             if ($d[0] == 'attribute') {
                 $data['attribute'][] = $d[1];
             }
+            if ($d[0] == 'template') {
+                $data['template'][] = ['attribute_id'=>$d[1], 'value'=>$value];
+            }
+            if ($d[0] == 'value') {
+                $data['value'][] = ['attribute_id'=>$d[1], 'value'=>$value];
+            }
         }
+
         if ($this->session->data['free']) {
             return;
         }
+
         $this->load->model('catalog/attributico');
         $this->model_catalog_attributico->deleteAttributeGroups($data);
         $this->model_catalog_attributico->deleteAttributes($data);
+        $this->model_catalog_attributico->deleteValues($data, $language_id);
     }
 
     public function replaceAttributeGroup()
@@ -1578,7 +1668,7 @@ class ControllerModuleAttributico extends Controller
                             $count_of_products += $this->model_catalog_attributico_tools->addCategoryAttributesToProducts($CategoryId);
                         }
                         $task_result .= $language->get('message_inject_to_products') . "  " . (string)$count_of_products;
-                       /*  $diff_time = microtime(true) - $start_time;
+                        /*  $diff_time = microtime(true) - $start_time;
                         file_put_contents('attributico.txt', $diff_time, FILE_APPEND);
                         file_put_contents('attributico.txt', PHP_EOL, FILE_APPEND); */
                     }
@@ -1632,10 +1722,7 @@ class ControllerModuleAttributico extends Controller
 
         $this->cache->delete('attributico');
     }
-
 }
 
 class ControllerExtensionModuleAttributico extends ControllerModuleAttributico
-{
-
-}
+{ }
