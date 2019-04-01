@@ -238,56 +238,40 @@ class KeydownCommandCategory extends KeydownCommand {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }
-
-/* Functions */
-function reactivateCategory() {
-    var node = null;
-    if (arguments.length !== 0) {
-        node = arguments[0];
+/* Filter create and event services */
+class Filter {
+    constructor(tab, tree, lng_id) {        
+        this.tab = tab;
+        this.tree = tree;        
+        this.lng_id = lng_id;        
     }
-    $category_tree.each(function (indx, element) {
-        var tree = $("#" + element.id).fancytree("getTree");
-        var categoryNode = (node ? tree.getNodeByKey(node.key) : null) || tree.getActiveNode();
 
-        if (categoryNode && categoryNode !== undefined) {
-            categoryNode.setActive(false);
-            categoryNode.setActive(true);
-        }
-    });
-}
-
-function reloadAttribute() {
-    if (arguments.length == 0) {
-        $attribute_synchro_trees.each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-            ClearFilter(tree);
-            tree.reload().done(function () {
-                tree.options.source.data.isPending = false;
-            });
-        });
-    } else {
-        var node = arguments[0],
-            self = arguments[1];
-        $attribute_synchro_trees.each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-            if ((tree !== node.tree) || self) { // not reload active tree
-                ClearFilter(tree);
-                tree.reload().done(function () {
-                    tree.options.source.data.isPending = false;
-                    var newnode = tree.getNodeByKey(node.key); // || node.getNextSibling() || node.getPrevSibling() || node.getParent(); // ????
-                    if (newnode && newnode !== undefined) {
-                        newnode.setActive();
-                    }
-                });
-            }
-        });
-        if (!self) {
-            node.setActive();
-        }
-        // reactivateCategory(node);
+    set permissions(newPermissions) {
+        this.access = newPermissions;
     }
+
+    attachEvents () {
+        $("input[name=" + this.tab + "_search" + this.lng_id + "]").keyup({
+            tree: this.tree,
+            tab: this.tab,
+            lng_id: this.lng_id
+        }, FilterSearch).focus();
+        $("button#" + this.tab + "_btnSearch" + this.lng_id).click({
+            tree: this.tree,
+            tab: this.tab,
+            lng_id: this.lng_id
+        }, FilterButtonSearch);
+        $("div#" + this.tab + "_filter" + this.lng_id + " input:checkbox").change({
+            tree: this.tree,
+            tab: this.tab,
+            lng_id: this.lng_id
+        }, FilterSettingsChange);
+        $("button#" + this.tab + "_btnResetSearch" + this.lng_id).click(function (e) {
+            ClearFilter(this.tree, this.tab, this.lng_id);
+        }).attr("disabled", true);
+        $("button#" + this.tab + "_btnSearch" + this.lng_id).attr("disabled", $("input#" + this.tab + "_autoComplete" + this.lng_id).is(":checked"));
+    }
+   
 }
 
 function ClearFilter(tree, tab, lng_id) { 
@@ -408,6 +392,58 @@ function FilterButtonSearch(e) {
 
     $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
     $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+}
+
+
+/* Functions */
+function reactivateCategory() {
+    var node = null;
+    if (arguments.length !== 0) {
+        node = arguments[0];
+    }
+    $category_tree.each(function (indx, element) {
+        var tree = $("#" + element.id).fancytree("getTree");
+        var categoryNode = (node ? tree.getNodeByKey(node.key) : null) || tree.getActiveNode();
+
+        if (categoryNode && categoryNode !== undefined) {
+            categoryNode.setActive(false);
+            categoryNode.setActive(true);
+        }
+    });
+}
+
+function reloadAttribute() {
+    if (arguments.length == 0) {
+        $attribute_synchro_trees.each(function (indx, element) {
+            var tree = $("#" + element.id).fancytree("getTree");
+            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
+            ClearFilter(tree);
+            tree.reload().done(function () {
+                tree.options.source.data.isPending = false;
+            });
+        });
+    } else {
+        var node = arguments[0],
+            self = arguments[1];
+        $attribute_synchro_trees.each(function (indx, element) {
+            var tree = $("#" + element.id).fancytree("getTree");
+            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
+            if ((tree !== node.tree) || self) { // not reload active tree
+                ClearFilter(tree);
+                tree.reload().done(function () {
+                    tree.options.source.data.isPending = false;
+                    var newnode = tree.getNodeByKey(node.key); // || node.getNextSibling() || node.getPrevSibling() || node.getParent(); // ????
+                    if (newnode && newnode !== undefined) {
+                        newnode.setActive();
+                    }
+                });
+            }
+        });
+        if (!self) {
+            node.setActive();
+        }
+        // reactivateCategory(node);
+    }
 }
 
 function getSelectedKeys(selNodes) {
@@ -887,25 +923,9 @@ function initTrees() {
        var currentTree = attribute_group_tree.fancytree("getTree");
        // var collapse = true;
 
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab,currentTree,lng_id);
+        filter.attachEvents();
+
         // ------------------------ attribute_group_tree.contextmenu ---------------------
         attribute_group_tree.contextmenu({
             delegate: "span.fancytree-title",

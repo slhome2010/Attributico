@@ -1570,8 +1570,8 @@ class ControllerModuleAttributico extends Controller
                 $children[$i] = $this->request->post['ft_' . $i];
                 $i++;
             }
-            $filetr_settings['attributico_filter'] = serialize($this->request->post);
-            $this->model_setting_setting->editSetting('attributico', $filetr_settings);
+            $filter_settings['attributico_filter'] = serialize($this->request->post);
+            $this->model_setting_setting->editSetting('attributico', $filter_settings);
         }
     }
 

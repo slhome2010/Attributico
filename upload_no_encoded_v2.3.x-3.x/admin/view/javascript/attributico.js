@@ -37,7 +37,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function ()
  * @returns (int){id}
  *
  **/
-$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {   
+$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
     var selector = this.tree.$div.context.id;
     var lng_id = parseInt(selector.replace(/\D+/ig, ''));
     return lng_id;
@@ -125,7 +125,7 @@ class ContextmenuCommandCategory extends ContextmenuCommand {
 }
 /**
  * Handling shortcut click commands
- * @returns {none}
+ * @type {class}
  *
  **/
 class KeydownCommand {
@@ -175,7 +175,7 @@ class KeydownCommand {
                 }
                 break;
             case 46:
-                //   del   cmd = "remove";                
+                //   del   cmd = "remove";
                 if (this.access.remove && confirm(textConfirm))
                     this.remove();
                 break;
@@ -238,6 +238,151 @@ class KeydownCommandCategory extends KeydownCommand {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }
+/**
+ * Filter create and event services
+ * @type {class}
+ *
+ **/
+class Filter {
+    constructor(tab, tree, lng_id) {
+        this.data = {
+            tab,
+            tree,
+            lng_id
+        };
+    }
+
+    attachEvents() {
+        $("input[name=" + this.data.tab + "_search" + this.data.lng_id + "]").keyup(this.data, this.search).focus();
+        $("button#" + this.data.tab + "_btnSearch" + this.data.lng_id).click(this.data, this.search);
+        $("div#" + this.data.tab + "_filter" + this.data.lng_id + " input:checkbox").change(this.data, this.changeSettings);
+        $("button#" + this.data.tab + "_btnResetSearch" + this.data.lng_id).click(this.data, this.clear).attr("disabled", true);
+        $("button#" + this.data.tab + "_btnSearch" + this.data.lng_id).attr("disabled", $("input#" + this.data.tab + "_autoComplete" + this.data.lng_id).is(":checked"));
+    }
+
+    clear(e) {
+        if (e.data.tree.isFilterActive()) {
+            e.data.tree.clearFilter();
+            // if (e.data.length === 3) {
+            $('input[name *= ' + e.data.tab + '_search' + e.data.lng_id + ']').val("");
+            $('span[id *= ' + e.data.tab + '_matches' + e.data.lng_id + ']').text("");
+            //  } else {
+            //      $('input[name *= "search"]').val("");
+            //      $('span[id *= "matches"]').text("");
+            //  }
+            $("[id ^=loadImg]").hide();
+        }
+    }
+
+    changeSettings(e) {
+        let id = $(this).attr("id");
+        let flag = $(this).is(":checked");
+
+        switch (id) {
+            case e.data.tab + "_autoExpand" + e.data.lng_id:
+            case e.data.tab + "_regex" + e.data.lng_id:
+            case e.data.tab + "_leavesOnly" + e.data.lng_id:
+            case e.data.tab + "_attributesOnly" + e.data.lng_id:
+                break; // Re-apply filter only
+            case e.data.tab + "_autoComplete" + e.data.lng_id:
+                $("button#" + e.data.tab + "_btnSearch" + e.data.lng_id).attr("disabled", $(this).is(":checked"));
+                break;
+            case e.data.tab + "_hideMode" + e.data.lng_id:
+                e.data.tree.options.filter.mode = flag ? "hide" : "dimm";
+                break;
+            case e.data.tab + "_counter" + e.data.lng_id:
+            case e.data.tab + "_fuzzy" + e.data.lng_id:
+            case e.data.tab + "_hideExpandedCounter" + e.data.lng_id:
+            case e.data.tab + "_highlight" + e.data.lng_id:
+                e.data.tree.options.filter[id.replace(/\d/g, '')] = flag;
+                break;
+        }
+        e.data.tree.clearFilter();
+        $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").trigger("keyup");
+    }
+
+    search(e) {
+        let n = 0;
+        let opts = {
+            autoExpand: $("#" + e.data.tab + "_autoExpand" + e.data.lng_id).is(":checked"),
+            leavesOnly: $("#" + e.data.tab + "_leavesOnly" + e.data.lng_id).is(":checked")
+        };
+        let attributesOnly = $("#" + e.data.tab + "_attributesOnly" + e.data.lng_id).is(":checked");
+        let match = $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").val();
+        // match = $(this).val();
+
+        if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
+            $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).click();
+            return;
+        }
+        if (!$("#" + e.data.tab + "_autoComplete" + e.data.lng_id).is(":checked") && e.type === "keyup") {
+            //console.log(e.type);
+            return;
+        }
+        if (!attributesOnly && !e.data.tree.options.source.data.isPending) {
+            e.data.tree.visit(function (node) {
+                if (node.isLazy()) {
+                    node.load(true);
+                }
+            });
+            //  $("#loadImg" + e.data.lng_id).show();
+            e.data.tree.options.source.data.isPending = true;
+        }
+        setTimeout(function () {
+            if ($("#" + e.data.tab + "_regex" + e.data.lng_id).is(":checked")) {
+                // Pass function to perform match
+                n = e.data.tree.filterNodes(function (node) {
+                    return new RegExp(match, "i").test(node.title);
+                }, opts);
+                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+            } else {
+                n = e.data.tree.filterNodes(match, opts);
+                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+            }
+        }, 600);
+
+        $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
+        $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+    }
+}
+/* Clear Filter if tree reload */
+function ClearFilter(tree) {
+    if (tree.isFilterActive()) {
+        tree.clearFilter();
+
+        $('input[name *= "search"]').val("");
+        $('span[id *= "matches"]').text("");
+        $("[id ^=loadImg]").hide();
+    }
+}
+/* Dropdown menu in filter */
+function FilterAction(e, lng_id, tab) {
+    $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
+        "checked": true
+    });
+    switch ($(e).attr("id")) {
+        case 'f_' + tab + '_empty':
+            $("input[name=" + tab + "_search" + lng_id + "]").val("^\s*$");
+            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
+            break;
+        case 'f_' + tab + '_digital':
+            $("input[name=" + tab + "_search" + lng_id + "]").val("[0-9]");
+            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
+            break;
+        case 'f_' + tab + '_html':
+            $("input[name=" + tab + "_search" + lng_id + "]").val("<[^>]+>");
+            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
+            break;
+        case 'f_' + tab + '_default':
+            $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
+                "checked": false
+            });
+            $("button#" + tab + "_btnResetSearch" + lng_id).trigger("click");
+            break;
+    }
+
+    return false;
+}
 
 /* Functions */
 function reactivateCategory() {
@@ -268,7 +413,7 @@ function reloadAttribute() {
         });
     } else {
         var node = arguments[0],
-            self = arguments[1];
+                self = arguments[1];
         $attribute_synchro_trees.each(function (indx, element) {
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -288,126 +433,6 @@ function reloadAttribute() {
         }
         // reactivateCategory(node);
     }
-}
-
-function ClearFilter(tree, tab, lng_id) { 
-    if (tree.isFilterActive() ) {
-        tree.clearFilter();
-        if (arguments.length === 3) {
-            $('input[name *= ' + tab + '_search' + lng_id + ']').val("");
-            $('span[id *= ' + tab + '_matches' + lng_id + ']').text("");
-        } else {
-            $('input[name *= "search"]').val("");
-            $('span[id *= "matches"]').text("");
-        }
-        $("[id ^=loadImg]").hide();
-    }
-}
-
-function FilterSettingsChange(e) {
-    var id = $(this).attr("id"),
-        flag = $(this).is(":checked");
-    switch (id) {
-        case e.data.tab + "_autoExpand" + e.data.lng_id:
-        case e.data.tab + "_regex" + e.data.lng_id:
-        case e.data.tab + "_leavesOnly" + e.data.lng_id:
-        case e.data.tab + "_attributesOnly" + e.data.lng_id:
-            break; // Re-apply filter only
-        case e.data.tab + "_autoComplete" + e.data.lng_id:
-            $("button#" + e.data.tab + "_btnSearch" + e.data.lng_id).attr("disabled", $(this).is(":checked"));
-            break;
-        case e.data.tab + "_hideMode" + e.data.lng_id:
-            e.data.tree.options.filter.mode = flag ? "hide" : "dimm";
-            break;
-        case e.data.tab + "_counter" + e.data.lng_id:
-        case e.data.tab + "_fuzzy" + e.data.lng_id:
-        case e.data.tab + "_hideExpandedCounter" + e.data.lng_id:
-        case e.data.tab + "_highlight" + e.data.lng_id:
-            e.data.tree.options.filter[id.replace(/\d/g, '')] = flag;
-            break;
-    }
-    e.data.tree.clearFilter();
-    $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").trigger("keyup");
-}
-
-function FilterSearch(e) {
-    var n = 0,
-        opts = {
-            autoExpand: $("#" + e.data.tab + "_autoExpand" + e.data.lng_id).is(":checked"),
-            leavesOnly: $("#" + e.data.tab + "_leavesOnly" + e.data.lng_id).is(":checked")
-        },
-        attributesOnly = $("#" + e.data.tab + "_attributesOnly" + e.data.lng_id).is(":checked"),
-        match = $(this).val();
-
-    if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-        $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).click();
-        return;
-    }
-    if ($("#" + e.data.tab + "_autoComplete" + e.data.lng_id).is(":checked")) {
-        if (!attributesOnly && !e.data.tree.options.source.data.isPending) {
-            e.data.tree.visit(function (node) {
-                if (node.isLazy()) {
-                    node.load(true);
-                }
-            });
-            //  $("#loadImg" + e.data.lng_id).show();
-            e.data.tree.options.source.data.isPending = true;
-        }
-        setTimeout(function () {
-            if ($("#" + e.data.tab + "_regex" + e.data.lng_id).is(":checked")) {
-                // Pass function to perform match
-                n = e.data.tree.filterNodes(function (node) {
-                    return new RegExp(match, "i").test(node.title);
-                }, opts);
-                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-            } else {
-                n = e.data.tree.filterNodes(match, opts);
-                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-            }
-        }, 600);
-    }
-    $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
-    $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-}
-
-function FilterButtonSearch(e) {
-    var n = 0,
-        opts = {
-            autoExpand: $("#" + e.data.tab + "_autoExpand" + e.data.lng_id).is(":checked"),
-            leavesOnly: $("#" + e.data.tab + "_leavesOnly" + e.data.lng_id).is(":checked")
-        },
-        attributesOnly = $("#" + e.data.tab + "_attributesOnly" + e.data.lng_id).is(":checked"),
-        match = $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").val();
-
-    if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-        $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).click();
-        return;
-    }
-
-    if (!attributesOnly && !e.data.tree.options.source.data.isPending) {
-        e.data.tree.visit(function (node) {
-            if (node.isLazy()) {
-                node.load(true);
-            }
-        });
-        //  $("#loadImg" + e.data.lng_id).show();
-        e.data.tree.options.source.data.isPending = true;
-    }
-    setTimeout(function () {
-        if ($("#" + e.data.tab + "_regex" + e.data.lng_id).is(":checked")) {
-            // Pass function to perform match
-            n = e.data.tree.filterNodes(function (node) {
-                return new RegExp(match, "i").test(node.title);
-            }, opts);
-            $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-        } else {
-            n = e.data.tree.filterNodes(match, opts);
-            $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-        }
-    }, 600);
-
-    $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
-    $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
 }
 
 function getSelectedKeys(selNodes) {
@@ -456,7 +481,7 @@ function selectControl(data) {
 
 function addAttribute(activeNode, activeKey, lng_id) {
     var node = activeNode,
-        parentLevel = (activeKey === 'attribute') ? 2 : 1;
+            parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
         node = node.getParent();
     }
@@ -488,7 +513,7 @@ function deleteAttribute(node) {
                 'token': token,
                 'keys': selNodes ? getSelectedKeys(selNodes) : [node.key],
                 'titles': selNodes ? getSelectedTitles(selNodes) : [node.title],
-                'language_id' : node.getLanguageId()
+                'language_id': node.getLanguageId()
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
@@ -586,7 +611,7 @@ function addAttributeToCategory(targetnode, data, remove) {
 }
 
 var clipboardNodes = [],
-    clipboardTitles = [];
+        clipboardTitles = [];
 var pasteMode = null;
 
 function copyPaste(action, targetNode) {
@@ -645,7 +670,7 @@ function initTrees() {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var currentTab = 'tab-attribute';
         var attribute_group_tree = $("#attribute_group_tree" + lng_id);
-       // var currentTree = attribute_group_tree.fancytree("getTree");
+        // var currentTree = attribute_group_tree.fancytree("getTree");
         var sortOrder = $('input[id = "sortOrder_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -850,7 +875,7 @@ function initTrees() {
                         deSelectNodes(subjectNode);
                     });
                 },
-                draggable: { // modify default jQuery draggable options
+                draggable: {// modify default jQuery draggable options
                     scroll: true // disable auto-scrolling
                 }
             },
@@ -884,35 +909,19 @@ function initTrees() {
             }
         });
 
-       var currentTree = attribute_group_tree.fancytree("getTree");
-       // var collapse = true;
+        var currentTree = attribute_group_tree.fancytree("getTree");
+        // var collapse = true;
 
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
+
         // ------------------------ attribute_group_tree.contextmenu ---------------------
         attribute_group_tree.contextmenu({
             delegate: "span.fancytree-title",
             menu: contextmenu[lng_id],
             beforeOpen: function (event, ui) {
                 var node = $.ui.fancytree.getNode(ui.target);
-               // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
+                // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
                 attribute_group_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                 attribute_group_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                 node.setActive();
@@ -928,7 +937,7 @@ function initTrees() {
     $category_tree.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_tree = $("#category_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_tree' + lng_id + '"]:checkbox').is(":checked");
         //var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
         //  var selectMode = $('input[id = "multiSelect_category_tree' + lng_id + '"]:checkbox').is(":checked");
@@ -1027,7 +1036,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_attribute_tree = $("#category_attribute_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
         category_attribute_tree.fancytree({
@@ -1267,7 +1276,7 @@ function initTrees() {
                     }
                     return true;
                 },
-                draggable: { // modify default jQuery draggable options
+                draggable: {// modify default jQuery draggable options
                     revert: true,
                     cursorAt: {
                         top: -5,
@@ -1315,25 +1324,8 @@ function initTrees() {
         });
 
         var currentTree = attribute_tree.fancytree("getTree");
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
         attribute_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1485,27 +1477,9 @@ function initTrees() {
         });
 
         var currentTree = duty_attribute_tree.fancytree("getTree");
-        //var collapse = true;
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
         // ------------------------ duty_attribute_tree.contextmenu ---------------------
         duty_attribute_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1529,7 +1503,7 @@ function initTrees() {
         var currentTab = 'tab-products';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_product_tree = $("#attribute_product_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_duty_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1629,25 +1603,8 @@ function initTrees() {
         });
 
         var currentTree = attribute_product_tree.fancytree("getTree");
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
         attribute_product_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1673,7 +1630,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var product_tree = $("#product_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         //var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
         //var attribute_id = currentAttributeID;
@@ -1828,7 +1785,7 @@ function initTrees() {
             this.show = function () {
                 var pos = $(this).position();
 
-                $(this).siblings('div').children($menu).css({ //============
+                $(this).siblings('div').children($menu).css({//============
                     top: pos.top + $(this).outerHeight(),
                     left: pos.left
                 });
@@ -2064,7 +2021,7 @@ $(function () { // document ready actions
         }
     });
 
-    $('input[name = "attributico_cache"]:checkbox').change(function (e) { // event handler for cache on/off        
+    $('input[name = "attributico_cache"]:checkbox').change(function (e) { // event handler for cache on/off
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -2111,16 +2068,16 @@ $(function () { // document ready actions
      **/
     $('input[id ^= "lazyLoad"]:checkbox').change(function (e) { // on/off lazyload
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
-            lazyLoad = $(this).is(":checked");
+                tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
+                lazyLoad = $(this).is(":checked");
         tree.options.source.data.lazyLoad = lazyLoad;
         tree.reload();
     });
 
     $('input[id ^= "sortOrder"]:checkbox').change(function (e) { // on/off sortOrder
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
-            sortOrder = $(this).is(":checked");
+                tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
+                sortOrder = $(this).is(":checked");
         tree.options.source.data.sortOrder = sortOrder;
         tree.options.source.data.category_id = currentCategory;
         tree.reload();
@@ -2128,17 +2085,17 @@ $(function () { // document ready actions
 
     $('input[id ^= "autoCollapse"]:checkbox').change(function (e) { // autocollapse control
         var id = $(this).attr("id"),
-            flag = $(this).is(":checked");
+                flag = $(this).is(":checked");
         $("#" + id.replace("autoCollapse_", "")).fancytree("getTree").options.autoCollapse = flag;
     });
 
     $('input[id ^= "multiSelect"]:checkbox').change(function (e) { // hierarchical select category
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
+                tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
 
-    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence 
+    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence
         var id = $(this).attr("id");
         var lng_id = parseInt(id.replace(/\D+/ig, ''));
         var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
@@ -2191,34 +2148,6 @@ $(function () { // document ready actions
         });
     });
 }); // end of document ready
-
-function FilterAction(e, lng_id, tab) {
-    $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
-        "checked": true
-    });
-    switch ($(e).attr("id")) {
-        case 'f_' + tab + '_empty':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("^\s*$");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_digital':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("[0-9]");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_html':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("<[^>]+>");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_default':
-            $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
-                "checked": false
-            });
-            $("button#" + tab + "_btnResetSearch" + lng_id).trigger("click");
-            break;
-    }
-
-    return false;
-}
 
 function tools(task) {
     $('[id *= "tree"].options').each(function (indx, element) {
