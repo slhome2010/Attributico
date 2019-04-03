@@ -23,14 +23,13 @@ class ControllerModuleAttributico extends Controller
         $this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');
         $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
         $this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
-
-        if (!in_array($_SERVER['HTTP_HOST'], array('hozmag', 'ocstore23', 'radiocity', 'radiocity.kz', 'demo.radiocity.kz', 'opencart30'))) {
-            $this->document->addScript('view/javascript/attributico.min.js');
-        } else {
-            $this->document->addScript('view/javascript/attributico.js');
-        }
-
         $this->document->addStyle('view/stylesheet/attributico.css');
+
+        if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists ( DIR_APPLICATION . 'view/javascript/attributico.js' )) {
+            $this->document->addScript('view/javascript/attributico.js'); 
+        } else {
+            $this->document->addScript('view/javascript/attributico.min.js'); 
+        }        
 
         $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
         $edit = version_compare(VERSION, '2.0.0', '>=') ? "edit" : "update";
@@ -1570,8 +1569,8 @@ class ControllerModuleAttributico extends Controller
                 $children[$i] = $this->request->post['ft_' . $i];
                 $i++;
             }
-            $filetr_settings['attributico_filter'] = serialize($this->request->post);
-            $this->model_setting_setting->editSetting('attributico', $filetr_settings);
+            $filter_settings['attributico_filter'] = serialize($this->request->post);
+            $this->model_setting_setting->editSetting('attributico', $filter_settings);
         }
     }
 

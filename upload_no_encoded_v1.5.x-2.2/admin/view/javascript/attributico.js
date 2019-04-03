@@ -37,7 +37,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function ()
  * @returns (int){id}
  *
  **/
-$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {   
+$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
     var selector = this.tree.$div.context.id;
     var lng_id = parseInt(selector.replace(/\D+/ig, ''));
     return lng_id;
@@ -125,7 +125,7 @@ class ContextmenuCommandCategory extends ContextmenuCommand {
 }
 /**
  * Handling shortcut click commands
- * @returns {none}
+ * @type {class}
  *
  **/
 class KeydownCommand {
@@ -175,7 +175,7 @@ class KeydownCommand {
                 }
                 break;
             case 46:
-                //   del   cmd = "remove";                
+                //   del   cmd = "remove";
                 if (this.access.remove && confirm(textConfirm))
                     this.remove();
                 break;
@@ -238,162 +238,285 @@ class KeydownCommandCategory extends KeydownCommand {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }
-/* Filter create and event services */
+/**
+ * Filter create and event services
+ * @type {class}
+ *
+ **/
 class Filter {
-    constructor(tab, tree, lng_id) {        
-        this.tab = tab;
-        this.tree = tree;        
-        this.lng_id = lng_id;        
+    constructor(tab, tree, lng_id) {
+        this.data = {
+            tab,
+            tree,
+            lng_id
+        };
+        this.input = $("input[name=" + this.data.tab + "_search" + this.data.lng_id + "]");
+        this.btnSearch = $("button#" + this.data.tab + "_btnSearch" + this.data.lng_id);
+        this.btnResetSearch = $("button#" + this.data.tab + "_btnResetSearch" + this.data.lng_id);
+        this.checkbox = $("div#" + this.data.tab + "_filter" + this.data.lng_id + " input:checkbox");
+        this.autoComplete = $("input#fs" + this.data.tab + "_autoComplete" + this.data.lng_id);
     }
 
-    set permissions(newPermissions) {
-        this.access = newPermissions;
+    attachEvents() {
+        //let self = this;
+        this.input.keyup(this.data, this.search).focus();
+        this.btnSearch.click(this.data, this.search);
+        this.checkbox.change(this.data, this.changeSettings);
+        this.btnResetSearch.click(this.data, this.clear).attr("disabled", true);
+        this.btnSearch.attr("disabled", this.autoComplete.is(":checked"));
+        //console.log($("a[id =f_" + this.data.tab + this.data.lng_id  + "_digital" + "]"));
+        $("a[id ^=f_" + this.data.tab + this.data.lng_id + "]").click(this.data, this.action);
     }
 
-    attachEvents () {
-        $("input[name=" + this.tab + "_search" + this.lng_id + "]").keyup({
-            tree: this.tree,
-            tab: this.tab,
-            lng_id: this.lng_id
-        }, FilterSearch).focus();
-        $("button#" + this.tab + "_btnSearch" + this.lng_id).click({
-            tree: this.tree,
-            tab: this.tab,
-            lng_id: this.lng_id
-        }, FilterButtonSearch);
-        $("div#" + this.tab + "_filter" + this.lng_id + " input:checkbox").change({
-            tree: this.tree,
-            tab: this.tab,
-            lng_id: this.lng_id
-        }, FilterSettingsChange);
-        $("button#" + this.tab + "_btnResetSearch" + this.lng_id).click(function (e) {
-            ClearFilter(this.tree, this.tab, this.lng_id);
-        }).attr("disabled", true);
-        $("button#" + this.tab + "_btnSearch" + this.lng_id).attr("disabled", $("input#" + this.tab + "_autoComplete" + this.lng_id).is(":checked"));
-    }
-   
-}
-
-function ClearFilter(tree, tab, lng_id) { 
-    if (tree.isFilterActive() ) {
-        tree.clearFilter();
-        if (arguments.length === 3) {
-            $('input[name *= ' + tab + '_search' + lng_id + ']').val("");
-            $('span[id *= ' + tab + '_matches' + lng_id + ']').text("");
-        } else {
-            $('input[name *= "search"]').val("");
-            $('span[id *= "matches"]').text("");
+    clear(e) {
+        if (e.data.tree.isFilterActive()) {
+            e.data.tree.clearFilter();
+            // if (e.data.length === 3) {
+            $('input[name *= ' + e.data.tab + '_search' + e.data.lng_id + ']').val("");
+            $('span[id *= ' + e.data.tab + '_matches' + e.data.lng_id + ']').text("");
+            //  } else {
+            //      $('input[name *= "search"]').val("");
+            //      $('span[id *= "matches"]').text("");
+            //  }
+            $("[id ^=loadImg]").hide();
         }
-        $("[id ^=loadImg]").hide();
     }
-}
 
-function FilterSettingsChange(e) {
-    var id = $(this).attr("id"),
-        flag = $(this).is(":checked");
-    switch (id) {
-        case e.data.tab + "_autoExpand" + e.data.lng_id:
-        case e.data.tab + "_regex" + e.data.lng_id:
-        case e.data.tab + "_leavesOnly" + e.data.lng_id:
-        case e.data.tab + "_attributesOnly" + e.data.lng_id:
-            break; // Re-apply filter only
-        case e.data.tab + "_autoComplete" + e.data.lng_id:
-            $("button#" + e.data.tab + "_btnSearch" + e.data.lng_id).attr("disabled", $(this).is(":checked"));
-            break;
-        case e.data.tab + "_hideMode" + e.data.lng_id:
-            e.data.tree.options.filter.mode = flag ? "hide" : "dimm";
-            break;
-        case e.data.tab + "_counter" + e.data.lng_id:
-        case e.data.tab + "_fuzzy" + e.data.lng_id:
-        case e.data.tab + "_hideExpandedCounter" + e.data.lng_id:
-        case e.data.tab + "_highlight" + e.data.lng_id:
-            e.data.tree.options.filter[id.replace(/\d/g, '')] = flag;
-            break;
+    changeSettings(e) {
+        let id = $(this).attr("id");
+        let flag = $(this).is(":checked");
+
+        switch (id) {
+            case "fs_" + e.data.tab + "_autoExpand" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_regex" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_leavesOnly" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_attributesOnly" + e.data.lng_id:
+                break; // Re-apply filter only
+            case "fs_" + e.data.tab + "_autoComplete" + e.data.lng_id:
+                $("button#" + e.data.tab + "_btnSearch" + e.data.lng_id).attr("disabled", $(this).is(":checked"));
+                break;
+            case "fs_" + e.data.tab + "_hideMode" + e.data.lng_id:
+                e.data.tree.options.filter.mode = flag ? "hide" : "dimm";
+                break;
+            case "fs_" + e.data.tab + "_counter" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_fuzzy" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_hideExpandedCounter" + e.data.lng_id:
+            case "fs_" + e.data.tab + "_highlight" + e.data.lng_id:
+                e.data.tree.options.filter[id.replace(/\d/g, '')] = flag;
+                break;
+        }
+        e.data.tree.clearFilter();
+        $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").trigger("keyup");
     }
-    e.data.tree.clearFilter();
-    $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").trigger("keyup");
-}
 
-function FilterSearch(e) {
-    var n = 0,
-        opts = {
-            autoExpand: $("#" + e.data.tab + "_autoExpand" + e.data.lng_id).is(":checked"),
-            leavesOnly: $("#" + e.data.tab + "_leavesOnly" + e.data.lng_id).is(":checked")
-        },
-        attributesOnly = $("#" + e.data.tab + "_attributesOnly" + e.data.lng_id).is(":checked"),
-        match = $(this).val();
+    search(e) {
+        let tab = e.data.tab;
+        let lng_id = e.data.lng_id;
+        let tree = e.data.tree;
+        let n = 0;
+        let opts = {
+            autoExpand: $("#fs_" + tab + "_autoExpand" + lng_id).is(":checked"),
+            leavesOnly: $("#fs_" + tab + "_leavesOnly" + lng_id).is(":checked")
+        };
+        let attributesOnly = $("#fs_" + tab + "_attributesOnly" + lng_id).is(":checked");
+        let match = $("input[name=" + tab + "_search" + lng_id + "]").val();
+        // match = $(this).val();
 
-    if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-        $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).click();
-        return;
-    }
-    if ($("#" + e.data.tab + "_autoComplete" + e.data.lng_id).is(":checked")) {
-        if (!attributesOnly && !e.data.tree.options.source.data.isPending) {
-            e.data.tree.visit(function (node) {
+        if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
+            $("button#" + tab + "_btnResetSearch" + lng_id).click();
+            return;
+        }
+        if (!$("#fs_" + tab + "_autoComplete" + lng_id).is(":checked") && e.type === "keyup") {
+            //console.log(e.type);
+            return;
+        }
+        if (!attributesOnly && !tree.options.source.data.isPending) {
+            tree.visit(function (node) {
                 if (node.isLazy()) {
                     node.load(true);
                 }
             });
-            //  $("#loadImg" + e.data.lng_id).show();
-            e.data.tree.options.source.data.isPending = true;
+            //  $("#loadImg" + lng_id).show();
+            tree.options.source.data.isPending = true;
         }
-        setTimeout(function () {
-            if ($("#" + e.data.tab + "_regex" + e.data.lng_id).is(":checked")) {
+        setTimeout(() => {
+            if ($("#fs_" + tab + "_regex" + lng_id).is(":checked")) {
                 // Pass function to perform match
-                n = e.data.tree.filterNodes(function (node) {
+                n = tree.filterNodes(function (node) {
                     return new RegExp(match, "i").test(node.title);
                 }, opts);
-                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+                $("span#" + tab + "_matches" + lng_id).text("(" + n + ")");
             } else {
-                n = e.data.tree.filterNodes(match, opts);
-                $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+                n = tree.filterNodes(match, opts);
+                $("span#" + tab + "_matches" + lng_id).text("(" + n + ")");
             }
         }, 600);
-    }
-    $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
-    $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-}
 
-function FilterButtonSearch(e) {
-    var n = 0,
-        opts = {
-            autoExpand: $("#" + e.data.tab + "_autoExpand" + e.data.lng_id).is(":checked"),
-            leavesOnly: $("#" + e.data.tab + "_leavesOnly" + e.data.lng_id).is(":checked")
-        },
-        attributesOnly = $("#" + e.data.tab + "_attributesOnly" + e.data.lng_id).is(":checked"),
-        match = $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").val();
-
-    if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-        $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).click();
-        return;
+        $("button#" + tab + "_btnResetSearch" + lng_id).attr("disabled", false);
+        $("span#" + tab + "_matches" + lng_id).text("(" + n + ")");
     }
 
-    if (!attributesOnly && !e.data.tree.options.source.data.isPending) {
-        e.data.tree.visit(function (node) {
-            if (node.isLazy()) {
-                node.load(true);
-            }
-        });
-        //  $("#loadImg" + e.data.lng_id).show();
-        e.data.tree.options.source.data.isPending = true;
-    }
-    setTimeout(function () {
-        if ($("#" + e.data.tab + "_regex" + e.data.lng_id).is(":checked")) {
-            // Pass function to perform match
-            n = e.data.tree.filterNodes(function (node) {
-                return new RegExp(match, "i").test(node.title);
-            }, opts);
-            $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
-        } else {
-            n = e.data.tree.filterNodes(match, opts);
-            $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+    action(e) {
+        let tab = e.data.tab;
+        let lng_id = e.data.lng_id;
+        let btnSearch = $("button#" + tab + "_btnSearch" + lng_id);
+        let btnResetSearch = $("button#" + tab + "_btnResetSearch" + lng_id);
+        let regex = $("div#" + tab + "_searchmode" + lng_id + " input#fs_" + tab + "_regex" + lng_id + ":checkbox");
+        let input = $("input[name=" + tab + "_search" + lng_id + "]");
+
+        regex.prop({"checked": true});
+
+        switch (e.target.id) {
+            case 'f_' + tab + lng_id + '_empty':
+                input.val("^\s*$");
+                btnSearch.trigger("click");
+                break;
+            case 'f_' + tab + lng_id + '_digital':
+                input.val("[0-9]");
+                btnSearch.trigger("click");
+                break;
+            case 'f_' + tab + lng_id + '_html':
+                input.val("<[^>]+>");
+                btnSearch.trigger("click");
+                break;
+            case 'f_' + tab + lng_id + '_default':
+                regex.prop({"checked": false});
+                btnResetSearch.trigger("click");
+                break;
         }
-    }, 600);
 
-    $("button#" + e.data.tab + "_btnResetSearch" + e.data.lng_id).attr("disabled", false);
-    $("span#" + e.data.tab + "_matches" + e.data.lng_id).text("(" + n + ")");
+        return false;
+    }
 }
+/* bild filter widget and add it to table */
+function bildFilter() {
+    let id = $(this).attr('id');
+    let lng_id = parseInt(id.replace(/\D+/ig, ''));
+    let tab = id.split('_')[0];
+    let checkbox = $filterItems[lng_id].checkbox;
+    let spancheckbox = $filterItems[lng_id].spancheckbox;
+    let dropdown = $filterItems[lng_id].dropdown;
 
+    // create open/close triangle
+    let hideFilter = "fs_" + tab + "_hideFilter" + lng_id;
+    $('<label>', {
+        class: 'checkbox-inline pull-right clearfix',
+        for : hideFilter,
+        append: $('<input>', {
+            type: "checkbox",
+            class: "hide",
+            name: hideFilter,
+            id: hideFilter,
+            checked: $.inArray(hideFilter, $filterSettings) + 1 ? true : false,
+            'data-toggle': "collapse",
+            'data-target': "#tab-attribute_filterwidget" + lng_id
+        }).add($('<i>', {
+            class: "fa fa-angle-double-down fa-lg",
+            'aria-hidden': "true"
+        }))
+    }).appendTo(this);
+
+    //create filter form
+    let open = $.inArray(hideFilter, $filterSettings) + 1 ? 'in' : '';
+    let form = $('<div>', {
+        class: 'form-group form-inline collapse ' + open,
+        id: "tab-attribute_filterwidget" + lng_id
+    });
+    form.appendTo(this);
+    // create input & buttons
+    let search = tab + "_search" + lng_id;
+    let btnSearch = tab + "_btnSearch" + lng_id;
+    let btnResetSearch = tab + "_btnResetSearch" + lng_id;
+    $('<label>', {for : search, text: $filterItems[lng_id].title, style: "margin-left:1px;"}).appendTo(form);
+    $('<input>', {type: "text", name: search, placeholder: "Filter...", class: "form-control", id: search, style: "margin-left:1px;"}).appendTo(form);
+    $('<button>', {id: btnResetSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-times", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
+    $('<button>', {id: btnSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-search", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
+    // create dropdown menu
+    let dropdownmenu = $('<div>', {class: "btn-group dropdown-events"});
+    dropdownmenu.appendTo(form);
+    $('<button>', {
+        type: "button",
+        class: "btn btn-default dropdown-toggle",
+        'data-toggle': "dropdown",
+        'aria-haspopup': "true",
+        'aria-expanded': "false",
+        text: $filterItems[lng_id].button,
+        append: $('<span>', {class: "caret"}),
+        style: "margin-left:1px;"
+    }).appendTo(dropdownmenu);
+    let ul = $('<ul>', {class: "dropdown-menu"});
+    ul.appendTo(dropdownmenu);
+    for (var key in dropdown) {
+        let li = $('<li>').appendTo(ul);
+
+        $('<a>', {
+            id: "f_" + tab + lng_id + "_" + key,
+            href: "#",
+            //onclick: "return FilterAction(this,"+lng_id+",'tab-attribute');",
+            text: dropdown[key]
+        }).appendTo(li);
+    }
+    // create matches counter
+    $('<span>', {id: tab + "_matches" + lng_id, class: "badge"}).appendTo(form);
+    // create fistline checkboxes
+    for (var key in checkbox) {
+        let itemId = "fs_" + tab + "_" + key + lng_id;
+        $('<input>', {
+            type: "checkbox",
+            name: itemId,
+            id: itemId,
+            checked: $.inArray(itemId, $filterSettings) + 1 ? true : false,
+            style: "margin-left:1rem;"
+        }).appendTo(form);
+
+        $('<label>', {
+            for : itemId,
+            //class: "checkbox-inline",
+            style: "padding-top:0px; margin-left:1px; font-weight:normal;",
+            text: checkbox[key]
+        }).appendTo(form);
+    }
+    // create loader gif
+    $('<div>', {
+        class: 'ajax-loader',
+        append: $('<img>', {
+            src: "view/javascript/fancytree/skin-win7/loading.gif",
+            id: "loadImg" + lng_id,
+            style: "z-index:1000; display:none;"
+        })
+    }).appendTo(form);
+    // create secondline checkboxes
+    let span = $('<div>', {id: tab + "_searchmode" + lng_id, style: "margin-top:1em;"});
+    span.appendTo(form);
+
+    for (var key in spancheckbox) {
+        let spanId = "fs_" + tab + "_" + key + lng_id;
+        $('<input>', {
+            type: "checkbox",
+            name: spanId,
+            id: spanId,
+            checked: $.inArray(spanId, $filterSettings) + 1 ? true : false,
+            style: "margin-left:1rem;"
+        }).appendTo(span);
+
+        $('<label>', {
+            for : spanId,
+            //class: "checkbox-inline",
+            style: "padding-top:0px; margin-left:1px; font-weight:normal;",
+            text: spancheckbox[key]
+        }).appendTo(span);
+    }
+}
+/* Clear Filter if tree reload */
+function ClearFilter(tree) {
+    if (tree.isFilterActive()) {
+        tree.clearFilter();
+
+        $('input[name *= "search"]').val("");
+        $('span[id *= "matches"]').text("");
+        $("[id ^=loadImg]").hide();
+    }
+}
 
 /* Functions */
 function reactivateCategory() {
@@ -424,7 +547,7 @@ function reloadAttribute() {
         });
     } else {
         var node = arguments[0],
-            self = arguments[1];
+                self = arguments[1];
         $attribute_synchro_trees.each(function (indx, element) {
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -492,7 +615,7 @@ function selectControl(data) {
 
 function addAttribute(activeNode, activeKey, lng_id) {
     var node = activeNode,
-        parentLevel = (activeKey === 'attribute') ? 2 : 1;
+            parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
         node = node.getParent();
     }
@@ -524,7 +647,7 @@ function deleteAttribute(node) {
                 'token': token,
                 'keys': selNodes ? getSelectedKeys(selNodes) : [node.key],
                 'titles': selNodes ? getSelectedTitles(selNodes) : [node.title],
-                'language_id' : node.getLanguageId()
+                'language_id': node.getLanguageId()
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
@@ -622,7 +745,7 @@ function addAttributeToCategory(targetnode, data, remove) {
 }
 
 var clipboardNodes = [],
-    clipboardTitles = [];
+        clipboardTitles = [];
 var pasteMode = null;
 
 function copyPaste(action, targetNode) {
@@ -681,7 +804,7 @@ function initTrees() {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var currentTab = 'tab-attribute';
         var attribute_group_tree = $("#attribute_group_tree" + lng_id);
-       // var currentTree = attribute_group_tree.fancytree("getTree");
+        // var currentTree = attribute_group_tree.fancytree("getTree");
         var sortOrder = $('input[id = "sortOrder_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -886,7 +1009,7 @@ function initTrees() {
                         deSelectNodes(subjectNode);
                     });
                 },
-                draggable: { // modify default jQuery draggable options
+                draggable: {// modify default jQuery draggable options
                     scroll: true // disable auto-scrolling
                 }
             },
@@ -920,10 +1043,10 @@ function initTrees() {
             }
         });
 
-       var currentTree = attribute_group_tree.fancytree("getTree");
-       // var collapse = true;
+        var currentTree = attribute_group_tree.fancytree("getTree");
+        // var collapse = true;
 
-        let filter = new Filter(currentTab,currentTree,lng_id);
+        let filter = new Filter(currentTab, currentTree, lng_id);
         filter.attachEvents();
 
         // ------------------------ attribute_group_tree.contextmenu ---------------------
@@ -932,7 +1055,7 @@ function initTrees() {
             menu: contextmenu[lng_id],
             beforeOpen: function (event, ui) {
                 var node = $.ui.fancytree.getNode(ui.target);
-               // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
+                // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
                 attribute_group_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                 attribute_group_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                 node.setActive();
@@ -948,7 +1071,7 @@ function initTrees() {
     $category_tree.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_tree = $("#category_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_tree' + lng_id + '"]:checkbox').is(":checked");
         //var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
         //  var selectMode = $('input[id = "multiSelect_category_tree' + lng_id + '"]:checkbox').is(":checked");
@@ -1047,7 +1170,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_attribute_tree = $("#category_attribute_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
         category_attribute_tree.fancytree({
@@ -1287,7 +1410,7 @@ function initTrees() {
                     }
                     return true;
                 },
-                draggable: { // modify default jQuery draggable options
+                draggable: {// modify default jQuery draggable options
                     revert: true,
                     cursorAt: {
                         top: -5,
@@ -1335,25 +1458,8 @@ function initTrees() {
         });
 
         var currentTree = attribute_tree.fancytree("getTree");
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
         attribute_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1505,27 +1611,9 @@ function initTrees() {
         });
 
         var currentTree = duty_attribute_tree.fancytree("getTree");
-        //var collapse = true;
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
         // ------------------------ duty_attribute_tree.contextmenu ---------------------
         duty_attribute_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1549,7 +1637,7 @@ function initTrees() {
         var currentTab = 'tab-products';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_product_tree = $("#attribute_product_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_duty_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1649,25 +1737,8 @@ function initTrees() {
         });
 
         var currentTree = attribute_product_tree.fancytree("getTree");
-        $("input[name=" + currentTab + "_search" + lng_id + "]").keyup({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSearch).focus();
-        $("button#" + currentTab + "_btnSearch" + lng_id).click({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterButtonSearch);
-        $("div#" + currentTab + "_filter" + lng_id + " input:checkbox").change({
-            tree: currentTree,
-            tab: currentTab,
-            lng_id: lng_id
-        }, FilterSettingsChange);
-        $("button#" + currentTab + "_btnResetSearch" + lng_id).click(function (e) {
-            ClearFilter(currentTree, currentTab, lng_id);
-        }).attr("disabled", true);
-        $("button#" + currentTab + "_btnSearch" + lng_id).attr("disabled", $("input#" + currentTab + "_autoComplete" + lng_id).is(":checked"));
+        let filter = new Filter(currentTab, currentTree, lng_id);
+        filter.attachEvents();
 
         attribute_product_tree.contextmenu({
             delegate: "span.fancytree-title",
@@ -1693,7 +1764,7 @@ function initTrees() {
         //var lng_id = (indx + 1);
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var product_tree = $("#product_tree" + lng_id);
-       // var collapse = true;
+        // var collapse = true;
         //var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
         //var attribute_id = currentAttributeID;
@@ -1848,7 +1919,7 @@ function initTrees() {
             this.show = function () {
                 var pos = $(this).position();
 
-                $(this).siblings('div').children($menu).css({ //============
+                $(this).siblings('div').children($menu).css({//============
                     top: pos.top + $(this).outerHeight(),
                     left: pos.left
                 });
@@ -2084,7 +2155,7 @@ $(function () { // document ready actions
         }
     });
 
-    $('input[name = "attributico_cache"]:checkbox').change(function (e) { // event handler for cache on/off        
+    $('input[name = "attributico_cache"]:checkbox').change(function (e) { // event handler for cache on/off
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -2131,16 +2202,16 @@ $(function () { // document ready actions
      **/
     $('input[id ^= "lazyLoad"]:checkbox').change(function (e) { // on/off lazyload
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
-            lazyLoad = $(this).is(":checked");
+                tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
+                lazyLoad = $(this).is(":checked");
         tree.options.source.data.lazyLoad = lazyLoad;
         tree.reload();
     });
 
     $('input[id ^= "sortOrder"]:checkbox').change(function (e) { // on/off sortOrder
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
-            sortOrder = $(this).is(":checked");
+                tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
+                sortOrder = $(this).is(":checked");
         tree.options.source.data.sortOrder = sortOrder;
         tree.options.source.data.category_id = currentCategory;
         tree.reload();
@@ -2148,17 +2219,17 @@ $(function () { // document ready actions
 
     $('input[id ^= "autoCollapse"]:checkbox').change(function (e) { // autocollapse control
         var id = $(this).attr("id"),
-            flag = $(this).is(":checked");
+                flag = $(this).is(":checked");
         $("#" + id.replace("autoCollapse_", "")).fancytree("getTree").options.autoCollapse = flag;
     });
 
     $('input[id ^= "multiSelect"]:checkbox').change(function (e) { // hierarchical select category
         var id = $(this).attr("id"),
-            tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
+                tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
 
-    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence 
+    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence
         var id = $(this).attr("id");
         var lng_id = parseInt(id.replace(/\D+/ig, ''));
         var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
@@ -2211,34 +2282,6 @@ $(function () { // document ready actions
         });
     });
 }); // end of document ready
-
-function FilterAction(e, lng_id, tab) {
-    $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
-        "checked": true
-    });
-    switch ($(e).attr("id")) {
-        case 'f_' + tab + '_empty':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("^\s*$");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_digital':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("[0-9]");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_html':
-            $("input[name=" + tab + "_search" + lng_id + "]").val("<[^>]+>");
-            $("button#" + tab + "_btnSearch" + lng_id).trigger("click");
-            break;
-        case 'f_' + tab + '_default':
-            $("span#" + tab + "_searchmode" + lng_id + " input#" + tab + "_regex" + lng_id + ":checkbox").prop({
-                "checked": false
-            });
-            $("button#" + tab + "_btnResetSearch" + lng_id).trigger("click");
-            break;
-    }
-
-    return false;
-}
 
 function tools(task) {
     $('[id *= "tree"].options').each(function (indx, element) {
