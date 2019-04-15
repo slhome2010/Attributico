@@ -227,7 +227,7 @@ class KeydownCommand {
         addAttribute(this.node, 'group', this.lng_id);
     }
 }
-/* Override methods for CategoryattributeTree*/
+/* Override methods for CategoryattributeTree */
 class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
@@ -238,6 +238,8 @@ class KeydownCommandCategory extends KeydownCommand {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }
+
+
 /**
  * Filter create and event services
  * @type {class}
@@ -327,7 +329,7 @@ class Filter {
             return;
         }
         if (!$("#fs_" + tab + "_autoComplete" + lng_id).is(":checked") && e.type === "keyup") {
-            //console.log(e.type);
+
             return;
         }
         if (!attributesOnly && !tree.options.source.data.isPending) {
@@ -393,9 +395,10 @@ function bildFilter() {
     let id = $(this).attr('id');
     let lng_id = parseInt(id.replace(/\D+/ig, ''));
     let tab = id.split('_')[0];
-    let checkbox = $filterItems[lng_id].checkbox;
-    let spancheckbox = $filterItems[lng_id].spancheckbox;
-    let dropdown = $filterItems[lng_id].dropdown;
+    let checkbox = filterItems[lng_id].checkbox;
+    let spancheckbox = filterItems[lng_id].spancheckbox;
+    let dropdown = filterItems[lng_id].dropdown;
+    let widget = tab + "_filterwidget" + lng_id;
 
     // create open/close triangle
     let hideFilter = "fs_" + tab + "_hideFilter" + lng_id;
@@ -407,9 +410,9 @@ function bildFilter() {
             class: "hide",
             name: hideFilter,
             id: hideFilter,
-            checked: $.inArray(hideFilter, $filterSettings) + 1 ? true : false,
+            checked: $.inArray(hideFilter, FILTERSETTINGS) + 1 ? true : false,
             'data-toggle': "collapse",
-            'data-target': "#tab-attribute_filterwidget" + lng_id
+            'data-target': "#" + widget
         }).add($('<i>', {
             class: "fa fa-angle-double-down fa-lg",
             'aria-hidden': "true"
@@ -417,17 +420,17 @@ function bildFilter() {
     }).appendTo(this);
 
     //create filter form
-    let open = $.inArray(hideFilter, $filterSettings) + 1 ? 'in' : '';
+    let open = $.inArray(hideFilter, FILTERSETTINGS) + 1 ? 'in' : '';
     let form = $('<div>', {
         class: 'form-group form-inline collapse ' + open,
-        id: "tab-attribute_filterwidget" + lng_id
+        id: widget
     });
     form.appendTo(this);
     // create input & buttons
     let search = tab + "_search" + lng_id;
     let btnSearch = tab + "_btnSearch" + lng_id;
     let btnResetSearch = tab + "_btnResetSearch" + lng_id;
-    $('<label>', {for : search, text: $filterItems[lng_id].title, style: "margin-left:1px;"}).appendTo(form);
+    $('<label>', {for : search, text: filterItems[lng_id].title, style: "margin-left:1px;"}).appendTo(form);
     $('<input>', {type: "text", name: search, placeholder: "Filter...", class: "form-control", id: search, style: "margin-left:1px;"}).appendTo(form);
     $('<button>', {id: btnResetSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-times", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
     $('<button>', {id: btnSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-search", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
@@ -440,7 +443,7 @@ function bildFilter() {
         'data-toggle': "dropdown",
         'aria-haspopup': "true",
         'aria-expanded': "false",
-        text: $filterItems[lng_id].button,
+        text: filterItems[lng_id].button,
         append: $('<span>', {class: "caret"}),
         style: "margin-left:1px;"
     }).appendTo(dropdownmenu);
@@ -465,7 +468,7 @@ function bildFilter() {
             type: "checkbox",
             name: itemId,
             id: itemId,
-            checked: $.inArray(itemId, $filterSettings) + 1 ? true : false,
+            checked: $.inArray(itemId, FILTERSETTINGS) + 1 ? true : false,
             style: "margin-left:1rem;"
         }).appendTo(form);
 
@@ -495,7 +498,7 @@ function bildFilter() {
             type: "checkbox",
             name: spanId,
             id: spanId,
-            checked: $.inArray(spanId, $filterSettings) + 1 ? true : false,
+            checked: $.inArray(spanId, FILTERSETTINGS) + 1 ? true : false,
             style: "margin-left:1rem;"
         }).appendTo(span);
 
@@ -518,37 +521,40 @@ function ClearFilter(tree) {
     }
 }
 
-/* Functions */
+/* Functions for trees handling logic */
 function reactivateCategory() {
-    var node = null;
-    if (arguments.length !== 0) {
-        node = arguments[0];
-    }
-    $category_tree.each(function (indx, element) {
-        var tree = $("#" + element.id).fancytree("getTree");
-        var categoryNode = (node ? tree.getNodeByKey(node.key) : null) || tree.getActiveNode();
+    let node = arguments.length !== 0 ? arguments[0] : null;
 
-        if (categoryNode && categoryNode !== undefined) {
-            categoryNode.setActive(false);
-            categoryNode.setActive(true);
+    CATEGORY_TREE.each(function (indx, element) {
+        const tree = $("#" + element.id).fancytree("getTree");
+        let activeNode = node !== null ? node : tree.getActiveNode();
+
+        if (activeNode !== null && activeNode !== undefined) {
+            tree.getNodeByKey(activeNode.key).setActive(false);
+            tree.getNodeByKey(activeNode.key).setActive(true);
         }
     });
 }
 
 function reloadAttribute() {
     if (arguments.length == 0) {
-        $attribute_synchro_trees.each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
+        ATTRIBUTE_SYNCRO_TREES.each(function (indx, element) {
+            const tree = $("#" + element.id).fancytree("getTree");
+            let activeNode = tree.getActiveNode();
+
             ClearFilter(tree);
+
+            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             tree.reload().done(function () {
                 tree.options.source.data.isPending = false;
+                if (activeNode !== null)
+                    tree.getNodeByKey(activeNode.key).setActive(true);
             });
         });
     } else {
-        var node = arguments[0],
-                self = arguments[1];
-        $attribute_synchro_trees.each(function (indx, element) {
+        var node = arguments[0];
+        var self = arguments[1];
+        ATTRIBUTE_SYNCRO_TREES.each(function (indx, element) {
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             if ((tree !== node.tree) || self) { // not reload active tree
@@ -730,7 +736,6 @@ function addAttributeToCategory(targetnode, data, remove) {
     }).done(function () {
         if (!remove) {
             deSelectNodes(data.otherNode);
-            // reactivateCategory(targetnode);
             data.otherNode.tree.visit(function (node) { // при дбавлении надо засинхронизировать дерево атрибутов где были lazy вдруг это были первые
                 if (node.isLazy()) {
                     node.load(true);
@@ -758,7 +763,7 @@ function copyPaste(action, targetNode) {
                 selNodes.forEach(function (node, i) {
                     clipboardNodes[i] = [];
                     clipboardTitles[i] = [];
-                    $attribute_group_tree.each(function (indx, element) {
+                    ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
                         var tree = $("#" + element.id).fancytree("getTree");
                         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                         clipboardNodes[i][lng_id] = tree.getNodeByKey(node.key);
@@ -768,7 +773,7 @@ function copyPaste(action, targetNode) {
             } else {
                 clipboardNodes[0] = [];
                 clipboardTitles[0] = [];
-                $attribute_group_tree.each(function (indx, element) {
+                ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
                     var tree = $("#" + element.id).fancytree("getTree");
                     var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                     clipboardNodes[0][lng_id] = tree.getNodeByKey(targetNode.key);
@@ -800,11 +805,11 @@ function copyPaste(action, targetNode) {
 }
 
 function initTrees() {
-    $attribute_group_tree.each(function (indx, element) {
+
+    ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var currentTab = 'tab-attribute';
         var attribute_group_tree = $("#attribute_group_tree" + lng_id);
-        // var currentTree = attribute_group_tree.fancytree("getTree");
         var sortOrder = $('input[id = "sortOrder_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1040,41 +1045,37 @@ function initTrees() {
                 hideExpandedCounter: true, // Hide counter badge, when parent is expanded
                 highlight: true, // Highlight matches by wrapping inside <mark> tags
                 mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
-            }
-        });
-
-        var currentTree = attribute_group_tree.fancytree("getTree");
-        // var collapse = true;
-
-        let filter = new Filter(currentTab, currentTree, lng_id);
-        filter.attachEvents();
-
-        // ------------------------ attribute_group_tree.contextmenu ---------------------
-        attribute_group_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                // attribute_group_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute') || !node.key.indexOf('group'));
-                attribute_group_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
-                attribute_group_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                let filter = new Filter(currentTab, data.tree, lng_id);
+                filter.attachEvents();
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
-    // --------------------------------------- category attribute table -------------------------------------
+    // --------------------------------------- category table -------------------------------------
     // --------------------------------------- category tree ------------------------------------------------
-    $category_tree.each(function (indx, element) {
+    CATEGORY_TREE.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_tree = $("#category_tree" + lng_id);
-        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_tree' + lng_id + '"]:checkbox').is(":checked");
-        //var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-        //  var selectMode = $('input[id = "multiSelect_category_tree' + lng_id + '"]:checkbox').is(":checked");
 
         category_tree.fancytree({
             autoCollapse: true,
@@ -1144,33 +1145,36 @@ function initTrees() {
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
-            }
-        });
-
-        category_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                category_tree.contextmenu("enableEntry", "remove", false);
-                category_tree.contextmenu("enableEntry", "rename", false);
-                category_tree.contextmenu("enableEntry", "addSibling", false);
-                category_tree.contextmenu("enableEntry", "addChild", false);
-                category_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "rename", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
     // --------------------------------------- category attribute tree -------------------------------------
-    $category_attribute_tree.each(function (indx, element) {
-        //var lng_id = (indx + 1);
+    CATEGORY_ATTRIBUTE_TREE.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var category_attribute_tree = $("#category_attribute_tree" + lng_id);
-        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_category_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
         category_attribute_tree.fancytree({
@@ -1326,33 +1330,37 @@ function initTrees() {
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
-            }
-        });
-
-        category_attribute_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                category_attribute_tree.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute'));
-                category_attribute_tree.contextmenu("enableEntry", "rename", false);
-                category_attribute_tree.contextmenu("enableEntry", "addSibling", false);
-                category_attribute_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
-                category_attribute_tree.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommandCategory(ui);
-                command.execute();
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "rename", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
     // ------------------- attribute tree --------------------------------------------------------------
-    $attribute_tree.each(function (indx, element) {
+    ATTRIBUTE_TREE.each(function (indx, element) {
         var currentTab = 'tab-category';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_tree = $("#attribute_tree" + lng_id);
-        //var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1454,35 +1462,38 @@ function initTrees() {
                 hideExpandedCounter: true, // Hide counter badge, when parent is expanded
                 highlight: true, // Highlight matches by wrapping inside <mark> tags
                 mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
-            }
-        });
-
-        var currentTree = attribute_tree.fancytree("getTree");
-        let filter = new Filter(currentTab, currentTree, lng_id);
-        filter.attachEvents();
-
-        attribute_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                attribute_tree.contextmenu("enableEntry", "remove", false);
-                attribute_tree.contextmenu("enableEntry", "rename", false);
-                attribute_tree.contextmenu("enableEntry", "addSibling", false);
-                attribute_tree.contextmenu("enableEntry", "addChild", false);
-                attribute_tree.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                let filter = new Filter(currentTab, data.tree, lng_id);
+                filter.attachEvents();
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "rename", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
 
     // --------------------------------------- duty attribute table -------------------------------------
     // --------------------------------------- duty category tree ------------------------------------------------
-    $duty_attribute_tree.each(function (indx, element) {
+    DUTY_ATTRIBUTE_TREE.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var duty_attribute_tree = $("#duty_attribute_tree" + lng_id);
         var currentTab = 'tab-duty';
@@ -1607,37 +1618,38 @@ function initTrees() {
                 hideExpandedCounter: true, // Hide counter badge, when parent is expanded
                 highlight: true, // Highlight matches by wrapping inside <mark> tags
                 mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
-            }
-        });
-
-        var currentTree = duty_attribute_tree.fancytree("getTree");
-        let filter = new Filter(currentTab, currentTree, lng_id);
-        filter.attachEvents();
-
-        // ------------------------ duty_attribute_tree.contextmenu ---------------------
-        duty_attribute_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                duty_attribute_tree.contextmenu("enableEntry", "remove", false);
-                duty_attribute_tree.contextmenu("enableEntry", "addSibling", false);
-                duty_attribute_tree.contextmenu("enableEntry", "addChild", false);
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                let filter = new Filter(currentTab, data.tree, lng_id);
+                filter.attachEvents();
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
     // ------------------- Products --------------------------------------------------------------
     // ------------------- attribute tree --------------------------------------------------------
-    $attribute_product_tree.each(function (indx, element) {
+    ATTRIBUTE_PRODUCT_TREE.each(function (indx, element) {
         var currentTab = 'tab-products';
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var attribute_product_tree = $("#attribute_product_tree" + lng_id);
-        // var collapse = true;
         var sortOrder = $('input[id = "sortOrder_attribute_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var lazyLoad = $('input[id = "lazyLoad_duty_attribute_tree' + lng_id + '"]:checkbox').is(":checked");
 
@@ -1679,9 +1691,7 @@ function initTrees() {
                 }
             },
             activate: function (event, data) {
-                // var node = data.node;
                 var tree = $("#product_tree" + lng_id).fancytree("getTree");
-                //currentAttributeID = data.node.key;
                 tree.reload({
                     data: {
                         'user_token': user_token,
@@ -1733,41 +1743,40 @@ function initTrees() {
                 hideExpandedCounter: true, // Hide counter badge, when parent is expanded
                 highlight: true, // Highlight matches by wrapping inside <mark> tags
                 mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
-            }
-        });
-
-        var currentTree = attribute_product_tree.fancytree("getTree");
-        let filter = new Filter(currentTab, currentTree, lng_id);
-        filter.attachEvents();
-
-        attribute_product_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                attribute_product_tree.contextmenu("enableEntry", "remove", false);
-                attribute_product_tree.contextmenu("enableEntry", "rename", false);
-                attribute_product_tree.contextmenu("enableEntry", "addSibling", false);
-                attribute_product_tree.contextmenu("enableEntry", "addChild", false);
-                attribute_product_tree.contextmenu("enableEntry", "copy", false);
-                attribute_product_tree.contextmenu("enableEntry", "paste", false);
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                let filter = new Filter(currentTab, data.tree, lng_id);
+                filter.attachEvents();
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "rename", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        data.tree.$div.contextmenu("enableEntry", "copy", false);
+                        data.tree.$div.contextmenu("enableEntry", "paste", false);
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
     // --------------------------------------- product tree -------------------------------------
-    $product_tree.each(function (indx, element) {
-        //var lng_id = (indx + 1);
+    PRODUCT_TREE.each(function (indx, element) {
         var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         var product_tree = $("#product_tree" + lng_id);
-        // var collapse = true;
-        //var sortOrder = $('input[id = "sortOrder_product_tree' + lng_id + '"]:checkbox').is(":checked");
         var diver = $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
-        //var attribute_id = currentAttributeID;
 
         product_tree.fancytree({
             autoCollapse: true,
@@ -1778,8 +1787,6 @@ function initTrees() {
                     'user_token': user_token,
                     'token': token,
                     'language_id': lng_id,
-                    //'attribute_id': attribute_id,
-                    //'sortOrder': sortOrder,
                     'invert': diver
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getProductTree'
@@ -1826,29 +1833,92 @@ function initTrees() {
             },
             focusTree: function (e, data) {
                 data.tree.$container.focus();
-            }
-        });
-
-        product_tree.contextmenu({
-            delegate: "span.fancytree-title",
-            menu: contextmenu[lng_id],
-            beforeOpen: function (event, ui) {
-                var node = $.ui.fancytree.getNode(ui.target);
-                product_tree.contextmenu("enableEntry", "remove", false);
-                product_tree.contextmenu("enableEntry", "rename", false);
-                product_tree.contextmenu("enableEntry", "addSibling", false);
-                product_tree.contextmenu("enableEntry", "addChild", false);
-                product_tree.contextmenu("enableEntry", "copy", false);
-                product_tree.contextmenu("enableEntry", "paste", false);
-                node.setActive();
             },
-            select: function (event, ui) {
-                let command = new ContextmenuCommand(ui);
-                command.execute();
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+                data.tree.$div.contextmenu({
+                    delegate: "span.fancytree-title",
+                    menu: contextmenu[lng_id],
+                    beforeOpen: function (event, ui) {
+                        let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "rename", false);
+                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
+                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        data.tree.$div.contextmenu("enableEntry", "copy", false);
+                        data.tree.$div.contextmenu("enableEntry", "paste", false);
+                        node.setActive();
+                    },
+                    select: function (event, ui) {
+                        let command = new ContextmenuCommand(ui);
+                        command.execute();
+                    }
+                });
             }
         });
     });
-}
+    /**
+     * Build deduplicate tree and detach tree for tools
+     *
+     **/
+    GROUP_CHECK_TREE.each(function (indx, element) {
+        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+        $(element).fancytree({
+            checkbox: true,
+            selectMode: 3,
+            autoScroll: true,
+            source: {
+                data: {
+                    'user_token': user_token,
+                    'token': token,
+                    'sortOrder': sortOrder,
+                    'onlyGroup': true,
+                    'isPending': false
+                },
+                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+            },
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+            }
+        });
+    });
+
+    /**
+     * Build category attribute tree for tools
+     *
+     **/
+    CATEGORY_CHECK_TREE.each(function (indx, element) {
+        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
+        $(element).fancytree({
+            autoCollapse: true,
+            autoScroll: true,
+            minExpandLevel: 2,
+            checkbox: true,
+            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
+            source: {
+                data: {
+                    'user_token': user_token,
+                    'token': token,
+                    'sortOrder': sortOrder
+                },
+                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+            },
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+            }
+        });
+    });
+} // end of Inittree()
 
 // Autocomplete for fancytree*/
 (function ($) {
@@ -1867,15 +1937,12 @@ function initTrees() {
 
             // Focus
             $(this).on('focus', function (event) {
-                //  console.log('focus');
                 event.preventDefault();
-
                 this.request();
             });
 
             // Blur
             $(this).on('blur', function () {
-                //   console.log('blur');
                 setTimeout(function (object) {
                     object.hide();
                 }, 200, this);
@@ -1884,7 +1951,7 @@ function initTrees() {
             // Keydown
             $(this).on('keydown', function (event) {
                 event.preventDefault();
-                //   console.log('keydown');
+
                 switch (event.keyCode) {
                     case 27: // escape
                         this.hide();
@@ -1897,7 +1964,6 @@ function initTrees() {
 
             // Mousedown perehvat
             $(this).on("mousedown", function (event) {
-                //    console.log('attributico.fancytree-edit');
                 event.preventDefault();
                 event.stopPropagation();
                 $(this).focus();
@@ -1905,7 +1971,6 @@ function initTrees() {
 
             // Click
             this.click = function (event) {
-                //    console.log('click');
                 event.preventDefault();
                 //    event.stopPropagation();  // нельзя будет вылетать
                 value = $(event.target).parent().attr('data-value');
@@ -1998,6 +2063,7 @@ function initTrees() {
     }
 })(window.jQuery);
 
+/* Service functions */
 function dutyUpgrade() {
     $.ajax({
         data: {
@@ -2011,48 +2077,10 @@ function dutyUpgrade() {
         }
     });
 }
-
-function apply() {
-    $('[id ^= "tree"].settings').each(function (indx, element) {
-        $(element).fancytree("getTree").generateFormElements();
-    });
-    //alert("POST data:\n" + jQuery.param($("#form-attributico").serializeArray()));
-    $(".alert-success, #error_warning.alert-danger").hide();
-    $.post($("#form-attributico").attr('action'), $("#form-attributico").serialize(), function (html) {
-        var $success = $(html).find(".alert-success, #error_warning.alert-danger"); // если после редиректа форма выставила success
-        if ($success.length > 0) {
-            $(".alert-before").before($success);
-        } else {
-            var $href = $(html).find("[selected=\"selected\"]").val(); // если нет, то ищем success по ссылке, котрая в селекте
-            $.post($href, "", function (html) {
-                var $success = $(html).find(".alert-success, #error_warning.alert-danger");
-                if ($success.length > 0) {
-                    $(".alert-before").before($success);
-                }
-            });
-        }
-        // Re-apply settings for each trees and contextmenus
-        $('input[id ^= "multiSelect"]:checkbox').prop("checked", $('input[name = "attributico_multiselect"]:checkbox').is(":checked"));
-        $('input[id ^= "sortOrder"]:checkbox').prop("checked", $('input[name = "attributico_sortorder"]:checkbox').is(":checked"));
-        $('input[id ^= "lazyLoad"]:checkbox').prop("checked", $('input[name = "attributico_lazyload"]:checkbox').is(":checked"));
-        $category_tree.each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
-        });
-        $category_check_tree.each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
-        });
-        $attribute_synchro_trees.each(function (indx, element) { // reload function is located inside as asynchronous request
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.source.data.sortOrder = $('input[id ^= "sortOrder"]:checkbox').is(":checked");
-            tree.options.source.data.lazyLoad = $('input[id ^= "lazyLoad"]:checkbox').is(":checked");
-            tree.options.source.data.category_id = currentCategory;
-            tree.reload();
-        });
-    });
-}
-
+/**
+* Form buttons onclick events
+*
+**/
 function check_for_updates() {
     $.ajax({
         data: {
@@ -2080,6 +2108,76 @@ function check_for_updates() {
     });
 }
 
+function apply() {
+    $('[id ^= "tree"].settings').each(function (indx, element) {
+        $(element).fancytree("getTree").generateFormElements();
+    });
+    //alert("POST data:\n" + jQuery.param($("#form-attributico").serializeArray()));
+    $(".alert-success, #error_warning.alert-danger").hide();
+    $.post($("#form-attributico").attr('action'), $("#form-attributico").serialize(), function (html) {
+        var $success = $(html).find(".alert-success, #error_warning.alert-danger"); // если после редиректа форма выставила success
+        if ($success.length > 0) {
+            $(".alert-before").before($success);
+        } else {
+            var $href = $(html).find("[selected=\"selected\"]").val(); // если нет, то ищем success по ссылке, котрая в селекте
+            $.post($href, "", function (html) {
+                var $success = $(html).find(".alert-success, #error_warning.alert-danger");
+                if ($success.length > 0) {
+                    $(".alert-before").before($success);
+                }
+            });
+        }
+        // Re-apply settings for each trees and contextmenus
+        $('input[id ^= "multiSelect"]:checkbox').prop("checked", $('input[name = "attributico_multiselect"]:checkbox').is(":checked"));
+        $('input[id ^= "sortOrder"]:checkbox').prop("checked", $('input[name = "attributico_sortorder"]:checkbox').is(":checked"));
+        $('input[id ^= "lazyLoad"]:checkbox').prop("checked", $('input[name = "attributico_lazyload"]:checkbox').is(":checked"));
+        CATEGORY_TREE.each(function (indx, element) {
+            var tree = $("#" + element.id).fancytree("getTree");
+            tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
+        });
+        CATEGORY_CHECK_TREE.each(function (indx, element) {
+            var tree = $("#" + element.id).fancytree("getTree");
+            tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
+        });
+        ATTRIBUTE_SYNCRO_TREES.each(function (indx, element) { // reload function is located inside as asynchronous request
+            var tree = $("#" + element.id).fancytree("getTree");
+            tree.options.source.data.sortOrder = $('input[id ^= "sortOrder"]:checkbox').is(":checked");
+            tree.options.source.data.lazyLoad = $('input[id ^= "lazyLoad"]:checkbox').is(":checked");
+            tree.options.source.data.category_id = currentCategory;
+            tree.reload();
+        });
+    });
+}
+
+/*
+function beforeLoad() {
+    return new Promise(function (resolve, reject) {
+        $('[id ^= "tree"]').each(function (indx, element) {
+            $(element).fancytree({
+                checkbox: true,
+                selectMode: 2,
+                source: {
+                    data: {
+                        'user_token': user_token,
+                        'token': token,
+                        'tree': indx + 1
+                    },
+                    url: 'index.php?route=' + extension + 'module/attributico/getChildrenSettings'
+                },
+                init: function (event, data) {
+                    if (indx + 1 === 5) {
+                        // all settings trees has loaded
+                        console.log('Settings has loaded');
+                        resolve();
+                        //reject('Settings has not loaded');
+                    }
+                }
+            });
+        });
+    });
+}
+*/
+
 $(function () { // document ready actions
     /**
      * Building trees and configuring child nodes. (selectMode must be 2, see generateFormElements() description)
@@ -2100,6 +2198,7 @@ $(function () { // document ready actions
         });
     });
 
+    /* Button Save onclick event */
     $("#form-attributico").submit(function () {
         // Render hidden <input> elements for active and selected nodes
         $('[id ^= "tree"].settings').each(function (indx, element) {
@@ -2109,6 +2208,7 @@ $(function () { // document ready actions
         // return false to prevent submission of this sample
         //  return false;
     });
+
     /**
      * Alerts for tools when tasks is running
      * Placed in div = column-2, because column-1 is vtabs
@@ -2125,11 +2225,13 @@ $(function () { // document ready actions
         $("#column-2 .task-complete").hide();
         $("#column-2 .alert-info").show();
     });
+
     /**
-     * Common settings
+     * Common settings change event hundlers
      *
      **/
-    $('[name = "attributico_product_text"]').each(function (indx, element) { // access to autoadd radio
+    // access to autoadd radio
+    $('[name = "attributico_product_text"]').each(function (indx, element) {
         if (!$('[name = "attributico_autoadd"]').is(":checked")) {
             $(element).prop({
                 "disabled": true,
@@ -2137,8 +2239,8 @@ $(function () { // document ready actions
             });
         }
     });
-
-    $('input[name = "attributico_autoadd"]:checkbox').change(function (e) { // autoadd attribute values to product
+    // autoadd attribute values to product
+    $('input[name = "attributico_autoadd"]:checkbox').change(function (e) {
         flag = $(this).is(":checked");
         $('[name = "attributico_product_text"]').each(function (indx, element) {
             $(element).prop({
@@ -2146,16 +2248,16 @@ $(function () { // document ready actions
             });
         });
     });
-
-    $('input[name = "attributico_smart_scroll"]:checkbox').change(function (e) { // event handler for smartscroll
+    // event handler for smartscroll
+    $('input[name = "attributico_smart_scroll"]:checkbox').change(function (e) {
         if ($(this).is(":checked")) {
             $('[id *= "tree"]:not(.settings) > ul.fancytree-container').addClass("smart-scroll");
         } else {
             $("ul.fancytree-container").removeClass("smart-scroll");
         }
     });
-
-    $('input[name = "attributico_cache"]:checkbox').change(function (e) { // event handler for cache on/off
+    // event handler for cache on/off
+    $('input[name = "attributico_cache"]:checkbox').change(function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -2163,20 +2265,23 @@ $(function () { // document ready actions
             },
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
             success: function (json) {
-                $category_synchro_trees.each(function (indx, element) {
+                let size = CATEGORY_SYNCRO_TREES.size();
+                CATEGORY_SYNCRO_TREES.each(function (indx, element) {
                     var tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;
-                        reloadAttribute();
-                        reactivateCategory();
+                        if (indx + 1 == size) {
+                            reloadAttribute();
+                           // reactivateCategory();
+                        }
                     });
                 });
             }
         });
     });
-
-    $('input[name = "attributico_multistore"]:checkbox').change(function (e) { // event handler for multistore categories output
+    // event handler for multistore categories output
+    $('input[name = "attributico_multistore"]:checkbox').change(function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -2184,31 +2289,52 @@ $(function () { // document ready actions
             },
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
             success: function (json) {
-                $category_synchro_trees.each(function (indx, element) {
+                let size = CATEGORY_SYNCRO_TREES.size();
+                CATEGORY_SYNCRO_TREES.each(function (indx, element) {
                     var tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;
-                        reloadAttribute();
-                        reactivateCategory();
+                        if (indx + 1 == size) {
+                            reloadAttribute();
+                           // reactivateCategory();
+                        }
                     });
                 });
             }
         });
     });
+
     /**
-     * Context menu settings
+     * Context menu dialog events
      *
      **/
-    $('input[id ^= "lazyLoad"]:checkbox').change(function (e) { // on/off lazyload
+    // Attach dialog
+    $('[id *= "options_"]').dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        buttons: [{
+                icons: {
+                    primary: "ui-icon-check"
+                },
+                'class': "hawt-button",
+                title: "Apply",
+                click: function () {
+                    $(this).dialog("close");
+                }
+            }]
+    });
+    // on/off lazyload
+    $('input[id ^= "lazyLoad"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
                 tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
                 lazyLoad = $(this).is(":checked");
         tree.options.source.data.lazyLoad = lazyLoad;
         tree.reload();
     });
-
-    $('input[id ^= "sortOrder"]:checkbox').change(function (e) { // on/off sortOrder
+    // on/off sortOrder
+    $('input[id ^= "sortOrder"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
                 tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
                 sortOrder = $(this).is(":checked");
@@ -2216,71 +2342,26 @@ $(function () { // document ready actions
         tree.options.source.data.category_id = currentCategory;
         tree.reload();
     });
-
-    $('input[id ^= "autoCollapse"]:checkbox').change(function (e) { // autocollapse control
+    // autocollapse control
+    $('input[id ^= "autoCollapse"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
                 flag = $(this).is(":checked");
         $("#" + id.replace("autoCollapse_", "")).fancytree("getTree").options.autoCollapse = flag;
     });
-
-    $('input[id ^= "multiSelect"]:checkbox').change(function (e) { // hierarchical select category
+    // hierarchical select category
+    $('input[id ^= "multiSelect"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
                 tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
-
-    $('input[id ^= "diver"]:checkbox').change(function (e) { // on/off Divergence
+    // on/off Divergence
+    $('input[id ^= "diver"]:checkbox').change(function (e) {
         var id = $(this).attr("id");
         var lng_id = parseInt(id.replace(/\D+/ig, ''));
         var tree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
         tree.reactivate();
     });
 
-    /**
-     * Build deduplicate tree (and detach tree)
-     *
-     **/
-    $group_check_tree.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        $(element).fancytree({
-            checkbox: true,
-            selectMode: 3,
-            autoScroll: true,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder,
-                    'onlyGroup': true,
-                    'isPending': false
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
-            }
-        });
-    });
-    /**
-     * Build category attribute tree for tools
-     *
-     **/
-    $category_check_tree.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-        $(element).fancytree({
-            autoCollapse: true,
-            autoScroll: true,
-            minExpandLevel: 2,
-            checkbox: true,
-            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
-            }
-        });
-    });
 }); // end of document ready
 
 function tools(task) {

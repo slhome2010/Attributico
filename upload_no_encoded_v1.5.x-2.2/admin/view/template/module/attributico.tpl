@@ -875,35 +875,34 @@
     </div>
 </div>
 <script type="text/javascript">
-var selNodes = null,
-    selCategories = null;
-var $attribute_synchro_trees = $(
-    '[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]'
-);
-var $attribute_group_tree = $('[name ^= "attribute_group_tree"]');
-var $category_tree = $('[name ^= "category_tree"]');
-var $category_attribute_tree = $('[name ^= "category_attribute_tree"]');
-var $duty_attribute_tree = $('[name ^= "duty_attribute_tree"]');
-var $attribute_tree = $('[name ^= "attribute_tree"]');
-var $attribute_product_tree = $('[name ^= "attribute_product_tree"]');
-var $product_tree = $('[name ^= "product_tree"]');
-var $group_check_tree = $('[name ^= "group_check_tree"]');
-var $category_check_tree = $('[name ^= "category_check_tree"]');
-var $category_synchro_trees = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
-var token = '<?php echo $token; ?>';
-var user_token = '<?php echo $user_token; ?>';
-var extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
-var edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
-var contextmenu = [];
-var textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
-var textNewGroup = <?php echo json_encode($text_New_group) ?>;
-var textConfirm = <?php echo json_encode($text_confirm) ?>;
-var currentCategory = 0;
-var $filterSettings = <?php echo json_encode($filter_settings) ?>;
-var $filterItems = [];
+let selNodes = null;
+let selCategories = null;
+const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
+const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
+const CATEGORY_TREE = $('[name ^= "category_tree"]');
+const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
+const DUTY_ATTRIBUTE_TREE = $('[name ^= "duty_attribute_tree"]');
+const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
+const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
+const PRODUCT_TREE = $('[name ^= "product_tree"]');
+const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
+const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+const token = '<?php echo $token; ?>';
+const user_token = '<?php echo $user_token; ?>';
+const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
+const edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
+let contextmenu = [];
+const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
+const textNewGroup = <?php echo json_encode($text_New_group) ?>;
+const textConfirm = <?php echo json_encode($text_confirm) ?>;
+let currentCategory = 0;
+const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
+let filterItems = [];
+const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
 
-$attribute_group_tree.each(function(indx, element) {
-    var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
+    let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
     contextmenu[lng_id] = [{
             title: <?php echo json_encode($text_Edit) ?> [lng_id] + "<kbd>[Shift+Click]</kbd>",
             cmd: "rename",
@@ -958,7 +957,8 @@ $attribute_group_tree.each(function(indx, element) {
             uiIcon: "ui-icon-arrowreturn-1-e"
         }
     ];
-    $filterItems[lng_id] = {
+
+    filterItems[lng_id] = {
         title : <?php echo json_encode($text_filter) ?> [lng_id],
         button: <?php echo json_encode($button_filter_action) ?> [lng_id],
         checkbox: {
@@ -985,31 +985,11 @@ $attribute_group_tree.each(function(indx, element) {
 });
 
 $(document).ready(function() {
-    $('.fancyfilter').each(bildFilter);
-    initTrees();
-
     $("[data-toggle='tooltip']").tooltip();
 
-    $('[id *= "options_"]').dialog({
-        autoOpen: false,
-        resizable: false,
-        modal: true,
-        buttons: [{
-            icons: {
-                primary: "ui-icon-check"
-            },
-            'class': "hawt-button",
-            title: "Apply",
-            click: function() {
-                $(this).dialog("close");
-            }
-        }]
-    });
+    $('.fancyfilter').each(bildFilter);
 
-    if ($('input[name = "attributico_smart_scroll"]:checkbox').is(":checked")) { // on/off smartscroll
-        $('[id *= "tree"]:not(.settings) > ul.fancytree-container').addClass(
-            "smart-scroll"); // add class when all trees will be loaded
-    }
+    initTrees();
 
 });
 </script>

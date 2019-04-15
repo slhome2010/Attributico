@@ -327,7 +327,7 @@
                     </div>
                     <?php foreach ($languages as $language) { ?>
                     <div id="tab-attribute_language<?php echo $language['language_id'];?>">
-                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-duty_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
+                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-attribute_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
                             id="tab-attribute_filter<?php echo $language['language_id']; ?>">
                             <label for="tab-attribute_search"> <?php echo $text_filter[$language['language_id']]; ?> </label>
                             <input type="text" name="tab-attribute_search<?php echo $language['language_id']; ?>" placeholder="Filter..." class="form-control" id="tab-attribute_search">
@@ -335,56 +335,56 @@
                             <button id="tab-attribute_btnSearch<?php echo $language['language_id']; ?>" type="button" class="button">&#9762;</button>
                             <button class="button" onclick="$(this).next().slideToggle(); return false;"><?php echo $button_filter_action[$language['language_id']]; ?></button>
                             <ul class="drop-menu" style="max-width: 250px; position: absolute; margin-left: 260px;">
-                                <li><a id="f_tab-attribute_empty" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-attribute');"><?php echo $f_empty[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-attribute_digital" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-attribute');"><?php echo $f_digital[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-attribute_html" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-attribute');"><?php echo $f_html[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-attribute<?php echo $language['language_id'];?>_empty" href="#" ><?php echo $f_empty[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-attribute<?php echo $language['language_id'];?>_digital" href="#" ><?php echo $f_digital[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-attribute<?php echo $language['language_id'];?>_html" href="#" ><?php echo $f_html[$language['language_id']]; ?></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a id="f_tab-attribute_default" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-attribute');"><?php echo $f_default[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-attribute<?php echo $language['language_id'];?>_default" href="#" ><?php echo $f_default[$language['language_id']]; ?></a></li>
                             </ul>
                             <span id="tab-attribute_matches<?php echo $language['language_id']; ?>" class="badge" style="margin-left: 5px;"></span>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-attribute_autoComplete<?php echo $language['language_id']; ?>">
-                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-attribute_autoComplete<?php echo $language['language_id']; ?>" id="tab-attribute_autoComplete<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-attribute_autoComplete<?php echo $language['language_id']; ?>">
+                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-attribute_autoComplete<?php echo $language['language_id']; ?>" id="fs_tab-attribute_autoComplete<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-attribute_autoComplete" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_autoComplete[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-attribute_attributesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-attribute_attributesOnly<?php echo $language['language_id']; ?>" id="tab-attribute_attributesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-attribute_attributesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-attribute_attributesOnly<?php echo $language['language_id']; ?>" id="fs_tab-attribute_attributesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-attribute_attributesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Attributes_only[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-attribute_leavesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-attribute_leavesOnly<?php echo $language['language_id']; ?>" id="tab-attribute_leavesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-attribute_leavesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-attribute_leavesOnly<?php echo $language['language_id']; ?>" id="fs_tab-attribute_leavesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-attribute_leavesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Leaves_only[$language['language_id']]; ?>
                             </label>
                             <div class="ajax-loader"><img id="loadImg<?php echo $language['language_id']; ?>" src="view/javascript/fancytree/skin-win7/loading.gif" style="z-index:1000; display:none;" /></div>
-                            <span id="tab-attribute_searchmode<?php echo $language['language_id']; ?>">
-                                <label class="checkbox-inline" for="tab-attribute_hideMode<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_hideMode<?php echo $language['language_id']; ?>" id="tab-attribute_hideMode<?php echo $language['language_id']; ?>"
+                            <div id="tab-attribute_searchmode<?php echo $language['language_id']; ?>">
+                                <label class="checkbox-inline" for="fs_tab-attribute_hideMode<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_hideMode<?php echo $language['language_id']; ?>" id="fs_tab-attribute_hideMode<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_hideMode" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Hide_unmatched_nodes[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_autoExpand<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_autoExpand<?php echo $language['language_id']; ?>" id="tab-attribute_autoExpand<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_autoExpand<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_autoExpand<?php echo $language['language_id']; ?>" id="fs_tab-attribute_autoExpand<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_autoExpand" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Auto_expand[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_counter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_counter<?php echo $language['language_id']; ?>" id="tab-attribute_counter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_counter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_counter<?php echo $language['language_id']; ?>" id="fs_tab-attribute_counter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_counter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Counter_badges[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>" id="tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>" id="fs_tab-attribute_hideExpandedCounter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_hideExpandedCounter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_hideExpandedCounter[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_highlight<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_highlight<?php echo $language['language_id']; ?>" id="tab-attribute_highlight<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_highlight<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_highlight<?php echo $language['language_id']; ?>" id="fs_tab-attribute_highlight<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_highlight" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Highlight[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_fuzzy<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_fuzzy<?php echo $language['language_id']; ?>" id="tab-attribute_fuzzy<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_fuzzy<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-attribute_fuzzy<?php echo $language['language_id']; ?>" id="fs_tab-attribute_fuzzy<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_fuzzy" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Fuzzy[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-attribute_regex<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-attribute_regex<?php echo $language['language_id']; ?>" id="tab-attribute_regex<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-attribute_regex<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" id="fs_tab-attribute_regex<?php echo $language['language_id']; ?>" name="fs_tab-attribute_regex<?php echo $language['language_id']; ?>" id="tab-attribute_regex<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-attribute_regex" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Regular_expression[$language['language_id']]; ?>
                                 </label>
-                            </span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
@@ -415,63 +415,64 @@
                     </div>
                     <?php foreach ($languages as $language) { ?>
                     <div id="tab-duty_language<?php echo $language['language_id'];?>">
-                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-duty_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>" id="tab-duty_filter<?php echo $language['language_id']; ?>">
+                    <div class="form-group form-inline collapse <?php if (in_array("fs_tab-duty_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
+                            id="tab-duty_filter<?php echo $language['language_id']; ?>">
                             <label for="tab-duty_search"> <?php echo $text_filter[$language['language_id']]; ?> </label>
                             <input type="text" name="tab-duty_search<?php echo $language['language_id']; ?>" placeholder="Filter..." class="form-control" id="tab-duty_search">
                             <button id="tab-duty_btnResetSearch<?php echo $language['language_id']; ?>" type="button" class="button">&times;</button>
                             <button id="tab-duty_btnSearch<?php echo $language['language_id']; ?>" type="button" class="button">&#9762;</button>
                             <button class="button" onclick="$(this).next().slideToggle(); return false;"><?php echo $button_filter_action[$language['language_id']]; ?></button>
                             <ul class="drop-menu" style="max-width: 250px; position: absolute; margin-left: 260px;">
-                                <li><a id="f_tab-duty_empty" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-duty');"><?php echo $f_empty[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-duty_digital" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-duty');"><?php echo $f_digital[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-duty_html" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-duty');"><?php echo $f_html[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-duty<?php echo $language['language_id'];?>_empty" href="#" ><?php echo $f_empty[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-duty<?php echo $language['language_id'];?>_digital" href="#" ><?php echo $f_digital[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-duty<?php echo $language['language_id'];?>_html" href="#" ><?php echo $f_html[$language['language_id']]; ?></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a id="f_tab-duty_default" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-duty');"><?php echo $f_default[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-duty<?php echo $language['language_id'];?>_default" href="#" ><?php echo $f_default[$language['language_id']]; ?></a></li>
                             </ul>
                             <span id="tab-duty_matches<?php echo $language['language_id']; ?>" class="badge" style="margin-left: 5px;"></span>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-duty_autoComplete<?php echo $language['language_id']; ?>">
-                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-duty_autoComplete<?php echo $language['language_id']; ?>" id="tab-duty_autoComplete<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-duty_autoComplete<?php echo $language['language_id']; ?>">
+                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-duty_autoComplete<?php echo $language['language_id']; ?>" id="fs_tab-duty_autoComplete<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-duty_autoComplete" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_autoComplete[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-duty_attributesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-duty_attributesOnly<?php echo $language['language_id']; ?>" id="tab-duty_attributesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-duty_attributesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-duty_attributesOnly<?php echo $language['language_id']; ?>" id="fs_tab-duty_attributesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-duty_attributesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Attributes_only[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-duty_leavesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-duty_leavesOnly<?php echo $language['language_id']; ?>" id="tab-duty_leavesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-duty_leavesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-duty_leavesOnly<?php echo $language['language_id']; ?>" id="fs_tab-duty_leavesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-duty_leavesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Leaves_only[$language['language_id']]; ?>
                             </label>
                             <div class="ajax-loader"><img id="loadImg<?php echo $language['language_id']; ?>" src="view/javascript/fancytree/skin-win7/loading.gif" style="z-index:1000; display:none;" /></div>
-                            <span id="tab-duty_searchmode<?php echo $language['language_id']; ?>">
-                                <label class="checkbox-inline" for="tab-duty_hideMode<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_hideMode<?php echo $language['language_id']; ?>" id="tab-duty_hideMode<?php echo $language['language_id']; ?>"
+                            <div id="tab-duty_searchmode<?php echo $language['language_id']; ?>">
+                                <label class="checkbox-inline" for="fs_tab-duty_hideMode<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_hideMode<?php echo $language['language_id']; ?>" id="fs_tab-duty_hideMode<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_hideMode" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Hide_unmatched_nodes[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_autoExpand<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_autoExpand<?php echo $language['language_id']; ?>" id="tab-duty_autoExpand<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_autoExpand<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_autoExpand<?php echo $language['language_id']; ?>" id="fs_tab-duty_autoExpand<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_autoExpand" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Auto_expand[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_counter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_counter<?php echo $language['language_id']; ?>" id="tab-duty_counter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_counter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_counter<?php echo $language['language_id']; ?>" id="fs_tab-duty_counter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_counter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Counter_badges[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>" id="tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>" id="fs_tab-duty_hideExpandedCounter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_hideExpandedCounter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_hideExpandedCounter[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_highlight<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_highlight<?php echo $language['language_id']; ?>" id="tab-duty_highlight<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_highlight<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_highlight<?php echo $language['language_id']; ?>" id="fs_tab-duty_highlight<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_highlight" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Highlight[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_fuzzy<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_fuzzy<?php echo $language['language_id']; ?>" id="tab-duty_fuzzy<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_fuzzy<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-duty_fuzzy<?php echo $language['language_id']; ?>" id="fs_tab-duty_fuzzy<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_fuzzy" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Fuzzy[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-duty_regex<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-duty_regex<?php echo $language['language_id']; ?>" id="tab-duty_regex<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-duty_regex<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" id="fs_tab-duty_regex<?php echo $language['language_id']; ?>" name="fs_tab-duty_regex<?php echo $language['language_id']; ?>" id="tab-duty_regex<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-duty_regex" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Regular_expression[$language['language_id']]; ?>
                                 </label>
-                            </span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <ul id="duty_attribute_tree<?php echo $language['language_id']; ?>" name="duty_attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
@@ -509,7 +510,7 @@
                     </div>
                     <?php foreach ($languages as $language) { ?>
                     <div id="tab-category_language<?php echo $language['language_id'];?>">
-                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-duty_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
+                    <div class="form-group form-inline collapse <?php if (in_array("fs_tab-category_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
                             id="tab-category_filter<?php echo $language['language_id']; ?>">
                             <label for="tab-category_search"> <?php echo $text_filter[$language['language_id']]; ?> </label>
                             <input type="text" name="tab-category_search<?php echo $language['language_id']; ?>" placeholder="Filter..." class="form-control" id="tab-category_search">
@@ -517,56 +518,56 @@
                             <button id="tab-category_btnSearch<?php echo $language['language_id']; ?>" type="button" class="button">&#9762;</button>
                             <button class="button" onclick="$(this).next().slideToggle(); return false;"><?php echo $button_filter_action[$language['language_id']]; ?></button>
                             <ul class="drop-menu" style="max-width: 250px; position: absolute; margin-left: 260px;">
-                                <li><a id="f_tab-category_empty" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-category');"><?php echo $f_empty[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-category_digital" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-category');"><?php echo $f_digital[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-category_html" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-category');"><?php echo $f_html[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-category<?php echo $language['language_id'];?>_empty" href="#" ><?php echo $f_empty[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-category<?php echo $language['language_id'];?>_digital" href="#" ><?php echo $f_digital[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-category<?php echo $language['language_id'];?>_html" href="#" ><?php echo $f_html[$language['language_id']]; ?></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a id="f_tab-category_default" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-category');"><?php echo $f_default[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-category<?php echo $language['language_id'];?>_default" href="#" ><?php echo $f_default[$language['language_id']]; ?></a></li>
                             </ul>
                             <span id="tab-category_matches<?php echo $language['language_id']; ?>" class="badge" style="margin-left: 5px;"></span>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-category_autoComplete<?php echo $language['language_id']; ?>">
-                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-category_autoComplete<?php echo $language['language_id']; ?>" id="tab-category_autoComplete<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-category_autoComplete<?php echo $language['language_id']; ?>">
+                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-category_autoComplete<?php echo $language['language_id']; ?>" id="fs_tab-category_autoComplete<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-category_autoComplete" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_autoComplete[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-category_attributesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-category_attributesOnly<?php echo $language['language_id']; ?>" id="tab-category_attributesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-category_attributesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-category_attributesOnly<?php echo $language['language_id']; ?>" id="fs_tab-category_attributesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-category_attributesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Attributes_only[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-category_leavesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-category_leavesOnly<?php echo $language['language_id']; ?>" id="tab-category_leavesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-category_leavesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-category_leavesOnly<?php echo $language['language_id']; ?>" id="fs_tab-category_leavesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-category_leavesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Leaves_only[$language['language_id']]; ?>
                             </label>
                             <div class="ajax-loader"><img id="loadImg<?php echo $language['language_id']; ?>" src="view/javascript/fancytree/skin-win7/loading.gif" style="z-index:1000; display:none;" /></div>
-                            <span id="tab-category_searchmode<?php echo $language['language_id']; ?>">
-                                <label class="checkbox-inline" for="tab-category_hideMode<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_hideMode<?php echo $language['language_id']; ?>" id="tab-category_hideMode<?php echo $language['language_id']; ?>"
+                            <div id="tab-category_searchmode<?php echo $language['language_id']; ?>">
+                                <label class="checkbox-inline" for="fs_tab-category_hideMode<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_hideMode<?php echo $language['language_id']; ?>" id="fs_tab-category_hideMode<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_hideMode" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Hide_unmatched_nodes[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_autoExpand<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_autoExpand<?php echo $language['language_id']; ?>" id="tab-category_autoExpand<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_autoExpand<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_autoExpand<?php echo $language['language_id']; ?>" id="fs_tab-category_autoExpand<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_autoExpand" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Auto_expand[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_counter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_counter<?php echo $language['language_id']; ?>" id="tab-category_counter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_counter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_counter<?php echo $language['language_id']; ?>" id="fs_tab-category_counter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_counter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Counter_badges[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>" id="tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>" id="fs_tab-category_hideExpandedCounter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_hideExpandedCounter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_hideExpandedCounter[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_highlight<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_highlight<?php echo $language['language_id']; ?>" id="tab-category_highlight<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_highlight<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_highlight<?php echo $language['language_id']; ?>" id="fs_tab-category_highlight<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_highlight" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Highlight[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_fuzzy<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_fuzzy<?php echo $language['language_id']; ?>" id="tab-category_fuzzy<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_fuzzy<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-category_fuzzy<?php echo $language['language_id']; ?>" id="fs_tab-category_fuzzy<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_fuzzy" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Fuzzy[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-category_regex<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-category_regex<?php echo $language['language_id']; ?>" id="tab-category_regex<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-category_regex<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" id="fs_tab-category_regex<?php echo $language['language_id']; ?>" name="fs_tab-category_regex<?php echo $language['language_id']; ?>" id="tab-category_regex<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-category_regex" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Regular_expression[$language['language_id']]; ?>
                                 </label>
-                            </span>
+                            </div>
                         </div>
                         <table class="form table">
                             <thead>
@@ -642,7 +643,7 @@
                     </div>
                     <?php foreach ($languages as $language) { ?>
                     <div id="tab-products_language<?php echo $language['language_id'];?>">
-                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-duty_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
+                        <div class="form-group form-inline collapse <?php if (in_array("fs_tab-products_hideFilter" . $language['language_id'], $filter_settings)) { echo 'in'; } ?>"
                             id="tab-products_filter<?php echo $language['language_id']; ?>">
                             <label for="tab-products_search"> <?php echo $text_filter[$language['language_id']]; ?> </label>
                             <input type="text" name="tab-products_search<?php echo $language['language_id']; ?>" placeholder="Filter..." class="form-control" id="tab-products_search">
@@ -650,56 +651,56 @@
                             <button id="tab-products_btnSearch<?php echo $language['language_id']; ?>" type="button" class="button">&#9762;</button>
                             <button class="button" onclick="$(this).next().slideToggle(); return false;"><?php echo $button_filter_action[$language['language_id']]; ?></button>
                             <ul class="drop-menu" style="max-width: 250px; position: absolute; margin-left: 260px;">
-                                <li><a id="f_tab-products_empty" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-products');"><?php echo $f_empty[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-products_digital" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-products');"><?php echo $f_digital[$language['language_id']]; ?></a></li>
-                                <li><a id="f_tab-products_html" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-products');"><?php echo $f_html[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-products<?php echo $language['language_id'];?>_empty" href="#" ><?php echo $f_empty[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-products<?php echo $language['language_id'];?>_digital" href="#" ><?php echo $f_digital[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-products<?php echo $language['language_id'];?>_html" href="#" ><?php echo $f_html[$language['language_id']]; ?></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a id="f_tab-products_default" href="#" onclick="return FilterAction(this,<?php echo $language['language_id']; ?>,'tab-products');"><?php echo $f_default[$language['language_id']]; ?></a></li>
+                                <li><a id="f_tab-products<?php echo $language['language_id'];?>_default" href="#" ><?php echo $f_default[$language['language_id']]; ?></a></li>
                             </ul>
                             <span id="tab-products_matches<?php echo $language['language_id']; ?>" class="badge" style="margin-left: 5px;"></span>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-products_autoComplete<?php echo $language['language_id']; ?>">
-                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-products_autoComplete<?php echo $language['language_id']; ?>" id="tab-products_autoComplete<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-products_autoComplete<?php echo $language['language_id']; ?>">
+                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="fs_tab-products_autoComplete<?php echo $language['language_id']; ?>" id="fs_tab-products_autoComplete<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-products_autoComplete" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_autoComplete[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-products_attributesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-products_attributesOnly<?php echo $language['language_id']; ?>" id="tab-products_attributesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-products_attributesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-products_attributesOnly<?php echo $language['language_id']; ?>" id="fs_tab-products_attributesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-products_attributesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Attributes_only[$language['language_id']]; ?>
                             </label>
-                            <label class="checkbox-inline" style="padding-top:0px;" for="tab-products_leavesOnly<?php echo $language['language_id']; ?>">
-                                <input type="checkbox" name="fs_tab-products_leavesOnly<?php echo $language['language_id']; ?>" id="tab-products_leavesOnly<?php echo $language['language_id']; ?>"
+                            <label class="checkbox-inline" style="padding-top:0px;" for="fs_tab-products_leavesOnly<?php echo $language['language_id']; ?>">
+                                <input type="checkbox" name="fs_tab-products_leavesOnly<?php echo $language['language_id']; ?>" id="fs_tab-products_leavesOnly<?php echo $language['language_id']; ?>"
                                     <?php if (in_array("fs_tab-products_leavesOnly" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Leaves_only[$language['language_id']]; ?>
                             </label>
                             <div class="ajax-loader"><img id="loadImg<?php echo $language['language_id']; ?>" src="view/javascript/fancytree/skin-win7/loading.gif" style="z-index:1000; display:none;" /></div>
-                            <span id="tab-products_searchmode<?php echo $language['language_id']; ?>">
-                                <label class="checkbox-inline" for="tab-products_hideMode<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_hideMode<?php echo $language['language_id']; ?>" id="tab-products_hideMode<?php echo $language['language_id']; ?>"
+                            <div id="tab-products_searchmode<?php echo $language['language_id']; ?>">
+                                <label class="checkbox-inline" for="fs_tab-products_hideMode<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_hideMode<?php echo $language['language_id']; ?>" id="fs_tab-products_hideMode<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_hideMode" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Hide_unmatched_nodes[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_autoExpand<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_autoExpand<?php echo $language['language_id']; ?>" id="tab-products_autoExpand<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_autoExpand<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_autoExpand<?php echo $language['language_id']; ?>" id="fs_tab-products_autoExpand<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_autoExpand" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Auto_expand[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_counter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_counter<?php echo $language['language_id']; ?>" id="tab-products_counter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_counter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_counter<?php echo $language['language_id']; ?>" id="fs_tab-products_counter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_counter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Counter_badges[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>" id="tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>" id="fs_tab-products_hideExpandedCounter<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_hideExpandedCounter" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_hideExpandedCounter[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_highlight<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_highlight<?php echo $language['language_id']; ?>" id="tab-products_highlight<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_highlight<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_highlight<?php echo $language['language_id']; ?>" id="fs_tab-products_highlight<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_highlight" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Highlight[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_fuzzy<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_fuzzy<?php echo $language['language_id']; ?>" id="tab-products_fuzzy<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_fuzzy<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" name="fs_tab-products_fuzzy<?php echo $language['language_id']; ?>" id="fs_tab-products_fuzzy<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_fuzzy" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Fuzzy[$language['language_id']]; ?>
                                 </label>
-                                <label class="checkbox-inline" for="tab-products_regex<?php echo $language['language_id']; ?>">
-                                    <input type="checkbox" name="fs_tab-products_regex<?php echo $language['language_id']; ?>" id="tab-products_regex<?php echo $language['language_id']; ?>"
+                                <label class="checkbox-inline" for="fs_tab-products_regex<?php echo $language['language_id']; ?>">
+                                    <input type="checkbox" id="fs_tab-products_regex<?php echo $language['language_id']; ?>" name="fs_tab-products_regex<?php echo $language['language_id']; ?>" id="tab-products_regex<?php echo $language['language_id']; ?>"
                                         <?php if (in_array("fs_tab-products_regex" . $language['language_id'], $filter_settings)) { echo 'checked'; } ?>> <?php echo $text_Regular_expression[$language['language_id']]; ?>
                                 </label>
-                            </span>
+                            </div>
                         </div>
                         <table class="form table">
                             <thead>
@@ -964,31 +965,32 @@
 </div>
 </div>
 <script type="text/javascript">
-var selNodes = null,
-    selCategories = null;
-var $attribute_synchro_trees = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
-var $attribute_group_tree = $('[name ^= "attribute_group_tree"]');
-var $category_tree = $('[name ^= "category_tree"]');
-var $category_attribute_tree = $('[name ^= "category_attribute_tree"]');
-var $duty_attribute_tree = $('[name ^= "duty_attribute_tree"]');
-var $attribute_tree = $('[name ^= "attribute_tree"]');
-var $attribute_product_tree = $('[name ^= "attribute_product_tree"]');
-var $product_tree = $('[name ^= "product_tree"]');
-var $group_check_tree = $('[name ^= "group_check_tree"]');
-var $category_synchro_trees = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
-var $category_check_tree = $('[name ^= "category_check_tree"]');
-var token = '<?php echo $token; ?>';
-var user_token = '<?php echo $user_token; ?>';
-var extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
-var edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
-var contextmenu = [];
-var textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
-var textNewGroup = <?php echo json_encode($text_New_group) ?>;
-var textConfirm = <?php echo json_encode($text_confirm) ?>;
-var currentCategory = 0;
+let selNodes = null;
+let selCategories = null;
+const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
+const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
+const CATEGORY_TREE = $('[name ^= "category_tree"]');
+const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
+const DUTY_ATTRIBUTE_TREE = $('[name ^= "duty_attribute_tree"]');
+const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
+const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
+const PRODUCT_TREE = $('[name ^= "product_tree"]');
+const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
+const token = '<?php echo $token; ?>';
+const user_token = '<?php echo $user_token; ?>';
+const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
+const edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
+let contextmenu = [];
+const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
+const textNewGroup = <?php echo json_encode($text_New_group) ?>;
+const textConfirm = <?php echo json_encode($text_confirm) ?>;
+let currentCategory = 0;
+const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
 
-$attribute_group_tree.each(function(indx, element) {
-    var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
+    let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
     contextmenu[lng_id] = [{
             title: <?php echo json_encode($text_Edit) ?>[lng_id] + "<kbd>[Shift+Click]</kbd>",
             cmd: "rename",
@@ -1048,36 +1050,10 @@ $attribute_group_tree.each(function(indx, element) {
 $(document).ready(function() {
     initTrees();
 
-    $("[data-toggle='tooltip']").tooltip();
-
-    $('[id *= "options_"]').dialog({
-        autoOpen: false,
-        resizable: false,
-        modal: true,
-        buttons: [{
-            icons: {
-                primary: "ui-icon-check"
-            },
-            'class': "hawt-button",
-            title: "Apply",
-            click: function() {
-                $(this).dialog("close");
-            }
-        }]
-    });
-
-    if ($('input[name = "attributico_smart_scroll"]:checkbox').is(":checked")) { // on/off smartscroll
-        $('[id *= "tree"]:not(.settings) > ul.fancytree-container').addClass("smart-scroll"); // add class when all trees will be loaded
-    }
-
     $('a[data-toggle="pill"]').on('click', function(e) {
         $("#column-2 .alert-success").hide();
         $("#column-2 .alert-info").show();
-    });
-
-    // $("button.menu").click(function(){
-    //     $(this).next().slideToggle();
-    // });
+    });    
 
 });
 </script>
