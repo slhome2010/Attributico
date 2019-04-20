@@ -1066,9 +1066,10 @@ $('#tab-products_language a').tabs();
 $('.vtabs a').tabs();
 </script>
 <script type="text/javascript">
-$('#tab-attribute_language a:first').tabs('show');
-$('#tab-category_language a:first').tabs('show');
-$('#tab-duty_language a:first').tabs('show');
-$('#tab-products_language a:first').tabs('show');
+$('#tabs a:eq(1)').click();
+$('#tab-attribute_language a:first').click();
+$('#tab-category_language a:first').click();
+$('#tab-duty_language a:first').click();
+$('#tab-products_language a:first').click();
 </script>
 <?php echo $footer; ?>

@@ -904,23 +904,23 @@ const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
 ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
     contextmenu[lng_id] = [{
-            title: <?php echo json_encode($text_Edit) ?> [lng_id] + "<kbd>[Shift+Click]</kbd>",
+            title: <?php echo json_encode($text_Edit) ?>[lng_id] + "<kbd>[Shift+Click]</kbd>",
             cmd: "rename",
             uiIcon: "ui-icon-pencil"
         },
         {
-            title: <?php echo json_encode($text_Delete) ?> [lng_id] + "<kbd>[Del]</kbd>",
+            title: <?php echo json_encode($text_Delete) ?>[lng_id] + "<kbd>[Del]</kbd>",
             cmd: "remove",
             uiIcon: "ui-icon-trash"
         },
         {
-            title: <?php echo json_encode($text_Copy) ?> [lng_id] + "<kbd>Ctrl+C</kbd>",
+            title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>Ctrl+C</kbd>",
             cmd: "copy",
             uiIcon: "ui-icon-copy",
             disabled: true
         },
         {
-            title: <?php echo json_encode($text_Paste) ?> [lng_id] + "<kbd>Ctrl+V</kbd>",
+            title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>Ctrl+V</kbd>",
             cmd: "paste",
             uiIcon: "ui-icon-clipboard",
             disabled: true
@@ -929,17 +929,17 @@ ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
             title: "----"
         },
         {
-            title: <?php echo json_encode($text_Expande) ?> [lng_id] + "<kbd>Ctrl+B</kbd>",
+            title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
             cmd: "expande",
             uiIcon: "ui-icon-folder-open"
         },
         {
-            title: <?php echo json_encode($text_Collapse) ?> [lng_id] + "<kbd>Ctrl+B</kbd>",
+            title: <?php echo json_encode($text_Collapse) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
             cmd: "collapse",
             uiIcon: "ui-icon-folder-collapsed"
         },
         {
-            title: <?php echo json_encode($text_Options) ?> [lng_id],
+            title: <?php echo json_encode($text_Options) ?>[lng_id],
             cmd: "options",
             uiIcon: "ui-icon-gear"
         },
@@ -947,49 +947,61 @@ ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
             title: "----"
         },
         {
-            title: <?php echo json_encode($text_New_group) ?> [lng_id] + "<kbd>[Ctrl+M]</kbd>",
+            title: <?php echo json_encode($text_New_group) ?>[lng_id] + "<kbd>[Ctrl+M]</kbd>",
             cmd: "addSibling",
             uiIcon: "ui-icon-plus"
         },
         {
-            title: <?php echo json_encode($text_New_attribute) ?> [lng_id] + "<kbd>[Ctrl+Q]</kbd>",
+            title: <?php echo json_encode($text_New_attribute) ?>[lng_id] + "<kbd>[Ctrl+Q]</kbd>",
             cmd: "addChild",
             uiIcon: "ui-icon-arrowreturn-1-e"
         }
     ];
 
     filterItems[lng_id] = {
-        title : <?php echo json_encode($text_filter) ?> [lng_id],
-        button: <?php echo json_encode($button_filter_action) ?> [lng_id],
+        title: <?php echo json_encode($text_filter) ?>[lng_id],
+        button: <?php echo json_encode($button_filter_action) ?>[lng_id],
         checkbox: {
-            autoComplete: <?php echo json_encode($text_autoComplete) ?> [lng_id],
-            attributesOnly: <?php echo json_encode($text_Attributes_only) ?> [lng_id],
-            leavesOnly: <?php echo json_encode($text_Leaves_only) ?> [lng_id],
+            autoComplete: <?php echo json_encode($text_autoComplete) ?>[lng_id],
+            attributesOnly: <?php echo json_encode($text_Attributes_only) ?>[lng_id],
+            leavesOnly: <?php echo json_encode($text_Leaves_only) ?>[lng_id],
         },
         spancheckbox: {
-            hideMode: <?php echo json_encode($text_Hide_unmatched_nodes) ?> [lng_id],
-            autoExpand: <?php echo json_encode($text_Auto_expand) ?> [lng_id],
-            counter: <?php echo json_encode($text_Counter_badges) ?> [lng_id],
-            hideExpandedCounter: <?php echo json_encode($text_hideExpandedCounter) ?> [lng_id],
-            highlight: <?php echo json_encode($text_Highlight) ?> [lng_id],
-            fuzzy: <?php echo json_encode($text_Fuzzy) ?> [lng_id],
-            regex: <?php echo json_encode($text_Regular_expression) ?> [lng_id],
+            hideMode: <?php echo json_encode($text_Hide_unmatched_nodes) ?>[lng_id],
+            autoExpand: <?php echo json_encode($text_Auto_expand) ?>[lng_id],
+            counter: <?php echo json_encode($text_Counter_badges) ?>[lng_id],
+            hideExpandedCounter: <?php echo json_encode($text_hideExpandedCounter) ?>[lng_id],
+            highlight: <?php echo json_encode($text_Highlight) ?>[lng_id],
+            fuzzy: <?php echo json_encode($text_Fuzzy) ?>[lng_id],
+            regex: <?php echo json_encode($text_Regular_expression) ?>[lng_id],
         },
         dropdown: {
-            empty: <?php echo json_encode($f_empty) ?> [lng_id],
-            digital: <?php echo json_encode($f_digital) ?> [lng_id],
-            html: <?php echo json_encode($f_html) ?> [lng_id],
-            default: <?php echo json_encode($f_default) ?> [lng_id],
+            empty: <?php echo json_encode($f_empty) ?>[lng_id],
+            digital: <?php echo json_encode($f_digital) ?>[lng_id],
+            html: <?php echo json_encode($f_html) ?>[lng_id],
+            default: <?php echo json_encode($f_default) ?>[lng_id],
         }
     };
 });
 
 $(document).ready(function() {
+    var t0 = performance.now();
     $("[data-toggle='tooltip']").tooltip();
 
     $('.fancyfilter').each(bildFilter);
 
     initTrees();
+
+    var ajaxFinished = 0;
+    var totalAjax = 22; //Total of ajax functions you have
+
+    $(document).ajaxComplete(function() { //Listener for a complete Ajax function
+        ajaxFinished += 1;
+        if (ajaxFinished == totalAjax) { //here you know that all tasks are finish
+            var t1 = performance.now();
+            console.log("Call to initTrees took " + (t1 - t0) + " milliseconds.");
+        }
+    });
 
 });
 </script>

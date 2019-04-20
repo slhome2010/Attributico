@@ -1349,7 +1349,7 @@ function initTrees() {
                         node.setActive();
                     },
                     select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                        let command = new ContextmenuCommandCategory(ui);
                         command.execute();
                     }
                 });
