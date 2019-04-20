@@ -366,7 +366,9 @@ class Filter {
         let regex = $("div#" + tab + "_searchmode" + lng_id + " input#fs_" + tab + "_regex" + lng_id + ":checkbox");
         let input = $("input[name=" + tab + "_search" + lng_id + "]");
 
-        regex.prop({"checked": true});
+        regex.prop({
+            "checked": true
+        });
 
         switch (e.target.id) {
             case 'f_' + tab + lng_id + '_empty':
@@ -382,7 +384,9 @@ class Filter {
                 btnSearch.trigger("click");
                 break;
             case 'f_' + tab + lng_id + '_default':
-                regex.prop({"checked": false});
+                regex.prop({
+                    "checked": false
+                });
                 btnResetSearch.trigger("click");
                 break;
         }
@@ -404,7 +408,7 @@ function bildFilter() {
     let hideFilter = "fs_" + tab + "_hideFilter" + lng_id;
     $('<label>', {
         class: 'checkbox-inline pull-right clearfix',
-        for : hideFilter,
+        for: hideFilter,
         append: $('<input>', {
             type: "checkbox",
             class: "hide",
@@ -430,12 +434,43 @@ function bildFilter() {
     let search = tab + "_search" + lng_id;
     let btnSearch = tab + "_btnSearch" + lng_id;
     let btnResetSearch = tab + "_btnResetSearch" + lng_id;
-    $('<label>', {for : search, text: filterItems[lng_id].title, style: "margin-left:1px;"}).appendTo(form);
-    $('<input>', {type: "text", name: search, placeholder: "Filter...", class: "form-control", id: search, style: "margin-left:1px;"}).appendTo(form);
-    $('<button>', {id: btnResetSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-times", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
-    $('<button>', {id: btnSearch, type: "button", class: "btn btn-default", append: $('<i>', {class: "fa fa-search", 'aria-hidden': "true"}), style: "margin-left:1px;"}).appendTo(form);
+    $('<label>', {
+        for: search,
+        text: filterItems[lng_id].title,
+        style: "margin-left:1px;"
+    }).appendTo(form);
+    $('<input>', {
+        type: "text",
+        name: search,
+        placeholder: "Filter...",
+        class: "form-control",
+        id: search,
+        style: "margin-left:1px;"
+    }).appendTo(form);
+    $('<button>', {
+        id: btnResetSearch,
+        type: "button",
+        class: "btn btn-default",
+        append: $('<i>', {
+            class: "fa fa-times",
+            'aria-hidden': "true"
+        }),
+        style: "margin-left:1px;"
+    }).appendTo(form);
+    $('<button>', {
+        id: btnSearch,
+        type: "button",
+        class: "btn btn-default",
+        append: $('<i>', {
+            class: "fa fa-search",
+            'aria-hidden': "true"
+        }),
+        style: "margin-left:1px;"
+    }).appendTo(form);
     // create dropdown menu
-    let dropdownmenu = $('<div>', {class: "btn-group dropdown-events"});
+    let dropdownmenu = $('<div>', {
+        class: "btn-group dropdown-events"
+    });
     dropdownmenu.appendTo(form);
     $('<button>', {
         type: "button",
@@ -444,10 +479,14 @@ function bildFilter() {
         'aria-haspopup': "true",
         'aria-expanded': "false",
         text: filterItems[lng_id].button,
-        append: $('<span>', {class: "caret"}),
+        append: $('<span>', {
+            class: "caret"
+        }),
         style: "margin-left:1px;"
     }).appendTo(dropdownmenu);
-    let ul = $('<ul>', {class: "dropdown-menu"});
+    let ul = $('<ul>', {
+        class: "dropdown-menu"
+    });
     ul.appendTo(dropdownmenu);
     for (var key in dropdown) {
         let li = $('<li>').appendTo(ul);
@@ -460,7 +499,10 @@ function bildFilter() {
         }).appendTo(li);
     }
     // create matches counter
-    $('<span>', {id: tab + "_matches" + lng_id, class: "badge"}).appendTo(form);
+    $('<span>', {
+        id: tab + "_matches" + lng_id,
+        class: "badge"
+    }).appendTo(form);
     // create fistline checkboxes
     for (var key in checkbox) {
         let itemId = "fs_" + tab + "_" + key + lng_id;
@@ -473,7 +515,7 @@ function bildFilter() {
         }).appendTo(form);
 
         $('<label>', {
-            for : itemId,
+            for: itemId,
             //class: "checkbox-inline",
             style: "padding-top:0px; margin-left:1px; font-weight:normal;",
             text: checkbox[key]
@@ -489,7 +531,10 @@ function bildFilter() {
         })
     }).appendTo(form);
     // create secondline checkboxes
-    let span = $('<div>', {id: tab + "_searchmode" + lng_id, style: "margin-top:1em;"});
+    let span = $('<div>', {
+        id: tab + "_searchmode" + lng_id,
+        style: "margin-top:1em;"
+    });
     span.appendTo(form);
 
     for (var key in spancheckbox) {
@@ -503,7 +548,7 @@ function bildFilter() {
         }).appendTo(span);
 
         $('<label>', {
-            for : spanId,
+            for: spanId,
             //class: "checkbox-inline",
             style: "padding-top:0px; margin-left:1px; font-weight:normal;",
             text: spancheckbox[key]
@@ -621,7 +666,7 @@ function selectControl(data) {
 
 function addAttribute(activeNode, activeKey, lng_id) {
     var node = activeNode,
-            parentLevel = (activeKey === 'attribute') ? 2 : 1;
+        parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
         node = node.getParent();
     }
@@ -750,7 +795,7 @@ function addAttributeToCategory(targetnode, data, remove) {
 }
 
 var clipboardNodes = [],
-        clipboardTitles = [];
+    clipboardTitles = [];
 var pasteMode = null;
 
 function copyPaste(action, targetNode) {
@@ -1014,7 +1059,7 @@ function initTrees() {
                         deSelectNodes(subjectNode);
                     });
                 },
-                draggable: {// modify default jQuery draggable options
+                draggable: { // modify default jQuery draggable options
                     scroll: true // disable auto-scrolling
                 }
             },
@@ -1418,7 +1463,7 @@ function initTrees() {
                     }
                     return true;
                 },
-                draggable: {// modify default jQuery draggable options
+                draggable: { // modify default jQuery draggable options
                     revert: true,
                     cursorAt: {
                         top: -5,
@@ -1860,64 +1905,7 @@ function initTrees() {
             }
         });
     });
-    /**
-     * Build deduplicate tree and detach tree for tools
-     *
-     **/
-    GROUP_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        $(element).fancytree({
-            checkbox: true,
-            selectMode: 3,
-            autoScroll: true,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder,
-                    'onlyGroup': true,
-                    'isPending': false
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
 
-            }
-        });
-    });
-
-    /**
-     * Build category attribute tree for tools
-     *
-     **/
-    CATEGORY_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-        $(element).fancytree({
-            autoCollapse: true,
-            autoScroll: true,
-            minExpandLevel: 2,
-            checkbox: true,
-            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
-
-            }
-        });
-    });
 } // end of Inittree()
 
 // Autocomplete for fancytree*/
@@ -1984,7 +1972,7 @@ function initTrees() {
             this.show = function () {
                 var pos = $(this).position();
 
-                $(this).siblings('div').children($menu).css({//============
+                $(this).siblings('div').children($menu).css({ //============
                     top: pos.top + $(this).outerHeight(),
                     left: pos.left
                 });
@@ -2078,9 +2066,9 @@ function dutyUpgrade() {
     });
 }
 /**
-* Form buttons onclick events
-*
-**/
+ * Form buttons onclick events
+ *
+ **/
 function check_for_updates() {
     $.ajax({
         data: {
@@ -2218,12 +2206,66 @@ $(function () { // document ready actions
         $("#column-2 .task-complete").hide();
         $("#column-2 .alert-info").show();
     });
-    // $('a[data-toggle="pill"]').tabs( "option", "event", "show" );
-    $('#vtabs2').bind('tabsselect', function (event, ui) {
-        alert('select');
-        $("#column-2 .alert-success").hide();
-        $("#column-2 .task-complete").hide();
-        $("#column-2 .alert-info").show();
+
+    $('a[href="#tab-tools"]').on('click', function (event, ui) {
+        /* 
+         * Build deduplicate tree and detach tree for tools
+         *
+         */
+        GROUP_CHECK_TREE.each(function (indx, element) {
+            var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+            $(element).fancytree({
+                checkbox: true,
+                selectMode: 3,
+                autoScroll: true,
+                source: {
+                    data: {
+                        'user_token': user_token,
+                        'token': token,
+                        'sortOrder': sortOrder,
+                        'onlyGroup': true,
+                        'isPending': false
+                    },
+                    url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+                },
+                init: function (event, data) {
+                    //console.log(data.tree.$div.context.id, ' has loaded');
+                    if (smartScroll.is(":checked"))
+                        data.tree.$container.addClass("smart-scroll");
+
+                }
+            });
+        });
+
+        /**
+         * Build category attribute tree for tools
+         *
+         **/
+        CATEGORY_CHECK_TREE.each(function (indx, element) {
+            var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+            // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
+            $(element).fancytree({
+                autoCollapse: true,
+                autoScroll: true,
+                minExpandLevel: 2,
+                checkbox: true,
+                selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
+                source: {
+                    data: {
+                        'user_token': user_token,
+                        'token': token,
+                        'sortOrder': sortOrder
+                    },
+                    url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+                },
+                init: function (event, data) {
+                    //console.log(data.tree.$div.context.id, ' has loaded');
+                    if (smartScroll.is(":checked"))
+                        data.tree.$container.addClass("smart-scroll");
+
+                }
+            });
+        });
     });
 
     /**
@@ -2273,7 +2315,7 @@ $(function () { // document ready actions
                         tree.options.source.data.isPending = false;
                         if (indx + 1 == size) {
                             reloadAttribute();
-                           // reactivateCategory();
+                            // reactivateCategory();
                         }
                     });
                 });
@@ -2297,7 +2339,7 @@ $(function () { // document ready actions
                         tree.options.source.data.isPending = false;
                         if (indx + 1 == size) {
                             reloadAttribute();
-                           // reactivateCategory();
+                            // reactivateCategory();
                         }
                     });
                 });
@@ -2315,29 +2357,29 @@ $(function () { // document ready actions
         resizable: false,
         modal: true,
         buttons: [{
-                icons: {
-                    primary: "ui-icon-check"
-                },
-                'class': "hawt-button",
-                title: "Apply",
-                click: function () {
-                    $(this).dialog("close");
-                }
-            }]
+            icons: {
+                primary: "ui-icon-check"
+            },
+            'class': "hawt-button",
+            title: "Apply",
+            click: function () {
+                $(this).dialog("close");
+            }
+        }]
     });
     // on/off lazyload
     $('input[id ^= "lazyLoad"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
-                tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
-                lazyLoad = $(this).is(":checked");
+            tree = $("#" + id.replace("lazyLoad_", "")).fancytree("getTree"),
+            lazyLoad = $(this).is(":checked");
         tree.options.source.data.lazyLoad = lazyLoad;
         tree.reload();
     });
     // on/off sortOrder
     $('input[id ^= "sortOrder"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
-                tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
-                sortOrder = $(this).is(":checked");
+            tree = $("#" + id.replace("sortOrder_", "")).fancytree("getTree"),
+            sortOrder = $(this).is(":checked");
         tree.options.source.data.sortOrder = sortOrder;
         tree.options.source.data.category_id = currentCategory;
         tree.reload();
@@ -2345,13 +2387,13 @@ $(function () { // document ready actions
     // autocollapse control
     $('input[id ^= "autoCollapse"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
-                flag = $(this).is(":checked");
+            flag = $(this).is(":checked");
         $("#" + id.replace("autoCollapse_", "")).fancytree("getTree").options.autoCollapse = flag;
     });
     // hierarchical select category
     $('input[id ^= "multiSelect"]:checkbox').change(function (e) {
         var id = $(this).attr("id"),
-                tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
+            tree = $("#" + id.replace("multiSelect_", "")).fancytree("getTree");
         tree.options.selectMode = $(this).is(":checked") ? 3 : 2;
     });
     // on/off Divergence

@@ -993,7 +993,7 @@ $(document).ready(function() {
     initTrees();
 
     var ajaxFinished = 0;
-    var totalAjax = 22; //Total of ajax functions you have
+    var totalAjax = 19; //Total of ajax functions you have
 
     $(document).ajaxComplete(function() { //Listener for a complete Ajax function
         ajaxFinished += 1;
