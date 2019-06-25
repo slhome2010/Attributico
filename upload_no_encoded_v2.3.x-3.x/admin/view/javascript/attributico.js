@@ -1,5 +1,5 @@
 /** http://servenus.com © 2015-2019 All Rights Reserved **/
-/** For Attribut&co v.3.0.5  **/
+/** For Attribut&co v.3.0.6  **/
 //var $jq = jQuery.noConflict(true);
 
 /* Add methods to _FancytreeNodeClass */
@@ -86,7 +86,7 @@ class ContextmenuCommand {
             case "addSibling":
                 this.addSibling();
                 break;
-                // case "cut":
+            // case "cut":
             case "copy":
                 copyPaste(this.ui.cmd, this.node);
                 break;
@@ -206,12 +206,12 @@ class KeydownCommand {
                     return false;
                 }
                 break;
-                //  case 88:
-                //   if( event.ctrlKey ) { // Ctrl-X
-                //      copyPaste("cut", node);
-                //      return false;
-                //    }
-                //    break;
+            //  case 88:
+            //   if( event.ctrlKey ) { // Ctrl-X
+            //      copyPaste("cut", node);
+            //      return false;
+            //    }
+            //    break;
         }
     }
 
@@ -703,6 +703,7 @@ function deleteAttribute(node) {
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
                 if (selNodes) {
+                    // TODO selNodes всегда есть, можно убрать if else. Проверить корректность удаления кэша в модели
                     $.each(selNodes, function (i, o) {
                         o.remove();
                     });
@@ -1769,7 +1770,7 @@ function initTrees() {
             select: function (event, data) {
                 selNodes = data.tree.getSelectedNodes();
             },
-            click: function (event, data) {},
+            click: function (event, data) { },
             keydown: function (e, data) {
                 let command = new KeydownCommand(e, data);
                 command.permissions = {
@@ -1864,7 +1865,7 @@ function initTrees() {
                 }
                 // index.php?route=catalog/product/update for 1.5.5
             },
-            click: function (event, data) {},
+            click: function (event, data) { },
             keydown: function (e, data) {
                 let command = new KeydownCommand(e, data);
                 command.permissions = {
@@ -1902,6 +1903,65 @@ function initTrees() {
                         command.execute();
                     }
                 });
+            }
+        });
+    });
+
+    /* 
+    * Build deduplicate tree and detach tree for tools
+    *
+    */
+    GROUP_CHECK_TREE.each(function (indx, element) {
+        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+        $(element).fancytree({
+            checkbox: true,
+            selectMode: 3,
+            autoScroll: true,
+            source: {
+                data: {
+                    'user_token': user_token,
+                    'token': token,
+                    'sortOrder': sortOrder,
+                    'onlyGroup': true,
+                    'isPending': false
+                },
+                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+            },
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
+            }
+        });
+    });
+
+    /**
+     * Build category attribute tree for tools
+     *
+     **/
+    CATEGORY_CHECK_TREE.each(function (indx, element) {
+        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
+        $(element).fancytree({
+            autoCollapse: true,
+            autoScroll: true,
+            minExpandLevel: 2,
+            checkbox: true,
+            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
+            source: {
+                data: {
+                    'user_token': user_token,
+                    'token': token,
+                    'sortOrder': sortOrder
+                },
+                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+            },
+            init: function (event, data) {
+                //console.log(data.tree.$div.context.id, ' has loaded');
+                if (smartScroll.is(":checked"))
+                    data.tree.$container.addClass("smart-scroll");
+
             }
         });
     });
@@ -2207,66 +2267,13 @@ $(function () { // document ready actions
         $("#column-2 .alert-info").show();
     });
 
-    $('a[href="#tab-tools"]').on('click', function (event, ui) {
-        /* 
-         * Build deduplicate tree and detach tree for tools
-         *
-         */
-        GROUP_CHECK_TREE.each(function (indx, element) {
-            var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-            $(element).fancytree({
-                checkbox: true,
-                selectMode: 3,
-                autoScroll: true,
-                source: {
-                    data: {
-                        'user_token': user_token,
-                        'token': token,
-                        'sortOrder': sortOrder,
-                        'onlyGroup': true,
-                        'isPending': false
-                    },
-                    url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
-                },
-                init: function (event, data) {
-                    //console.log(data.tree.$div.context.id, ' has loaded');
-                    if (smartScroll.is(":checked"))
-                        data.tree.$container.addClass("smart-scroll");
-
-                }
-            });
-        });
-
-        /**
-         * Build category attribute tree for tools
-         *
-         **/
-        CATEGORY_CHECK_TREE.each(function (indx, element) {
-            var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-            // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-            $(element).fancytree({
-                autoCollapse: true,
-                autoScroll: true,
-                minExpandLevel: 2,
-                checkbox: true,
-                selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
-                source: {
-                    data: {
-                        'user_token': user_token,
-                        'token': token,
-                        'sortOrder': sortOrder
-                    },
-                    url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
-                },
-                init: function (event, data) {
-                    //console.log(data.tree.$div.context.id, ' has loaded');
-                    if (smartScroll.is(":checked"))
-                        data.tree.$container.addClass("smart-scroll");
-
-                }
-            });
-        });
-    });
+    /* 
+    * Build trees when tab-hools has clicked
+    *
+    */
+   /*  $('a[href="#tab-tools"]').on('click', function (event, ui) {
+       
+    }); */
 
     /**
      * Common settings change event hundlers
