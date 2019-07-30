@@ -703,7 +703,7 @@ function deleteAttribute(node) {
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
                 if (selNodes) {
-                    // TODO selNodes всегда есть, можно убрать if else. Проверить корректность удаления кэша в модели
+                    // TODO selNodes всегда есть, можно убрать if else???. Проверить корректность удаления кэша в модели
                     $.each(selNodes, function (i, o) {
                         o.remove();
                     });
