@@ -105,7 +105,7 @@ class ModelCatalogAttributico extends Model
         $attribute_values_data = array();
 
         $sql = "SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id='" . (int)$attribute_id . "'";
-        $sql_categories = $categories ? " AND product_id IN (SELECT ptc.product_id FROM hm_product_to_category ptc WHERE ptc.category_id IN (" . implode(",", $categories) . "))" : "";
+        $sql_categories = $categories ? " AND product_id IN (SELECT ptc.product_id FROM " . DB_PREFIX . "product_to_category ptc WHERE ptc.category_id IN (" . implode(",", $categories) . "))" : "";
 
         $query = $this->db->query($sql . $sql_categories . " ORDER BY text");
         //	$query = $this->db->query("SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id=" . (int) $attribute_id . " ORDER BY CAST(text AS DECIMAL)");
@@ -387,11 +387,12 @@ class ModelCatalogAttributico extends Model
 
     public function deleteValues($data, $language_id)
     {
+        set_time_limit(600);
         $this->cache->delete('attributico');
 
         if (isset($data['value'])) {
             foreach ($data['value'] as $instance) {
-                $this->db->query("DELETE FROM hm_product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
+                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
                  AND attribute_id = '" . (int)$instance['attribute_id'] . "'
                  ");
                 // AND language_id = '" . (int)$language_id . "'");
@@ -400,7 +401,7 @@ class ModelCatalogAttributico extends Model
 
         if (isset($data['template'])) {
             foreach ($data['template'] as $instance) {
-                $this->db->query("DELETE FROM hm_product_attribute  WHERE text LIKE '" . $instance['value'] . "'
+                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE text LIKE '" . $instance['value'] . "'
                  AND attribute_id = '" . (int)$instance['attribute_id'] . "'
                  ");
                 // AND language_id = '" . (int)$language_id . "'");

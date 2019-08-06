@@ -1907,65 +1907,6 @@ function initTrees() {
         });
     });
 
-    /* 
-    * Build deduplicate tree and detach tree for tools
-    *
-    */
-    GROUP_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        $(element).fancytree({
-            checkbox: true,
-            selectMode: 3,
-            autoScroll: true,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder,
-                    'onlyGroup': true,
-                    'isPending': false
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
-
-            }
-        });
-    });
-
-    /**
-     * Build category attribute tree for tools
-     *
-     **/
-    CATEGORY_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-        $(element).fancytree({
-            autoCollapse: true,
-            autoScroll: true,
-            minExpandLevel: 2,
-            checkbox: true,
-            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
-
-            }
-        });
-    });
-
 } // end of Inittree()
 
 // Autocomplete for fancytree*/
@@ -2245,6 +2186,66 @@ $(function () { // document ready actions
             }
         });
     });
+    
+    /* 
+    * Build deduplicate tree and detach tree for tools
+    * This tree must have fixed position for correctly form serializing
+    */
+   GROUP_CHECK_TREE.each(function (indx, element) {
+    var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+    $(element).fancytree({
+        checkbox: true,
+        selectMode: 3,
+        autoScroll: true,
+        source: {
+            data: {
+                'user_token': user_token,
+                'token': token,
+                'sortOrder': sortOrder,
+                'onlyGroup': true,
+                'isPending': false
+            },
+            url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+        },
+        init: function (event, data) {
+            //console.log(data.tree.$div.context.id, ' has loaded');
+            if (smartScroll.is(":checked"))
+                data.tree.$container.addClass("smart-scroll");
+
+        }
+    });
+});
+
+/**
+ * Build category attribute tree for tools
+ * This tree must have fixed position for correctly form serializing
+ **/
+CATEGORY_CHECK_TREE.each(function (indx, element) {
+    var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+    // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
+    $(element).fancytree({
+        autoCollapse: true,
+        autoScroll: true,
+        minExpandLevel: 2,
+        checkbox: true,
+        selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
+        source: {
+            data: {
+                'user_token': user_token,
+                'token': token,
+                'sortOrder': sortOrder
+            },
+            url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+        },
+        init: function (event, data) {
+            //console.log(data.tree.$div.context.id, ' has loaded');
+            if (smartScroll.is(":checked"))
+                data.tree.$container.addClass("smart-scroll");
+
+        }
+    });
+});
+
 
     /* Button Save onclick event */
     $("#form-attributico").submit(function () {
