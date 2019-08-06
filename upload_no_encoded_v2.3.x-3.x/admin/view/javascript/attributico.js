@@ -116,7 +116,7 @@ class ContextmenuCommand {
 class ContextmenuCommandCategory extends ContextmenuCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node, this.node);
+        deleteAttributesFromCategory(this.node);
     }
 
     addChild() {
@@ -231,7 +231,7 @@ class KeydownCommand {
 class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node, this.node);
+        deleteAttributesFromCategory(this.node);
     }
 
     addChild() {
@@ -751,7 +751,7 @@ function copyAttributes(targetNode) {
     }
 }
 
-function deleteAttributesFromCategory(node, targetnode) {
+function deleteAttributesFromCategory(node) {
     var category_id = node.getParent().key;
 
     $.ajax({
@@ -763,7 +763,7 @@ function deleteAttributesFromCategory(node, targetnode) {
         url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
         success: function () {
-            reactivateCategory(targetnode);
+            reactivateCategory();
             reloadAttribute(node, true); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
         }
     });
@@ -790,7 +790,7 @@ function addAttributeToCategory(targetnode, data, remove) {
             reactivateCategory(targetnode);
             reloadAttribute(data.otherNode, false);
         } else {
-            deleteAttributesFromCategory(data.otherNode, targetnode);
+            deleteAttributesFromCategory(data.otherNode);
         }
     });
 }
