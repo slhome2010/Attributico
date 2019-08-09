@@ -339,6 +339,20 @@
             ]]></add>
         </operation>
         <operation>
+            <search><![CDATA[<td class="text-left"><?php echo $entry_attribute; ?></td>]]></search>
+            <add position="after"><![CDATA[<td class="text-left"><?php echo $entry_sort_order; ?></td>]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<td class="text-left" style="width: 40%;">]]></search>
+            <add position="replace"><![CDATA[<td class="text-left" style="width: 40%;"><label><?php echo $product_attribute['group_name']; ?></label>                        
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<td class="text-left"><?php foreach ($languages as $language) { ?>]]></search>
+            <add position="before"><![CDATA[<td class="text-left" style="width: 5%;"><input type="text" value="<?php echo $product_attribute['sort_order']; ?>" class="form-control" readonly="true"/></td>
+            ]]></add>
+        </operation>
+        <operation>
             <search><![CDATA[<td class="text-left"><?php echo $entry_text; ?></td>]]></search>
             <add position="replace"><![CDATA[
                 <td class="text-left">
@@ -419,8 +433,8 @@
         <operation error="skip">
             <search><![CDATA[if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {]]></search>
             <add position="before"><![CDATA[
-                if (isset($this->request->get['attribute_id'])) {
-                    $this->load->model('catalog/attributico');
+                $this->load->model('catalog/attributico');
+                if (isset($this->request->get['attribute_id'])) {                   
                     $attribute_info = $this->model_catalog_attributico->getAttributeInfo($this->request->get['attribute_id']);
                     $data['redirect_options'] = $this->language->get('entry_attribute') . " - " . $attribute_info[$this->config->get('config_language_id')]['name'] . "  /  "
 			.  $this->language->get('entry_attribute_group') . " - " . $attribute_info[$this->config->get('config_language_id')]['group_name'];
@@ -433,6 +447,29 @@
             <search><![CDATA[$data['footer'] = $this->load->controller('common/footer');]]></search>
             <add position="after"><![CDATA[
 		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);]]></search>
+            <add position="replace"><![CDATA[
+		        $attribute_info = $this->model_catalog_attributico->getAttributeInfo($product_attribute['attribute_id'])[$this->config->get('config_language_id')];
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA['product_attribute_description' => $product_attribute['product_attribute_description']]]></search>
+            <add position="after"><![CDATA[
+		        ,'sort_order' => $attribute_info['sort_order'],
+				'group_name'  => $attribute_info['group_name'],
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[// Options]]></search>
+            <add position="before"><![CDATA[
+		        $sort_order = array();
+                foreach ($data['product_attributes'] as $key => $value) {
+                    $sort_order[$key] = $value['sort_order'];
+                }
+                array_multisort($sort_order, SORT_ASC, $data['product_attributes']);
             ]]></add>
         </operation>
     </file>
