@@ -42,6 +42,18 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
     var lng_id = parseInt(selector.replace(/\D+/ig, ''));
     return lng_id;
 };
+/**
+ * Return permission for node action
+ * @returns boolean
+ *
+ **/
+$.ui.fancytree._FancytreeNodeClass.prototype.permission = function (actions) {   
+    let permission = false;
+    for (let i = 0; i < actions.length; i++) {
+        permission = permission || !this.key.indexOf(actions[i]) && !this.unselectable;
+    }
+    return permission;
+};
 
 /* Classes and constants */
 /**
@@ -112,7 +124,7 @@ class ContextmenuCommand {
     }
 }
 
-/* Override methods for CategoryattributeTree*/
+/* Override methods for CategoryattributeTree and DutyTree*/
 class ContextmenuCommandCategory extends ContextmenuCommand {
 
     remove() {
@@ -121,6 +133,12 @@ class ContextmenuCommandCategory extends ContextmenuCommand {
 
     addChild() {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+class ContextmenuCommandDuty extends ContextmenuCommand {
+
+    remove() {
+        deleteDuty(this.node);
     }
 }
 /**
@@ -227,7 +245,7 @@ class KeydownCommand {
         addAttribute(this.node, 'group', this.lng_id);
     }
 }
-/* Override methods for CategoryattributeTree */
+/* Override methods for CategoryattributeTree and DutyTree*/
 class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
@@ -236,6 +254,12 @@ class KeydownCommandCategory extends KeydownCommand {
 
     addChild() {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+class KeydownCommandDuty extends KeydownCommand {
+
+    remove() {
+        deleteDuty(this.node);
     }
 }
 
@@ -795,6 +819,21 @@ function addAttributeToCategory(targetnode, data, remove) {
     });
 }
 
+function deleteDuty(node) {
+    
+    $.ajax({
+        data: {
+            'attribute': node.key,            
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/deleteDuty' + '&user_token=' + user_token + '&token=' + token,
+        type: 'POST',
+        success: function () {           
+            reloadAttribute(node, false); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
+        }
+    });
+    
+}
+
 var clipboardNodes = [],
     clipboardTitles = [];
 var pasteMode = null;
@@ -1104,6 +1143,8 @@ function initTrees() {
                     menu: contextmenu[lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['group','attribute','template','value']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group','attribute','template','value']));
                         data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
@@ -1647,9 +1688,9 @@ function initTrees() {
                 return false;
             },
             keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+                let command = new KeydownCommandDuty(e, data);
                 command.permissions = {
-                    remove: false,
+                    remove: true,
                     addChild: false,
                     addSibling: false,
                     copy: false,
@@ -1677,13 +1718,15 @@ function initTrees() {
                     menu: contextmenu[lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['duty']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group','attribute','duty']));
+                       // data.tree.$div.contextmenu("enableEntry", "remove", true);
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();
                     },
                     select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                        let command = new ContextmenuCommandDuty(ui);
                         command.execute();
                     }
                 });
