@@ -947,7 +947,7 @@ function initTrees() {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (data.node.isRootNode() || data.node.getLevel() === 1 || data.node.getLevel() === 4) {
+                    if (!data.node.permission(['group','attribute','template','value'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
@@ -1121,6 +1121,13 @@ function initTrees() {
             },
             keydown: function (e, data) {
                 let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: data.node.permission(['group','attribute','template','value']),
+                    addChild: true,
+                    addSibling: true,
+                    copy:  data.node.permission(['attribute']),
+                    paste: true
+                };
                 command.execute();
             },
             filter: {
@@ -1407,10 +1414,10 @@ function initTrees() {
             keydown: function (e, data) {
                 let command = new KeydownCommandCategory(e, data);
                 command.permissions = {
-                    remove: true,
+                    remove: !data.node.key.indexOf('attribute'),
                     addChild: true,
                     addSibling: false,
-                    copy: true,
+                    copy: !data.node.key.indexOf('attribute'),
                     paste: true
                 };
                 command.execute();
@@ -1537,7 +1544,7 @@ function initTrees() {
                     remove: false,
                     addChild: false,
                     addSibling: false,
-                    copy: true,
+                    copy: !data.node.key.indexOf('attribute'),
                     paste: false
                 };
                 command.execute();
@@ -1635,7 +1642,7 @@ function initTrees() {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (data.node.isRootNode() || data.node.getLevel() === 1) {
+                    if (!data.node.permission(['group','attribute','duty'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
@@ -1690,7 +1697,7 @@ function initTrees() {
             keydown: function (e, data) {
                 let command = new KeydownCommandDuty(e, data);
                 command.permissions = {
-                    remove: true,
+                    remove: data.node.permission(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,
