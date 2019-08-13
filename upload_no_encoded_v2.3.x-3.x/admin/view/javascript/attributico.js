@@ -819,19 +819,20 @@ function addAttributeToCategory(targetnode, data, remove) {
     });
 }
 
-function deleteDuty(node) {
-    
+function deleteDuty(node) {    
     $.ajax({
         data: {
-            'attribute': node.key,            
+            'user_token': user_token,
+            'token': token,
+            'key': node.key,
+            'language_id': node.getLanguageId(),
+            'name': '',            
         },
-        url: 'index.php?route=' + extension + 'module/attributico/deleteDuty' + '&user_token=' + user_token + '&token=' + token,
-        type: 'POST',
+        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',        
         success: function () {           
-            reloadAttribute(node, false); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
+            reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
         }
-    });
-    
+    });    
 }
 
 var clipboardNodes = [],
