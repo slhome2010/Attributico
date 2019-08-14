@@ -42,6 +42,18 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
     var lng_id = parseInt(selector.replace(/\D+/ig, ''));
     return lng_id;
 };
+/**
+ * Return permission for node action
+ * @returns boolean
+ *
+ **/
+$.ui.fancytree._FancytreeNodeClass.prototype.permission = function (actions) {   
+    let permission = false;
+    for (let i = 0; i < actions.length; i++) {
+        permission = permission || !this.key.indexOf(actions[i]) && !this.unselectable;
+    }
+    return permission;
+};
 
 /* Classes and constants */
 /**
@@ -112,15 +124,21 @@ class ContextmenuCommand {
     }
 }
 
-/* Override methods for CategoryattributeTree*/
+/* Override methods for CategoryattributeTree and DutyTree*/
 class ContextmenuCommandCategory extends ContextmenuCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node, this.node);
+        deleteAttributesFromCategory(this.node);
     }
 
     addChild() {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+class ContextmenuCommandDuty extends ContextmenuCommand {
+
+    remove() {
+        deleteDuty(this.node);
     }
 }
 /**
@@ -227,15 +245,21 @@ class KeydownCommand {
         addAttribute(this.node, 'group', this.lng_id);
     }
 }
-/* Override methods for CategoryattributeTree */
+/* Override methods for CategoryattributeTree and DutyTree*/
 class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node, this.node);
+        deleteAttributesFromCategory(this.node);
     }
 
     addChild() {
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
+    }
+}
+class KeydownCommandDuty extends KeydownCommand {
+
+    remove() {
+        deleteDuty(this.node);
     }
 }
 
@@ -751,7 +775,7 @@ function copyAttributes(targetNode) {
     }
 }
 
-function deleteAttributesFromCategory(node, targetnode) {
+function deleteAttributesFromCategory(node) {
     var category_id = node.getParent().key;
 
     $.ajax({
@@ -763,7 +787,7 @@ function deleteAttributesFromCategory(node, targetnode) {
         url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
         success: function () {
-            reactivateCategory(targetnode);
+            reactivateCategory();
             reloadAttribute(node, true); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
         }
     });
@@ -790,9 +814,25 @@ function addAttributeToCategory(targetnode, data, remove) {
             reactivateCategory(targetnode);
             reloadAttribute(data.otherNode, false);
         } else {
-            deleteAttributesFromCategory(data.otherNode, targetnode);
+            deleteAttributesFromCategory(data.otherNode);
         }
     });
+}
+
+function deleteDuty(node) {    
+    $.ajax({
+        data: {
+            'user_token': user_token,
+            'token': token,
+            'key': node.key,
+            'language_id': node.getLanguageId(),
+            'name': '',            
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',        
+        success: function () {           
+            reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+        }
+    });    
 }
 
 var clipboardNodes = [],
@@ -908,7 +948,7 @@ function initTrees() {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (data.node.isRootNode() || data.node.getLevel() === 1 || data.node.getLevel() === 4) {
+                    if (!data.node.permission(['group','attribute','template','value'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
@@ -1082,6 +1122,13 @@ function initTrees() {
             },
             keydown: function (e, data) {
                 let command = new KeydownCommand(e, data);
+                command.permissions = {
+                    remove: data.node.permission(['group','attribute','template','value']),
+                    addChild: true,
+                    addSibling: true,
+                    copy:  data.node.permission(['attribute']),
+                    paste: true
+                };
                 command.execute();
             },
             filter: {
@@ -1104,6 +1151,8 @@ function initTrees() {
                     menu: contextmenu[lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['group','attribute','template','value']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group','attribute','template','value']));
                         data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
@@ -1366,10 +1415,10 @@ function initTrees() {
             keydown: function (e, data) {
                 let command = new KeydownCommandCategory(e, data);
                 command.permissions = {
-                    remove: true,
+                    remove: !data.node.key.indexOf('attribute'),
                     addChild: true,
                     addSibling: false,
-                    copy: true,
+                    copy: !data.node.key.indexOf('attribute'),
                     paste: true
                 };
                 command.execute();
@@ -1496,7 +1545,7 @@ function initTrees() {
                     remove: false,
                     addChild: false,
                     addSibling: false,
-                    copy: true,
+                    copy: !data.node.key.indexOf('attribute'),
                     paste: false
                 };
                 command.execute();
@@ -1594,7 +1643,7 @@ function initTrees() {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (data.node.isRootNode() || data.node.getLevel() === 1) {
+                    if (!data.node.permission(['group','attribute','duty'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
@@ -1647,9 +1696,9 @@ function initTrees() {
                 return false;
             },
             keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+                let command = new KeydownCommandDuty(e, data);
                 command.permissions = {
-                    remove: false,
+                    remove: data.node.permission(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,
@@ -1677,13 +1726,15 @@ function initTrees() {
                     menu: contextmenu[lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", false);
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['duty']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group','attribute','duty']));
+                       // data.tree.$div.contextmenu("enableEntry", "remove", true);
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();
                     },
                     select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                        let command = new ContextmenuCommandDuty(ui);
                         command.execute();
                     }
                 });
@@ -1903,65 +1954,6 @@ function initTrees() {
                         command.execute();
                     }
                 });
-            }
-        });
-    });
-
-    /* 
-    * Build deduplicate tree and detach tree for tools
-    *
-    */
-    GROUP_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        $(element).fancytree({
-            checkbox: true,
-            selectMode: 3,
-            autoScroll: true,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder,
-                    'onlyGroup': true,
-                    'isPending': false
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
-
-            }
-        });
-    });
-
-    /**
-     * Build category attribute tree for tools
-     *
-     **/
-    CATEGORY_CHECK_TREE.each(function (indx, element) {
-        var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-        // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-        $(element).fancytree({
-            autoCollapse: true,
-            autoScroll: true,
-            minExpandLevel: 2,
-            checkbox: true,
-            selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
-            source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
-                    'sortOrder': sortOrder
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
-            },
-            init: function (event, data) {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
-                    data.tree.$container.addClass("smart-scroll");
-
             }
         });
     });
@@ -2245,6 +2237,66 @@ $(function () { // document ready actions
             }
         });
     });
+    
+    /* 
+    * Build deduplicate tree and detach tree for tools
+    * This tree must have fixed position for correctly form serializing
+    */
+   GROUP_CHECK_TREE.each(function (indx, element) {
+    var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+    $(element).fancytree({
+        checkbox: true,
+        selectMode: 3,
+        autoScroll: true,
+        source: {
+            data: {
+                'user_token': user_token,
+                'token': token,
+                'sortOrder': sortOrder,
+                'onlyGroup': true,
+                'isPending': false
+            },
+            url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+        },
+        init: function (event, data) {
+            //console.log(data.tree.$div.context.id, ' has loaded');
+            if (smartScroll.is(":checked"))
+                data.tree.$container.addClass("smart-scroll");
+
+        }
+    });
+});
+
+/**
+ * Build category attribute tree for tools
+ * This tree must have fixed position for correctly form serializing
+ **/
+CATEGORY_CHECK_TREE.each(function (indx, element) {
+    var sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+    // var multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
+    $(element).fancytree({
+        autoCollapse: true,
+        autoScroll: true,
+        minExpandLevel: 2,
+        checkbox: true,
+        selectMode: $('input[id = "input-attributico_multiselect"]:checkbox').is(":checked") ? 3 : 2,
+        source: {
+            data: {
+                'user_token': user_token,
+                'token': token,
+                'sortOrder': sortOrder
+            },
+            url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+        },
+        init: function (event, data) {
+            //console.log(data.tree.$div.context.id, ' has loaded');
+            if (smartScroll.is(":checked"))
+                data.tree.$container.addClass("smart-scroll");
+
+        }
+    });
+});
+
 
     /* Button Save onclick event */
     $("#form-attributico").submit(function () {

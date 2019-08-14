@@ -136,7 +136,13 @@ class ModelCatalogAttributico extends Model
                                    WHERE a.`attribute_id` = '" . (int)$attribute_id . "'");
 
         foreach ($query->rows as $result) {
-            $attribute_data[$result['language_id']] = array('attribute_id' => $result['attribute_id'], 'name' => $result['name'], 'group_name' => $result['group_name'], 'attribute_group_id' => $result['attribute_group_id']);
+            $attribute_data[$result['language_id']] = array(
+                'attribute_id' => $result['attribute_id'], 
+                'name' => $result['name'], 
+                'group_name' => $result['group_name'], 
+                'attribute_group_id' => $result['attribute_group_id'],
+                'sort_order' => $result['sort_order'],
+            );
         }
 
         return $attribute_data;
@@ -346,7 +352,6 @@ class ModelCatalogAttributico extends Model
 
     public function editAttribute($attribute_id, $data)
     {
-
         $this->cache->delete('attributico');
 
         foreach ($data['attribute_description'] as $language_id => $value) {
@@ -356,7 +361,6 @@ class ModelCatalogAttributico extends Model
 
     public function editDuty($attribute_id, $data)
     {
-
         $this->cache->delete('attributico');
 
         foreach ($data['attribute_description'] as $language_id => $value) {
