@@ -310,7 +310,7 @@
             ]]></add>
         </operation>
         <operation>
-            <search><![CDATA[<td class="text-left"><?php foreach ($languages as $language) { ?>]]></search>
+            <search index='0'><![CDATA[<td class="text-left">{% for language in languages %}]]></search>
             <add position="before"><![CDATA[<td class="text-left" style="width: 5%;"><input type="text" value="{{ product_attribute['sort_order'] }}" class="form-control" readonly="true"/></td>
             ]]></add>
         </operation>
