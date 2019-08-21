@@ -38,9 +38,8 @@
             <add position="after" offset="2"><![CDATA[
             <div class="tab-pane" id="tab-attribute">
               <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-attribute"><span data-toggle="tooltip" title="{{ help_filter }}">{{ entry_attribute }}</span></label>
-                <div class="col-sm-10">
-                  <input type="text" name="attribute" value="" placeholder="{{ entry_attribute }}" id="input-attribute" class="form-control" />
+                <label class="col-sm-2 control-label" for="input-attribute"><span data-toggle="tooltip" title="{{ category_description[language_id].name }}">{{ entry_attribute }}</span></label>
+                <div class="col-sm-10">                 
                   <div id="category-attribute" class="well well-sm" style="height: 150px; overflow: auto;">
                     {% for category_attribute in category_attributes %}
                     <div id="category-attribute{{ category_attribute.attribute_id }}"><i class="fa fa-minus-circle"></i> {{ category_attribute.name }}
@@ -52,34 +51,7 @@
               </div>
             </div>
             ]]></add>
-        </operation>
-        <operation>
-            <search index='1'><![CDATA[//--></script>]]></search>
-            <add position="after"><![CDATA[
-                <script type="text/javascript"><!--
-                    $('input[name=\'attribute\']').autocomplete({
-                        'source': function(request, response) {
-                            $.ajax({
-								url: 'index.php?route=catalog/attribute/autocomplete&user_token={{user_token}}&filter_name=' +  encodeURIComponent(request),
-								dataType: 'json',
-								success: function(json) {
-                                    response($.map(json, function(item) {
-                                        return {
-                                            category: item.attribute_group,
-                                            label: item.name,
-                                            value: item.attribute_id
-					}
-                                    }));
-				}
-                            });
-			},
-			'select': function(item) {
-                        }
-                    });
-		//--></script>
-                ]]>
-            </add>
-        </operation>
+        </operation>        
     </file>
 
     <file path="admin/controller/catalog/category.php">
@@ -90,6 +62,8 @@
         <operation>
             <search><![CDATA[$this->load->model('setting/store');]]></search>
             <add position="before"><![CDATA[
+        $data['language_id'] = $this->config->get('config_language_id'); 
+        $data['entry_attribute'] = $this->language->get('tab_attribute');   
 		$this->load->model('catalog/attribute');
 		$this->load->model('catalog/attributico');
 
