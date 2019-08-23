@@ -233,7 +233,8 @@
                         success: function (json) {
                             $.each(json, function (language_id, select) {
                                 var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]'); 
-                                $('select[language_id="' + language_id + '"]', textarea.parent()).remove();                                
+                                $('select[language_id="' + language_id + '"]', textarea.parent()).remove(); 
+                                //console.log(select);                                                           
                                 textarea.before(select);
                                 textarea.attr('rows', 3);
                             });
@@ -270,15 +271,14 @@
 						select.next('textarea').val(textarea_val + select.val());
 					}
 				});
-
-				$('input[value ='+localStorage.getItem("display_attribute")+']').prop("checked",true);
+                
+                // Set attribute values display mode when start
+				$('input[value ='+localStorage.getItem("display_attribute")+']').click();
 
 				function attributeDisplayMode(element) {
 					localStorage.setItem('display_attribute', element.value);
 
-					$('#attribute tbody tr').each(function(index, element) {
-						var	attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
-						makeValuesList(attribute_id, index);
+					$('#attribute tbody tr').each(function(index, element) {						
 					});
 				}
 
