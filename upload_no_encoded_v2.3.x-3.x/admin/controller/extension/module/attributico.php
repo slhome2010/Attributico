@@ -523,7 +523,7 @@ class ControllerModuleAttributico extends Controller
                         $select .= "</select>";
                     }
 
-                    $json[$language['language_id']][] = $select;
+                    $json[$language['language_id']] = $select;
                 }
             }
         }
