@@ -233,7 +233,7 @@
                         success: function (json) {
                             $.each(json, function (language_id, select) {
                                 var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]'); 
-                                $('select[language_id="' + language_id + '"]', textarea.parent()).remove();
+                                $('select[language_id="' + language_id + '"]', textarea.parent()).remove();                                
                                 textarea.before(select);
                                 textarea.attr('rows', 3);
                             });
@@ -258,6 +258,7 @@
                     });
                 }
 
+                // Set selected value or template in textarea
 				$('#attribute').on('change', 'select.attribute_select',function(){
 					var select = $(this);
 					var textarea_val = select.next('textarea').val();
@@ -280,10 +281,20 @@
 						makeValuesList(attribute_id, index);
 					});
 				}
+
+                // Set filter values display mode when start
+                $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click();
+
+                // Set filter mode for attribute values
+                $('#attribute input[name=\'filter-values\']').on('change', function () {                    
+                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());
+                    $('#attribute tbody tr').each(function(index, element) {
+                    });
+                });            
             ]]></add>
         </operation>
         <operation>
-            <search position="after"><![CDATA[$('#attribute tbody').each(function(index, element) {]]></search>
+            <search position="after"><![CDATA[$('#attribute tbody tr').each(function(index, element) {]]></search>
             <add><![CDATA[
 				var	attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
 				makeValuesList(attribute_id, index);
@@ -323,7 +334,22 @@
         <operation>
             <search position="replace" offset="1"><![CDATA[<td class="left"><?php echo $entry_text; ?></td>]]></search>
             <add><![CDATA[
-				<td class="left"><?php echo $entry_text; ?></td>
+				<td class="left"><?php echo $entry_text; ?>
+                    <div style="display:inline; float:right; padding: 0 7px;">
+                        <label class="radio-inline">
+                            <input type="radio" name="filter-values" id="filter-nofilter" value="all" checked>
+                            <?php echo $entry_flter_all; ?>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="filter-values" id="filter-category" value="categories">
+                            <?php echo $entry_flter_category; ?>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="filter-values" id="filter-duty" value="duty">
+                            <?php echo $entry_flter_duty; ?>
+                        </label>
+                    </div>
+                </td>
 				<td class="right">
 					<input type="radio" name="display_attribute" onchange="attributeDisplayMode(this)" value="template"><?php echo $entry_attribute_template; ?></input>
 					<input type="radio" name="display_attribute" onchange="attributeDisplayMode(this)" value="values"><?php echo $entry_attribute_values; ?></input>
@@ -337,7 +363,10 @@
             <search position="after"><![CDATA[// Entry]]></search>
             <add><![CDATA[
 				$_['entry_attribute_template'] = 'Шаблоны';
-				$_['entry_attribute_values'] = 'Значения';
+                $_['entry_attribute_values'] = 'Значения';
+                $_['entry_flter_all'] = 'Все';
+                $_['entry_flter_category'] = 'Категории';
+                $_['entry_flter_duty'] = 'Дежурные';
             ]]></add>
         </operation>
     </file>
@@ -346,8 +375,11 @@
         <operation error="skip">
             <search position="after"><![CDATA[// Entry]]></search>
             <add><![CDATA[
-				$_['entry_attribute_template'] = 'Templates';
-				$_['entry_attribute_values'] = 'Values';
+				 $_['entry_attribute_template'] = 'Templates';
+                $_['entry_attribute_values'] = 'Values';
+                $_['entry_flter_all'] = 'All';
+                $_['entry_flter_category'] = 'Categories';
+                $_['entry_flter_duty'] = 'Duties';
             ]]></add>
         </operation>
     </file>
@@ -363,6 +395,9 @@
 				} else {
 					$this->data['attributico_splitter'] = '/';
 				}
+                $this->data['entry_flter_all'] = $this->language->get('entry_flter_all');
+                $this->data['entry_flter_category'] = $this->language->get('entry_flter_category');
+                $this->data['entry_flter_duty'] = $this->language->get('entry_flter_duty');
             ]]></add>
         </operation>
         <operation error="skip">
