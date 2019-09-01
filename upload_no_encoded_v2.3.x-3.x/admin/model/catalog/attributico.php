@@ -487,7 +487,7 @@ class ModelCatalogAttributico extends Model
                     foreach ($languages as $language) {
                         if ($method == '3' || $method == '4') {
                             $duty = $this->whoisOnDuty($attribute_id, $language);
-                            $text = $duty ? "', text = '" . $duty . "' " : "'";
+                            $text = $duty ? "', text = '" . $this->db->escape($duty) . "' " : "'";
                         }
                         if ($method == '4') {
                             $query = $this->db->query("SELECT text FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int)$product['product_id'] . "' AND attribute_id = '" . (int)$attribute_id . "'  AND language_id = '" . (int)$language['language_id'] . "'");

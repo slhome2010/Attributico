@@ -247,7 +247,7 @@
                     var select = $(this);
                     var textarea_val = select.next('textarea').val();
                     textarea_val = (textarea_val == '') ? textarea_val : textarea_val +
-                        '<?php echo $attributico_splitter; ?>';
+                        '<?php echo quotemeta($attributico_splitter); ?>';
                     if (localStorage.getItem('display_attribute') == 'template') {
                         select.next('textarea').val(select.val());
                     } else {
