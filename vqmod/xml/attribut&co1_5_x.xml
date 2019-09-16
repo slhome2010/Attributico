@@ -263,7 +263,7 @@
 				$('#attribute').on('change', 'select.attribute_select',function(){
 					var select = $(this);
 					var textarea_val = select.next('textarea').val();
-					textarea_val = (textarea_val == '') ? textarea_val : textarea_val + '<?php echo $attributico_splitter; ?>';
+					textarea_val = (textarea_val == '') ? textarea_val : textarea_val + '<?php echo quotemeta($attributico_splitter); ?>';
 
 					if (localStorage.getItem('display_attribute') == 'template') {
 						select.next('textarea').val(select.val());
