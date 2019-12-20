@@ -1,5 +1,5 @@
 import Filter from '../FancyFilter';
-import { ContextmenuCommand } from '../ContextMenu';
+import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
 import { reloadAttribute } from '../../functions/Syncronisation';

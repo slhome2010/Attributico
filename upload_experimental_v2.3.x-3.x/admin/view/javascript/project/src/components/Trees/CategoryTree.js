@@ -1,4 +1,4 @@
-import { ContextmenuCommand } from '../ContextMenu';
+import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { addAttributeToCategory } from '../../functions/Crud';
 

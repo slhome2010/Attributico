@@ -1,4 +1,4 @@
-import { ContextmenuCommandDuty } from '../ContextMenu';
+import { ContextmenuCommandDuty } from '../ContextMenuCommand';
 import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { reloadAttribute } from '../../functions/Syncronisation';

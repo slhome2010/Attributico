@@ -1,5 +1,5 @@
 import Filter from '../FancyFilter';
-import { ContextmenuCommand } from '../ContextMenu';
+import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 
 export default class AttributeProductTree {

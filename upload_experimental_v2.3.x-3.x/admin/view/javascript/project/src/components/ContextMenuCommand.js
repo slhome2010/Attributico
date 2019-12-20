@@ -7,6 +7,7 @@
 /* import  'jquery.fancytree'; */
 import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
+import CollapseExpande from './Commands/CollapseExpande';
 
 export class ContextmenuCommand {
     constructor(ui) {        
@@ -21,9 +22,7 @@ export class ContextmenuCommand {
         switch (this.ui.cmd) {
             case "expande":
             case "collapse":
-                this.tree.visit(function (node) {
-                    node.setExpanded(!node.isExpanded());
-                });
+                CollapseExpande(this.tree);
                 break;
             case "options":
                 $("#options_" + this.selector).dialog("open");

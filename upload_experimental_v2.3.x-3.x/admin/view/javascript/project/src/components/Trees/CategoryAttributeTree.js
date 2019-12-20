@@ -2,7 +2,7 @@ import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/S
 import { reactivateCategory } from '../../functions/Syncronisation';
 import { addAttributeToCategory } from '../../functions/Crud';
 import { KeydownCommandCategory } from '../KeyDownCommand';
-import { ContextmenuCommandCategory } from '../ContextMenu';
+import { ContextmenuCommandCategory } from '../ContextMenuCommand';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {

@@ -3,8 +3,9 @@
  * @type {class}
  *
  **/
-import {deSelectNodes} from '../functions/Select'
-import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
+import { deSelectNodes } from '../functions/Select'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
+import CollapseExpande from './Commands/CollapseExpande';
 
 export class KeydownCommand {
     constructor(event, data) {
@@ -47,9 +48,7 @@ export class KeydownCommand {
             case 66:
                 //     ctrl+B  cmd = "expande/collapse";
                 if (this.e.ctrlKey) {
-                    this.tree.visit(function (node) {
-                        node.setExpanded(!node.isExpanded());
-                    });
+                    CollapseExpande(this.tree);
                 }
                 break;
             case 46:
