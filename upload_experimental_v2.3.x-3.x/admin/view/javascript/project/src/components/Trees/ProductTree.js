@@ -1,3 +1,6 @@
+import { ContextmenuCommand } from "../ContextMenuCommand";
+import { KeydownCommand } from "../KeyDownCommand";
+
 export default class ProductTree {
     constructor(element) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        

@@ -15,14 +15,12 @@ class ControllerModuleAttributico extends Controller
 
     public function index()
     {
-        if (version_compare(VERSION, '2.0.1', '>=')) {
-            $this->document->addScript('view/javascript/jquery/jquery-ui.min.js');
+        if (version_compare(VERSION, '2.0.1', '>=')) {          
             $this->document->addStyle('view/stylesheet/jquery-ui.css');
         }
-        $this->document->addScript('view/javascript/jquery/jquery.ui-contextmenu.min.js');
+        
         $this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');
-        $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
-        $this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
+        $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');       
         $this->document->addStyle('view/stylesheet/attributico.css');
 
         if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists ( DIR_APPLICATION . 'view/javascript/attributico.js' )) {
@@ -402,13 +400,13 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-        if (isset($this->request->post['attributico_diver'])) {
+        /* if (isset($this->request->post['attributico_diver'])) {
             $this->data['attributico_diver'] = $this->request->post['attributico_diver'];
         } elseif (($this->config->get('attributico_diver'))) {
             $this->data['attributico_diver'] = $this->config->get('attributico_diver');
         } else {
             $this->data['attributico_diver'] = 0;
-        }
+        } */
 
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
@@ -523,7 +521,7 @@ class ControllerModuleAttributico extends Controller
                         $select .= "</select>";
                     }
 
-                    $json[$language['language_id']] = $select;
+                    $json[$language['language_id']][] = $select;
                 }
             }
         }
@@ -1544,7 +1542,7 @@ class ControllerModuleAttributico extends Controller
         }
 
         $rootData = array(
-            "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "hideCheckbox" => true,
+            "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "checkbox" => false,
             "children" => array(
                 array("title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false, ),
                 array("title" => $this->session->data['entry_attribute_template'][$language_id], "key" => "template", "selected" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false, ),
