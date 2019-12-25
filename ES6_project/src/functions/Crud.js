@@ -3,7 +3,7 @@ import {getSelectedKeys, getSelectedTitles, deSelectNodes} from './Select'
 import {reactivateCategory, reloadAttribute} from './Syncronisation'
 
 export function addAttribute(activeNode, activeKey, lng_id) {
-    var node = activeNode,
+    let node = activeNode,
         parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
         node = node.getParent();
@@ -18,7 +18,7 @@ export function addAttribute(activeNode, activeKey, lng_id) {
         url: 'index.php?route=' + extension + 'module/attributico/addAttribute',
         success: function (new_id) {
             node.editCreateNode("child", {
-                title: activeKey === 'attribute' ? textNewAttribute[lng_id] : textNewGroup[lng_id],
+                title: activeKey === 'attribute' ? textNewAttribute[lng_id] + "_" + new_id : textNewGroup[lng_id] + "_" + new_id,
                 key: activeKey + "_" + new_id,
                 folder: (activeKey === 'group') ? true : false
             });
@@ -29,7 +29,7 @@ export function addAttribute(activeNode, activeKey, lng_id) {
 export function deleteAttribute(node) {
     let level = node.getLevel();
     if (level === 2 || level === 3 || level === 5) {
-        var siblingNode = node.findUnselectedSibling();
+        let siblingNode = node.findUnselectedSibling();
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -57,7 +57,7 @@ export function deleteAttribute(node) {
 }
 
 export function copyAttributes(targetNode) {
-    var node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
+    let node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
 
     if (node.key.indexOf('group') + 1) {
         $.ajax({
@@ -90,7 +90,7 @@ export function copyAttributes(targetNode) {
 }
 
 export function deleteAttributesFromCategory(node) {
-    var category_id = node.getParent().key;
+    let category_id = node.getParent().key;
 
     $.ajax({
         data: {
@@ -149,9 +149,9 @@ export function deleteDuty(node) {
     });    
 }
 
-/* export var clipboardNodes = [];
-export var clipboardTitles = [];
-export var pasteMode = null; */
+/* export let clipboardNodes = [];
+export let clipboardTitles = [];
+export let pasteMode = null; */
 
 export function copyPaste(action, targetNode) {
     switch (action) {
@@ -164,8 +164,8 @@ export function copyPaste(action, targetNode) {
                     clipboardNodes[i] = [];
                     clipboardTitles[i] = [];
                     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
-                        var tree = $("#" + element.id).fancytree("getTree");
-                        var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+                        let tree = $("#" + element.id).fancytree("getTree");
+                        let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                         clipboardNodes[i][lng_id] = tree.getNodeByKey(node.key);
                         clipboardTitles[i][lng_id] = tree.getNodeByKey(node.key).title;
                     });
@@ -174,8 +174,8 @@ export function copyPaste(action, targetNode) {
                 clipboardNodes[0] = [];
                 clipboardTitles[0] = [];
                 ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
-                    var tree = $("#" + element.id).fancytree("getTree");
-                    var lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+                    let tree = $("#" + element.id).fancytree("getTree");
+                    let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                     clipboardNodes[0][lng_id] = tree.getNodeByKey(targetNode.key);
                     clipboardTitles[0][lng_id] = tree.getNodeByKey(targetNode.key).title;
                 });

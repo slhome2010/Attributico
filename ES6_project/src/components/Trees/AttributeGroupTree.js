@@ -34,7 +34,7 @@ export default class AttributeGroupTree {
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
             loadError: function (e, data) {
-                var error = data.error;
+                let error = data.error;
                 if (error.status && error.statusText) {
                     data.message = "Ajax error: " + data.message;
                     data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
@@ -74,7 +74,7 @@ export default class AttributeGroupTree {
                     // Return false to prevent cancel/save (data.input is available)
                 },
                 save: (event, data) => {
-                    var parent = data.node.getParent();
+                    let parent = data.node.getParent();
                     $.ajax({
                         data: {
                             'user_token': user_token,
@@ -141,9 +141,9 @@ export default class AttributeGroupTree {
                     return true;
                 },
                 dragEnter: function (targetNode, data) {
-                    var targetLevel = targetNode.getLevel();
-                    var subjectLevel = data.otherNode.getLevel();
-                    var subjectNode = data.otherNode;
+                    let targetLevel = targetNode.getLevel();
+                    let subjectLevel = data.otherNode.getLevel();
+                    let subjectNode = data.otherNode;
                     // embargo on levels mixing
                     if (targetLevel === 1 || targetLevel > subjectLevel) {
                         return false;
@@ -163,12 +163,12 @@ export default class AttributeGroupTree {
                     return ["over"];
                 },
                 dragDrop: function (targetNode, data) {
-                    var subjectNode = data.otherNode;
-                    var targetLevel = targetNode.getLevel();
-                    var subjectLevel = subjectNode.getLevel();
-                    var selfreload = false;
-                    var replace = targetNode.getParent() !== subjectNode.getParent();
-                    var merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
+                    let subjectNode = data.otherNode;
+                    let targetLevel = targetNode.getLevel();
+                    let subjectLevel = subjectNode.getLevel();
+                    let selfreload = false;
+                    let replace = targetNode.getParent() !== subjectNode.getParent();
+                    let merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
                     let url = '';
 
                     if (merge && !confirm(textConfirm)) {

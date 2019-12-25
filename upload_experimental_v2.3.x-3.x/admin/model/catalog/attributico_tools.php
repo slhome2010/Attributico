@@ -292,4 +292,39 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_affected ? $count_affected : $this->db->countAffected();
     }
 
+    public function CloneLanguage($source_lng, $target_lng, $method, $node = [] ) {
+        // Не забыть Duty
+        /* Будут добавлены только записи с несовпадающими ключами. Поле Text не будет затронуто */
+        /* $sql_not_change = "INSERT IGNORE INTO */
+
+        /* "ON DUPLICATE KEY UPDATE  product_id = '" . (int) */
+
+        $this->cache->delete('attributico');
+		// Attribute
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int)$source_lng . "'");
+
+		foreach ($query->rows as $attribute) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute['attribute_id'] . "',
+             language_id = '" . (int)$target_lng . "', name = '" . $this->db->escape($attribute['name']) . "'");
+		}
+
+		// Attribute Group
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_group_description WHERE language_id = '" . (int)$source_lng . "'");
+
+		foreach ($query->rows as $attribute_group) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int)$attribute_group['attribute_group_id'] . "',
+             language_id = '" . (int)$target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'");
+		}          
+       
+
+		// Product Attribute
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE language_id = '" . (int)$source_lng . "'");
+
+		foreach ($query->rows as $product_attribute) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int)$product_attribute['product_id'] . "', attribute_id = '" . (int)$product_attribute['attribute_id'] . "',
+             language_id = '" . (int)$target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'");
+		}
+
+    }
+
 }

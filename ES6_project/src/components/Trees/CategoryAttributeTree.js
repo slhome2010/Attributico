@@ -29,7 +29,7 @@ export default class CategoryAttributeTree {
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributeTree'
             },
             loadError: function (e, data) {
-                var error = data.error;
+                let error = data.error;
                 if (error.status && error.statusText) {
                     data.message = "Ajax error: " + data.message;
                     data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
