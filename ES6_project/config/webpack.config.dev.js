@@ -86,49 +86,7 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        /* new HtmlWebpackPlugin({
-            template: '../node_modules/html-webpack-template/index.ejs',
-            title: 'Webpack 4 Demo',
-            favicon: '../src/favicon.ico',
-            meta: [
-                {
-                    name: 'robots',
-                    content: 'noindex,nofollow'
-                },
-                {
-                    name: 'description',
-                    content: 'Webpack 4 demo using ES6, React, SASS'
-                },
-                {
-                    name: 'keywords',
-                    content: 'webpack,webpack-4,webpack.config.js,html5,es6+,react,sass'
-                }
-            ],
-            appMountIds: ['app'],
-            inject: false,
-            minify: {
-                collapseWhitespace: true,
-                conservativeCollapse: true,
-                preserveLineBreaks: true,
-                useShortDoctype: true,
-                html5: true
-            },
-            mobile: true,
-            scripts: ['/static.js']
-        }), */
-        /* new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(), */
-        /* new CopyWebpackPlugin([
-            {
-                from: path.join(PATHS.src, 'favicon.ico'),
-                to: path.join(PATHS.dist, 'favicon.ico')
-            },
-            {
-                from: path.join(PATHS.src, 'demo/static.js'),
-                to: path.join(PATHS.dist, 'static.js')
-            }
-        ]), */
+    plugins: [        
         new webpack.DefinePlugin({
             PRODUCTION: JSON.stringify(false),
             VERSION: JSON.stringify('1.2.0'),
@@ -140,7 +98,8 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery',
             // NOTE: Required to load jQuery Plugins into the *global* jQuery instance:
-            jquery: 'jquery'
+            jquery: 'jquery',
+            'window.jQuery': 'jquery'
         }),
     ],
     devServer: {

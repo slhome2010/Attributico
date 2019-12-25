@@ -1,7 +1,4 @@
-window.jQuery = require("jquery");
-/* var $ = window.$ */
-/* window.dropmenu = dropmenu; */
-/* window.jQuery = window.$ ; */
+/* window.jQuery = require("jquery"); */
 
 // Autocomplete for fancytree*/
 (function ($) {
