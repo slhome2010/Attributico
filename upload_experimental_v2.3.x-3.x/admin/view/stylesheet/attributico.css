@@ -170,6 +170,6 @@ table.form > tbody > tr > td {	/* for 1.5.x */
    color: #1e91cf;
 }
 
-.table tbody > tr > td {
+/* .table tbody > tr > td {
     vertical-align: baseline;
-}
+} */

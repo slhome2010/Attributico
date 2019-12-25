@@ -17,7 +17,7 @@ export default function commonSettings() {
     });
     // autoadd attribute values to product
     $('input[name = "attributico_autoadd"]:checkbox').change(function (e) {
-        flag = $(this).is(":checked");
+       let flag = $(this).is(":checked");
         $('[name = "attributico_product_text"]').each(function (indx, element) {
             $(element).prop({
                 "disabled": !flag
@@ -43,7 +43,7 @@ export default function commonSettings() {
             success: function (json) {
                 let size = CATEGORY_SYNCRO_TREES.size();
                 CATEGORY_SYNCRO_TREES.each(function (indx, element) {
-                    var tree = $("#" + element.id).fancytree("getTree");
+                    let tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;
@@ -67,7 +67,7 @@ export default function commonSettings() {
             success: function (json) {
                 let size = CATEGORY_SYNCRO_TREES.size();
                 CATEGORY_SYNCRO_TREES.each(function (indx, element) {
-                    var tree = $("#" + element.id).fancytree("getTree");
+                    let tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;
