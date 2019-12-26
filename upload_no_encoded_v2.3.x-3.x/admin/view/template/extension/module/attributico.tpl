@@ -3,7 +3,7 @@
     <div class="page-header">
         <div class="container-fluid">
             <div class="pull-right">
-                <a onclick="check_for_updates()" class="btn btn-warning" data-toggle="tooltip" title="<?php echo $button_check_for_updates; ?>" data-placement="top"><i class="fa fa-cloud-download"></i></a>
+                <a onclick="checkForUpdates(); $('#infoModal').modal('show');" class="btn btn-warning" data-toggle="tooltip" title="<?php echo $button_check_for_updates; ?>" data-placement="top"><i class="fa fa-cloud-download"></i></a>
                 <a onclick="apply()" class="btn btn-success" data-toggle="tooltip" title="<?php echo $button_apply; ?>" data-placement="top"><i class="fa fa-check"></i></a>
                 <button type="button" form="form-attributico" onclick="$('#form-attributico').submit();" data-toggle="tooltip" data-placement="top" title="<?php echo $button_save; ?>" class="btn btn-primary"><i
                         class="fa fa-save"></i></button>
@@ -309,16 +309,19 @@
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_product_text; ?></span></label>
                                                 <div class="col-sm-9">
-                                                    <label class="radio-inline">
+                                                    <div class="radio">                                                        
+                                                    <label >
                                                         <?php if ($attributico_product_text == '1') { ?>
                                                         <input type="radio" name="attributico_product_text" value="1" checked="checked" />
-                                                        <?php echo $text_renew; ?>
+                                                        <?php echo $text_clear; ?>
                                                         <?php } else { ?>
                                                         <input type="radio" name="attributico_product_text" value="1" />
-                                                        <?php echo $text_renew; ?>
+                                                        <?php echo $text_clear; ?>
                                                         <?php } ?>
                                                     </label>
-                                                    <label class="radio-inline">
+                                                    </div>
+                                                    <div class="radio">
+                                                    <label >
                                                         <?php if ($attributico_product_text == '2') { ?>
                                                         <input type="radio" name="attributico_product_text" value="2" checked="checked" />
                                                         <?php echo $text_keep; ?>
@@ -327,7 +330,9 @@
                                                         <?php echo $text_keep; ?>
                                                         <?php } ?>
                                                     </label>
-                                                    <label class="radio-inline">
+                                                    </div>                                                    
+                                                    <div class="radio">                                                        
+                                                    <label >
                                                         <?php if ($attributico_product_text == '3') { ?>
                                                         <input type="radio" name="attributico_product_text" value="3" checked="checked" />
                                                         <?php echo $text_duty; ?>
@@ -336,7 +341,9 @@
                                                         <?php echo $text_duty; ?>
                                                         <?php } ?>
                                                     </label>
-                                                    <label class="radio-inline">
+                                                    </div>
+                                                    <div class="radio">
+                                                    <label >
                                                         <?php if ($attributico_product_text == '4') { ?>
                                                         <input type="radio" name="attributico_product_text" value="4" checked="checked" />
                                                         <?php echo $text_duty_only; ?>
@@ -345,6 +352,7 @@
                                                         <?php echo $text_duty_only; ?>
                                                         <?php } ?>
                                                     </label>
+                                                    </div>                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -365,22 +373,7 @@
                                         <div class="form-group">
                                             <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
                                         </div>
-                                        <div id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                            <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="autoCollapse_attribute_group_tree<?php echo $language['language_id']; ?>" checked>
-                                                <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="sortOrder_attribute_group_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="lazyLoad<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="lazyLoad_attribute_group_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_lazyload == '1' ? 'checked="checked"' : ''); ?>>
-                                                <b><?php echo $text_lazyLoad[$language['language_id']]; ?></b>
-                                            </label>
-                                        </div>
+                                        <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                     </div>
                                     <?php } ?>
                                 </div>
@@ -400,22 +393,7 @@
                                         <div class="form-group">
                                             <ul id="duty_attribute_tree<?php echo $language['language_id']; ?>" name="duty_attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
                                         </div>
-                                        <div id="options_duty_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                            <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="autoCollapse_duty_attribute_tree<?php echo $language['language_id']; ?>" checked>
-                                                <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="sortOrder_duty_attribute_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="lazyLoad<?php echo $language['language_id']; ?>">
-                                                <input type="checkbox" id="lazyLoad_duty_attribute_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_lazyload == '1' ? 'checked="checked"' : ''); ?>>
-                                                <b><?php echo $text_lazyLoad[$language['language_id']]; ?></b>
-                                            </label>
-                                        </div>
+                                        <div class="dialog-options" id="options_duty_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                     </div>
                                     <?php } ?>
                                 </div>
@@ -446,37 +424,11 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="category_tree<?php echo $language['language_id']; ?>" name="category_tree<?php echo $language['language_id']; ?>" class="filetree"></div>
-                                                            <div id="options_category_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                                                <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="autoCollapse_category_tree<?php echo $language['language_id']; ?>" checked>
-                                                                    <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="sortOrder_category_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="multiSelect<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="multiSelect_category_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_multiselect == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_multiSelect[$language['language_id']]; ?></b>
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_category_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                         </td>
                                                         <td class="left">
                                                             <div id="category_attribute_tree<?php echo $language['language_id']; ?>" name="category_attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></div>
-                                                            <div id="options_category_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                                                <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="autoCollapse_category_attribute_tree<?php echo $language['language_id']; ?>" checked>
-                                                                    <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="sortOrder_category_attribute_tree<?php echo $language['language_id']; ?>"
-                                                                        <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_category_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -490,22 +442,7 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="attribute_tree<?php echo $language['language_id']; ?>" name="attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></div>
-                                                            <div id="options_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                                                <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="autoCollapse_attribute_tree<?php echo $language['language_id']; ?>" checked>
-                                                                    <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="sortOrder_attribute_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="lazyLoad_attribute_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_lazyload == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_lazyLoad[$language['language_id']]; ?></b>
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -534,37 +471,11 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="attribute_product_tree<?php echo $language['language_id']; ?>" name="attribute_product_tree<?php echo $language['language_id']; ?>" class="filetree"></div>
-                                                            <div id="options_attribute_product_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                                                <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="autoCollapse_attribute_product_tree<?php echo $language['language_id']; ?>" checked>
-                                                                    <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="sortOrder_attribute_product_tree<?php echo $language['language_id']; ?>"
-                                                                        <?php echo ($attributico_sortorder == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_sortOrder[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="lazyLoad_attribute_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_lazyload == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_lazyLoad[$language['language_id']]; ?></b>
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_attribute_product_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                         </td>
                                                         <td class="left">
                                                             <div id="product_tree<?php echo $language['language_id']; ?>" name="product_tree<?php echo $language['language_id']; ?>" class="filetree"></div>
-                                                            <div id="options_product_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>">
-                                                                <label class="checkbox-inline" for="autoCollapse<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="autoCollapse_product_tree<?php echo $language['language_id']; ?>" checked>
-                                                                    <b><?php echo $text_autoCollapse[$language['language_id']]; ?></b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="diver<?php echo $language['language_id']; ?>">
-                                                                    <input type="checkbox" id="diver_product_tree<?php echo $language['language_id']; ?>" <?php echo ($attributico_diver == '1' ? 'checked="checked"' : ''); ?>>
-                                                                    <b><?php echo $text_Diver[$language['language_id']]; ?></b>
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_product_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -796,6 +707,7 @@
                                                                         </label>
                                                                     </div>
                                                                 </td>
+                                                                <td></td><td></td>
                                                             <tr>
                                                                 <td>
                                                                     <div id="category_check_tree1" name="category_check_tree1" class="options">
@@ -843,6 +755,92 @@
                                                 </div>
                                             </div>
                                             <div class="tab-pane" id="tab-standart">
+                                            <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <colgroup>
+                                                            <col class="col-xs-12 col-md-10">
+                                                            <col class="col-xs-4 col-md-1">
+                                                            <col class="col-xs-4 col-md-1">
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th><label class="control-label"><span><?php echo $head_settings; ?></span></label>
+                                                                </th>
+                                                                <th><?php echo $head_command; ?></th>
+                                                                <th><?php echo $head_status; ?></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="options">
+                                                                        <div>
+                                                                            <label class="control-label"><span data-toggle="tooltip" title="<?php echo $help_clone_options; ?>"><?php echo $head_clone; ?></span></label>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-6">
+                                                                                <label class="checkbox-inline" for="clone-language-group">
+                                                                                    <input type="checkbox" name="clone-language-group" id="clone-language-group" checked="checked">
+                                                                                    <?php echo $entry_attribute_groups; ?>
+                                                                                </label>
+                                                                                <label class="checkbox-inline" for="clone-language-attribute">
+                                                                                    <input type="checkbox" name="clone-language-attribute" id="clone-language-attribute" checked="checked">
+                                                                                    <?php echo $entry_attributes; ?>
+                                                                                </label>
+                                                                                <label class="checkbox-inline" for="clone-language-value">
+                                                                                    <input type="checkbox" name="clone-language-value" id="clone-language-value" checked="checked">
+                                                                                    <?php echo $entry_product_text; ?>
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <label class="radio-inline">                                                                            
+                                                                                    <input type="radio" name="clone-language-method" value="0" checked="checked" />
+                                                                                    <?php echo $text_insert; ?>                                                                           
+                                                                                </label>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="clone-language-method" value="1" />
+                                                                                    <?php echo $text_rewrite; ?>                                                                           
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-6">
+                                                                                <label class="control-label" for="clone-language-source"><?php echo $entry_from; ?></label>
+                                                                                <select name="clone-language-source" id="clone-language-source" class="form-control">
+                                                                                    <?php foreach ($languages as $language) { ?>
+                                                                                    <?php if ($language['code'] == $config_language) { ?>
+                                                                                    <option value="<?php echo $language['code']; ?>" selected="selected"><?php echo $language['name']; ?></option>
+                                                                                    <?php } else { ?>
+                                                                                    <option value="<?php echo $language['code']; ?>"><?php echo $language['name']; ?></option>
+                                                                                    <?php } ?>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>                                                                            
+                                                                            <div class="col-sm-6">
+                                                                                <label class="control-label" for="clone-language-target"><?php echo $entry_to; ?></label>
+                                                                                <select name="clone-language-target" id="clone-language-target" class="form-control">
+                                                                                    <?php foreach ($languages as $language) { ?>
+                                                                                    <?php if ($language['code'] == $config_language) { ?>
+                                                                                    <option value="<?php echo $language['code']; ?>" selected="selected"><?php echo $language['name']; ?></option>
+                                                                                    <?php } else { ?>
+                                                                                    <option value="<?php echo $language['code']; ?>"><?php echo $language['name']; ?></option>
+                                                                                    <?php } ?>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                    </div>
+                                                                </td>
+                                                                <td><button type="button" onclick=" return tools('none')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i
+                                                                            class="fa fa-play"></i></button></td>
+                                                                <td>
+                                                                    <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
+                                                                    <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                                 <div class="alert alert-info" role="alert"> <?php echo $alert_info; ?>
                                                 </div>
                                             </div>
@@ -877,6 +875,7 @@
 <script type="text/javascript">
 let selNodes = null;
 let selCategories = null;
+let currentCategory = 0;
 const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
 const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
 const CATEGORY_TREE = $('[name ^= "category_tree"]');
@@ -892,18 +891,21 @@ const token = '<?php echo $token; ?>';
 const user_token = '<?php echo $user_token; ?>';
 const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
 const edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
-let contextmenu = [];
 const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
 const textNewGroup = <?php echo json_encode($text_New_group) ?>;
 const textConfirm = <?php echo json_encode($text_confirm) ?>;
-let currentCategory = 0;
 const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
 let filterItems = [];
+let contextmenuConfig = [];
+let dialogItems = [];
 const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
+let clipboardNodes = [];
+let clipboardTitles = [];
+let pasteMode = null;
 
 ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-    contextmenu[lng_id] = [{
+    contextmenuConfig[lng_id] = [{
             title: <?php echo json_encode($text_Edit) ?>[lng_id] + "<kbd>[Shift+Click]</kbd>",
             cmd: "rename",
             uiIcon: "ui-icon-pencil"
@@ -982,28 +984,37 @@ ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
             default: <?php echo json_encode($f_default) ?>[lng_id],
         }
     };
+
+    dialogItems[lng_id] = {
+        sortorder: {
+            label: <?php echo json_encode($text_sortOrder) ?>[lng_id],
+            selector: 'sortOrder',
+            state: '<?php echo $attributico_sortorder; ?>'
+        },
+        lazyload: {
+            label: <?php echo json_encode($text_lazyLoad) ?>[lng_id],
+            selector: 'lazyLoad',
+            state: '<?php echo $attributico_lazyload; ?>'
+        },
+        autocollapse: {
+            label: <?php echo json_encode($text_autoCollapse) ?>[lng_id],
+            selector: 'autoCollapse',
+            state: '1'
+        },
+        hierarchy: {
+            label: <?php echo json_encode($text_multiSelect) ?>[lng_id],
+            selector: 'multiSelect',
+            state: '<?php echo $attributico_multiselect; ?>'
+        },
+        divergency: {
+            label: <?php echo json_encode($text_Diver) ?>[lng_id],
+            selector: 'diver',
+            state: '0'
+        }        
+    };
 });
 
-$(document).ready(function() {
-    var t0 = performance.now();
-    $("[data-toggle='tooltip']").tooltip();
-
-    $('.fancyfilter').each(bildFilter);
-
-    initTrees();
-
-    var ajaxFinished = 0;
-    var totalAjax = 19; //Total of ajax functions you have
-
-    $(document).ajaxComplete(function() { //Listener for a complete Ajax function
-        ajaxFinished += 1;
-        if (ajaxFinished == totalAjax) { //here you know that all tasks are finish
-            var t1 = performance.now();
-            console.log("Call to initTrees took " + (t1 - t0) + " milliseconds.");
-        }
-    });
-
-});
+$("[data-toggle='tooltip']").tooltip();
 </script>
 <script type="text/javascript">
 $('#tab-attribute_language a:first').tab('show');

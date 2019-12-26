@@ -15,14 +15,12 @@ class ControllerModuleAttributico extends Controller
 
     public function index()
     {
-        if (version_compare(VERSION, '2.0.1', '>=')) {
-            $this->document->addScript('view/javascript/jquery/jquery-ui.min.js');
+        if (version_compare(VERSION, '2.0.1', '>=')) {          
             $this->document->addStyle('view/stylesheet/jquery-ui.css');
         }
-        $this->document->addScript('view/javascript/jquery/jquery.ui-contextmenu.min.js');
+        
         $this->document->addStyle('view/javascript/fancytree/skin-win7/ui.fancytree.css');
-        $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
-        $this->document->addScript('view/javascript/fancytree/jquery.fancytree-all.min.js');
+        $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');       
         $this->document->addStyle('view/stylesheet/attributico.css');
 
         if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists ( DIR_APPLICATION . 'view/javascript/attributico.js' )) {
@@ -112,7 +110,9 @@ class ControllerModuleAttributico extends Controller
         $this->data['text_support'] = $this->language->get('text_support');
         $this->data['text_help1'] = $this->language->get('text_help1');
         $this->data['text_help2'] = $this->language->get('text_help2');
-        $this->data['text_renew'] = $this->language->get('text_renew');
+        $this->data['text_rewrite'] = $this->language->get('text_rewrite');
+        $this->data['text_clear'] = $this->language->get('text_clear');
+        $this->data['text_insert'] = $this->language->get('text_insert');
         $this->data['text_keep'] = $this->language->get('text_keep');
         $this->data['text_confirm'] = $this->language->get('text_confirm');
         $this->data['error_not_info'] = $this->language->get('error_not_info');
@@ -167,6 +167,8 @@ class ControllerModuleAttributico extends Controller
         $this->data['entry_create_categories'] = $this->language->get('entry_create_categories');
         $this->data['entry_inject_to_products'] = $this->language->get('entry_inject_to_products');
         $this->data['entry_multistore'] = $this->language->get('entry_multistore');
+        $this->data['entry_from'] = $this->language->get('entry_from');
+        $this->data['entry_to'] = $this->language->get('entry_to');
 
         $this->data['help_sortorder'] = $this->language->get('help_sortorder');
         $this->data['help_smart_scroll'] = $this->language->get('help_smart_scroll');
@@ -186,6 +188,7 @@ class ControllerModuleAttributico extends Controller
         $this->data['help_cache'] = $this->language->get('help_cache');
         $this->data['help_categories_options'] = $this->language->get('help_categories_options');
         $this->data['help_multistore'] = $this->language->get('help_multistore');
+        $this->data['help_clone_options'] = $this->language->get('help_clone_options');
 
         $this->data['button_apply'] = $this->language->get('button_apply');
         $this->data['button_save'] = $this->language->get('button_save');
@@ -202,6 +205,7 @@ class ControllerModuleAttributico extends Controller
         $this->data['alert_info'] = $this->language->get('alert_info');
         $this->data['alert_reload'] = $this->language->get('alert_reload');
         $this->data['alert_backup'] = $this->language->get('alert_backup');
+        $this->data['head_clone'] = $this->language->get('head_clone');
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -402,13 +406,13 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-        if (isset($this->request->post['attributico_diver'])) {
+        /* if (isset($this->request->post['attributico_diver'])) {
             $this->data['attributico_diver'] = $this->request->post['attributico_diver'];
         } elseif (($this->config->get('attributico_diver'))) {
             $this->data['attributico_diver'] = $this->config->get('attributico_diver');
         } else {
             $this->data['attributico_diver'] = 0;
-        }
+        } */
 
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
@@ -523,7 +527,7 @@ class ControllerModuleAttributico extends Controller
                         $select .= "</select>";
                     }
 
-                    $json[$language['language_id']] = $select;
+                    $json[$language['language_id']][] = $select;
                 }
             }
         }
@@ -1544,7 +1548,7 @@ class ControllerModuleAttributico extends Controller
         }
 
         $rootData = array(
-            "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "hideCheckbox" => true,
+            "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "checkbox" => false,
             "children" => array(
                 array("title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false, ),
                 array("title" => $this->session->data['entry_attribute_template'][$language_id], "key" => "template", "selected" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false, ),
@@ -1679,6 +1683,16 @@ class ControllerModuleAttributico extends Controller
 
                 break;
             case 'standart':
+                $source_lng = $options['clone-language-source'];
+                $target_lng = $options['clone-language-target'];
+                $method = $options['clone-language-method'];
+                $node = [ $options['clone-language-attribute'], $options['clone-language-group'], $options['clone-language-value'] ];
+                
+                $count_obj = $this->model_catalog_attributico_tools->cloneLanguage($source_lng, $target_lng, $method, $node);
+                
+                $task_result .= $language->get('message_clone_attribute') . "  " . (string)$count_obj->attribute . " " 
+                 . $language->get('message_clone_group') . "  " . (string)$count_obj->group . " "
+                 . $language->get('message_clone_avalue') . "  " . (string)$count_obj->value;
 
                 break;
         }
