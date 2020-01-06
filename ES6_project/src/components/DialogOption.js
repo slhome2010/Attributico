@@ -14,15 +14,18 @@ export default function dialogOptionEvents() {
 
     function changeSettings(e) {
         let id = $(this).attr("id");
+        let lng_id = parseInt(id.replace(/\D+/ig, ''));
         let selector = $(this).attr("class");
         let flag = $(this).is(":checked");
-        let tree = $("#" + id.replace(selector + "_", "")).fancytree("getTree");
-        ///(options_)/i, '');
+        let tree = $("#" + id.replace(selector + "_", "")).fancytree("getTree"); 
+        tree.options.source.data.category_id = currentCategory;
+        tree.options.source.data.attribute_id = currentAttribute; 
+        let diver =  $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
+        tree.options.source.data.invert = diver;     
 
         switch (selector) {
             case 'sortOrder':
-                tree.options.source.data.sortOrder = flag;
-                tree.options.source.data.category_id = currentCategory;
+                tree.options.source.data.sortOrder = flag;                
                 tree.reload();
                 break;
             case 'lazyLoad':
@@ -35,8 +38,7 @@ export default function dialogOptionEvents() {
             case 'multiSelect':
                 tree.options.selectMode = flag ? 3 : 2;
                 break;
-            case 'diver':
-                let lng_id = parseInt(id.replace(/\D+/ig, ''));
+            case 'diver':                
                 let activetree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
                 activetree.reactivate();
                 break;

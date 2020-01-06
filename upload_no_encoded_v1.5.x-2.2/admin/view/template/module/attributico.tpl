@@ -641,7 +641,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree1" name="group_check_tree1" class="options"></div>
+                                                                    <div id="detach_tree<?php echo $config_language; ?>" name="detach_tree<?php echo $config_language; ?>" class="options"></div>
+                                                                    <div class="dialog-options" id="options_detach_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('detached')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -672,7 +673,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree2" name="group_check_tree2" class="options"></div>
+                                                                    <div id="deduplicate_tree<?php echo $config_language; ?>" name="deduplicate_tree<?php echo $config_language; ?>" class="options"></div>
+                                                                    <div class="dialog-options" id="options_deduplicate_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('deduplicate')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -718,8 +720,8 @@
                                                                 <td></td>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="category_check_tree1" name="category_check_tree1" class="options">
-                                                                    </div>
+                                                                    <div id="category_check_tree<?php echo $config_language; ?>" name="category_check_tree<?php echo $config_language; ?>" class="options"></div>
+                                                                    <div class="dialog-options" id="options_category_check_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('createcategory')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -879,10 +881,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    let selNodes = null;
-    let selCategories = null;
-    let currentCategory = 0;
-    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
+    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const CATEGORY_TREE = $('[name ^= "category_tree"]');
     const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
@@ -890,9 +889,10 @@
     const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
     const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
     const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
     const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const config_language = '<?php echo $config_language; ?>';
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';
     const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
@@ -901,14 +901,18 @@
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
     const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
+    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
+    let selNodes = null;
+    let selCategories = null;
+    let currentCategory = 0;
+    let currentAttribute = 0;
     let filterItems = [];
     let contextmenuConfig = [];
     let dialogItems = [];
-    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
     let clipboardNodes = [];
     let clipboardTitles = [];
     let pasteMode = null;
-
+    
     ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [{

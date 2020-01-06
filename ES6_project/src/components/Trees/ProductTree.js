@@ -6,6 +6,7 @@ export default class ProductTree {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
         this.tree = $("#product_tree" + this.lng_id);
         this.diver = $('input[id = "diver_product_tree' + this.lng_id + '"]:checkbox').is(":checked");      
+        this.sortOrder = $('input[id = "sortOrder_product_tree' + this.lng_id + '"]:checkbox').is(":checked");
 
         this.config = {     
             autoCollapse: true,
@@ -16,6 +17,7 @@ export default class ProductTree {
                     'user_token': user_token,
                     'token': token,
                     'language_id': this.lng_id,
+                    'sortOrder': this.sortOrder,
                     'invert': this.diver
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getProductTree'

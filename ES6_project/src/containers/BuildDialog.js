@@ -7,9 +7,12 @@ export default function buildDialog() {
     $('<br>').appendTo(this);
     createCheckbox(dialogItems[lng_id].sortorder, tree, lng_id).appendTo(this);
     $('<br>').appendTo(this);
-   
+
     switch (tree.replace(/[0-9]/g, '')) {
         case 'category_tree':
+        case 'deduplicate_tree':  
+        case 'detach_tree':      
+        case 'category_check_tree':
             createCheckbox(dialogItems[lng_id].hierarchy, tree, lng_id).appendTo(this);
             break;
         case 'product_tree':
@@ -31,9 +34,9 @@ function createCheckbox(template, tree) {
         type: "checkbox",
         class: template.selector,
         id: template.selector + '_' + tree,
-        checked: template.state == '1' ? true : false 
+        checked: template.state == '1' ? true : false
     }).appendTo(label);
-  
+
     label.append(' ' + template.label);
 
     return label;

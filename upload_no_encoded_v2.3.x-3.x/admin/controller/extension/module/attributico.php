@@ -242,6 +242,10 @@ class ControllerModuleAttributico extends Controller
         foreach ($this->data['languages'] as $language) {
             $lng = $this->getLanguage($language['language_id']);
 
+            if ($this->config->get('config_admin_language') == $language['code']) {
+                $this->data['config_language'] = $language['language_id'];
+            }
+
             if (version_compare(VERSION, '2.2.0', '>=')) {
                 $this->data['languages'][$language['code']]['src'] = 'language/' . $language['code'] . '/' . $language['code'] . '.png';
             } else {
@@ -406,14 +410,7 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-        /* if (isset($this->request->post['attributico_diver'])) {
-            $this->data['attributico_diver'] = $this->request->post['attributico_diver'];
-        } elseif (($this->config->get('attributico_diver'))) {
-            $this->data['attributico_diver'] = $this->config->get('attributico_diver');
-        } else {
-            $this->data['attributico_diver'] = 0;
-        } */
-
+        
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
             $this->data['column_left'] = $this->load->controller('common/column_left');

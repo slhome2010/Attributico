@@ -741,9 +741,6 @@
 </div>
 </div>
 <script type="text/javascript">
-let selNodes = null;
-    let selCategories = null;
-    let currentCategory = 0;
     const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
     const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const CATEGORY_TREE = $('[name ^= "category_tree"]');
@@ -763,14 +760,18 @@ let selNodes = null;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
     const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
+    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
+    let selNodes = null;
+    let selCategories = null;
+    let currentCategory = 0;
+    let currentAttribute = 0;
     let filterItems = [];
     let contextmenuConfig = [];
     let dialogItems = [];
-    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
     let clipboardNodes = [];
     let clipboardTitles = [];
     let pasteMode = null;
-
+    
     ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [{

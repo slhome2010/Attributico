@@ -89,7 +89,7 @@ export default function buildFilter() {
         style: "margin-left:1px;"
     }).appendTo(dropdownmenu);
     let ul = $('<ul>', {
-        class: "dropdown-menu"
+        class: "dropdown-menu drop-menu"
     });
     ul.appendTo(dropdownmenu);
     for (var key in dropdown) {
