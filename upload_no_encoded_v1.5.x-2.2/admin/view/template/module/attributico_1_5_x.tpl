@@ -542,7 +542,8 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <div id="group_check_tree1" name="group_check_tree1" class="options"></div>
+                                            <div id="detach_tree<?php echo $config_language; ?>" name="detach_tree<?php echo $config_language; ?>" class="options"></div>
+                                            <div class="dialog-options" id="options_detach_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                         </td>
                                         <td class="right"><a onclick="return tools('detached')" class="button"><?php echo $button_play; ?></a></td>
                                         <td class="right">
@@ -566,7 +567,8 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <div id="group_check_tree2" name="group_check_tree2" class="options"></div>
+                                            <div id="deduplicate_tree<?php echo $config_language; ?>" name="deduplicate_tree<?php echo $config_language; ?>" class="options"></div>
+                                            <div class="dialog-options" id="options_deduplicate_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                         </td>
                                         <td class="right"><a onclick="return tools('deduplicate')" class="button"><?php echo $button_play; ?></a></td>
                                         <td class="right">
@@ -604,7 +606,8 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <div id="category_check_tree1" name="category_check_tree1" class="options"></div>
+                                            <div id="category_check_tree<?php echo $config_language; ?>" name="category_check_tree<?php echo $config_language; ?>" class="options"></div>
+                                            <div class="dialog-options" id="options_category_check_tree<?php echo $config_language; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                         </td>
                                         <td class="right"><a onclick="return tools('createcategory')" class="button"><?php echo $button_play; ?></a></td>
                                         <td class="right">
@@ -653,9 +656,11 @@
                                             <div class="options">
                                                 <div>
                                                     <label class="control-label"><span data-toggle="tooltip" title="<?php echo $help_clone_options; ?>"><?php echo $head_clone; ?></span></label>
+                                                    <br>
+                                                    <span class="help"> <?php echo $help_clone_options; ?></span>
                                                 </div>
-                                                <div class="form-group">
-                                                    <div class="col-sm-6">
+                                                <div class="form-group" style="margin-top: 10px;">
+                                                    <div class="col-sm-6" style="display: inline-block;">
                                                         <label class="checkbox-inline" for="clone-language-group">
                                                             <input type="checkbox" name="clone-language-group" id="clone-language-group" value="group" checked="checked">
                                                             <?php echo $entry_attribute_groups; ?>
@@ -669,7 +674,7 @@
                                                             <?php echo $entry_product_text; ?>
                                                         </label>
                                                     </div>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-6" style="float: right;">
                                                         <label class="radio-inline">
                                                             <input type="radio" name="clone-language-method" value="0" checked="checked" />
                                                             <?php echo $text_insert; ?>
@@ -680,8 +685,8 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <div class="col-sm-6">
+                                                <div class="form-group" style="margin: 10px;">
+                                                    <div class="col-sm-6" style="display: inline-block;">
                                                         <label class="control-label" for="clone-language-source"><?php echo $entry_from; ?></label>
                                                         <select name="clone-language-source" id="clone-language-source" class="form-control">
                                                             <?php foreach ($languages as $language) { ?>
@@ -693,7 +698,7 @@
                                                             <?php } ?>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-6" style="display: inline-block; margin-left: 30px;">
                                                         <label class="control-label" for="clone-language-target"><?php echo $entry_to; ?></label>
                                                         <select name="clone-language-target" id="clone-language-target" class="form-control">
                                                             <?php foreach ($languages as $language) { ?>
@@ -708,7 +713,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><button type="button" onclick=" return tools('clone')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                        <td class="right"><a onclick="return tools('clone')" class="button"><?php echo $button_play; ?></a></td>                                        
                                         <td>
                                             <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
                                             <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
@@ -741,7 +746,7 @@
 </div>
 </div>
 <script type="text/javascript">
-    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
+    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const CATEGORY_TREE = $('[name ^= "category_tree"]');
     const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
@@ -749,9 +754,10 @@
     const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
     const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
     const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
     const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const config_language = '<?php echo $config_language; ?>';
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';
     const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов

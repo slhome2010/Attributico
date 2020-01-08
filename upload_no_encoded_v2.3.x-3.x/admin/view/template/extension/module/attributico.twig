@@ -602,7 +602,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree1" name="group_check_tree1" class="options"></div>
+                                                                    <div id="detach_tree{{config_language}}" name="detach_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_detach_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('detached')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -632,7 +633,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree2" name="group_check_tree2" class="options"></div>
+                                                                    <div id="deduplicate_tree{{config_language}}" name="deduplicate_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_deduplicate_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('deduplicate')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -673,7 +675,8 @@
                                                                 </td>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="category_check_tree1" name="category_check_tree1" class="options"></div>
+                                                                    <div id="category_check_tree{{config_language}}" name="category_check_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_category_check_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('createcategory')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button>
                                                                 </td>
@@ -837,9 +840,10 @@
     const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
     const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
     const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
     const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const config_language = '{{config_language}}';
     const token = '{{token}}';
     const user_token = '{{user_token}}';
     const extension = '{{extension}}'; // для v2.3 другая структура каталогов
