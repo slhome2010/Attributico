@@ -745,6 +745,10 @@
     </div>
 </div>
 </div>
+<style type="text/css">
+  i.fa.fa-times:before { content: "\2715"; font-style: normal;}
+  i.fa.fa-search:before { content: "\25B6"; font-style: normal;}
+</style>
 <script type="text/javascript">
     const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
@@ -893,6 +897,11 @@
             $("#column-2 .alert-success").hide();
             $("#column-2 .alert-info").show();
         });
+
+        $('body').on('click', '.dropdown-toggle', function(e) {            
+            $(this).next().slideToggle();
+        }); 
+
 </script>
 <script type="text/javascript">
     $('#tabs a').tabs();

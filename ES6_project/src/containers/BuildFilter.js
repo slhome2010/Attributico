@@ -11,7 +11,8 @@ export default function buildFilter() {
     // create open/close triangle
     let hideFilter = "fs_" + tab + "_hideFilter" + lng_id;
     $('<label>', {
-        class: 'checkbox-inline pull-right clearfix',
+        class: 'checkbox-inline pull-right clearfix ',
+        style: "float:right;",
         for: hideFilter,
         append: $('<input>', {
             type: "checkbox",
@@ -54,7 +55,8 @@ export default function buildFilter() {
     $('<button>', {
         id: btnResetSearch,
         type: "button",
-        class: "btn btn-default",
+        class: "btn btn-default button",
+        value: 'S',
         append: $('<i>', {
             class: "fa fa-times",
             'aria-hidden': "true"
@@ -64,7 +66,8 @@ export default function buildFilter() {
     $('<button>', {
         id: btnSearch,
         type: "button",
-        class: "btn btn-default",
+        class: "btn btn-default button",
+        value: 'R',
         append: $('<i>', {
             class: "fa fa-search",
             'aria-hidden': "true"
@@ -73,7 +76,8 @@ export default function buildFilter() {
     }).appendTo(form);
     // create dropdown menu
     let dropdownmenu = $('<div>', {
-        class: "btn-group dropdown-events"
+        class: "btn-group dropdown-events",
+        style: 'display: inline-block;'
     });
     dropdownmenu.appendTo(form);
     $('<button>', {
