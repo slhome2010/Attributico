@@ -1,6 +1,7 @@
 import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
+import { loadError } from '../../functions/LoadError';
 
 export default class AttributeProductTree {
     constructor(element) {
@@ -30,18 +31,7 @@ export default class AttributeProductTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
-            loadError: function (e, data) {
-                var error = data.error;
-                if (error.status && error.statusText) {
-                    data.message = "Ajax error: " + data.message;
-                    data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
-                } else {
-                    data.message = "Custom error: " + data.message;
-                    data.details = "An error occurred during loading: " + error;
-                }
-                console.log(data);
-                console.log(error.responseText);
-            },
+            loadError: (e, data) => loadError(e, data),
             beforeActivate: function (event, data) {
                 if (data.node.getLevel() === 4) {
                     return false;

@@ -1,5 +1,6 @@
 import { ContextmenuCommand } from "../ContextMenuCommand";
 import { KeydownCommand } from "../KeyDownCommand";
+import { loadError } from "../../functions/LoadError";
 
 export default class ProductTree {
     constructor(element) {
@@ -22,18 +23,7 @@ export default class ProductTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getProductTree'
             },
-            loadError: function (e, data) {
-                var error = data.error;
-                if (error.status && error.statusText) {
-                    data.message = "Ajax error: " + data.message;
-                    data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
-                } else {
-                    data.message = "Custom error: " + data.message;
-                    data.details = "An error occurred during loading: " + error;
-                }
-                console.log(data);
-                console.log(error.responseText);
-            },
+            loadError: (e, data) => loadError(e, data),
             dblclick: (event, data) => {
                 if (data.node.getLevel() <= 2) {
                     data.node.setExpanded(!data.node.isExpanded());

@@ -2,6 +2,7 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, selectControl } from '../../functions/Select';
+import { loadError } from '../../functions/LoadError';
 
 // ------------------- attribute tree (Attribute group in tab-category) ----------------------------------------
 export default class AttributeTree {
@@ -32,18 +33,7 @@ export default class AttributeTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
-            loadError: function (e, data) {
-                var error = data.error;
-                if (error.status && error.statusText) {
-                    data.message = "Ajax error: " + data.message;
-                    data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
-                } else {
-                    data.message = "Custom error: " + data.message;
-                    data.details = "An error occurred during loading: " + error;
-                }
-                console.log(data);
-                console.log(error.responseText);
-            },
+            loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
                 data.result = {
                     data: {

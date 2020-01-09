@@ -2,6 +2,7 @@ import { ContextmenuCommandDuty } from '../ContextMenuCommand';
 import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { reloadAttribute } from '../../functions/Syncronisation';
+import { loadError } from '../../functions/LoadError';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
@@ -31,18 +32,7 @@ export default class DutyTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
-            loadError: function (e, data) {
-                var error = data.error;
-                if (error.status && error.statusText) {
-                    data.message = "Ajax error: " + data.message;
-                    data.details = "Ajax error: " + error.statusText + ", status code = " + error.status;
-                } else {
-                    data.message = "Custom error: " + data.message;
-                    data.details = "An error occurred during loading: " + error;
-                }
-                console.log(data);
-                console.log(error.responseText);
-            },
+            loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
                 data.result = {
                     data: {
