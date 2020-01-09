@@ -123,11 +123,9 @@ export default class AttributeTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-
-                        data.tree.$div.contextmenu("enableEntry", "remove", false);
-                        data.tree.$div.contextmenu("enableEntry", "rename", false);
-                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
-                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        ["remove", "rename", "addSibling", "addChild"].forEach(function (item, index, array) {
+                            data.tree.$div.contextmenu("enableEntry", item, false);
+                        });                        
                         data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                         node.setActive();
                     },

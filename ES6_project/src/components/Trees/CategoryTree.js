@@ -26,7 +26,7 @@ export default class CategoryTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
             },
-            activate: (event, data)  => {
+            activate: (event, data) => {
                 // var node = data.node;
                 let tree = $("#category_attribute_tree" + this.lng_id).fancytree("getTree");
                 currentCategory = data.node.key;
@@ -83,16 +83,15 @@ export default class CategoryTree {
                 //console.log(data.tree.$div.context.id, ' has loaded');
                 if (smartScroll.is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
-                    
+
                 data.tree.$div.contextmenu({
                     delegate: "span.fancytree-title",
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", false);
-                        data.tree.$div.contextmenu("enableEntry", "rename", false);
-                        data.tree.$div.contextmenu("enableEntry", "addSibling", false);
-                        data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        ["remove", "rename", "addSibling", "addChild"].forEach(function (item, index, array) {
+                            data.tree.$div.contextmenu("enableEntry", item, false);
+                        });
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },

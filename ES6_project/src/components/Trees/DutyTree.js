@@ -144,8 +144,7 @@ export default class DutyTree {
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
                         data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['duty']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group', 'attribute', 'duty']));
-                        // data.tree.$div.contextmenu("enableEntry", "remove", true);
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group', 'attribute', 'duty']));                        
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();
