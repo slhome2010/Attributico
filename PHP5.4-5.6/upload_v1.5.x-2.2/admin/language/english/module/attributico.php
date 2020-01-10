@@ -8,7 +8,9 @@ $_['button_check_for_updates'] = 'Check for updates';
 $_['text_success'] = 'Success: You have modified module!';
 $_['text_module'] = 'Modules';
 $_['text_edit'] = 'Edit Module';
-$_['text_renew'] = 'Renew';
+$_['text_rewrite'] = 'Rewrite';
+$_['text_insert'] = 'Insert';
+$_['text_clear'] = 'Clear';
 $_['text_keep'] = 'Keep';
 $_['text_duty'] = 'Take duty template';
 $_['text_duty_only'] = 'Take duty only if values is empty';
@@ -104,7 +106,7 @@ $_['help_autoattribute'] = 'When adding a new attribute to the category, it will
 $_['help_autodel'] = 'When you delete an attribute of a category, it will automatically be removed from all products in this category';
 $_['help_autoadd_inherit'] = 'Adding attributes to all the sub-categories, and the attribute values or templates to all products of these subcategories.';
 $_['help_autodel_inherit'] = 'Remove the attributes from all the sub-categories, and the attribute values or patterns of all the products of these subcategories.';
-$_['help_product_text'] = 'When you add an attribute to the product, the value of an attribute can be renewed (clear), keeping (save that which is already there) or Taken from duty template, overwriting the attribute values, or Taken from duty template only if the attribute values is empty.';
+$_['help_product_text'] = 'When you add an attribute to the product, the value of an attribute can be Cleared, Keeping (save that which is already there) or Taken from duty template, overwriting the attribute values, or Taken from duty template only if the attribute values is empty.';
 $_['help_upgrade'] = 'The database structure does not match the version of the module. Click the button below to conform.';
 $_['help_children'] = 'It enables or disables the display of Templates, Values or Duty Template as a child nodes of attribute in this tree.';
 $_['help_nosettings'] = 'Settings are not necessary.';
@@ -115,6 +117,7 @@ $_['help_defrag_options'] = 'You can undo the defragmentation of Groups or Attri
 $_['help_cache'] = 'When loading attribute trees, the data will be retrieved from the file cache corresponding to the tree.';
 $_['help_categories_options'] = 'Select the appropriate items to build a set of attributes for the categories you selected and place the attributes in the products. The placement will be done in accordance with the settings "Adding Attribute Values to the Product"';
 $_['help_multistore'] = 'Show categories for all stories';
+$_['help_clone_options'] = 'You can undo the clone of Groups, Attributes or Attribute values by uncheckmark from the corresponding item.';
 
 // Entry
 $_['entry_attribute_groups'] = 'Attribute Groups';
@@ -145,6 +148,8 @@ $_['entry_info_title'] = 'Information about <span> Attribut<b style="color: #219
 $_['entry_create_categories'] = 'Generate a set of attributes for a category';
 $_['entry_inject_to_products'] = 'Inject the category attributes into products';
 $_['entry_multistore'] = 'All stories';
+$_['entry_from'] = 'From:';
+$_['entry_to'] = 'To:';
 
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify Attribut<b style="color: #003F62;">&</b>co!';
@@ -182,9 +187,10 @@ $_['button_play']  = 'Start task';
 $_['head_settings']  = 'Settings';
 $_['head_command']  = 'Commands';
 $_['head_status']  = 'Status';
+$_['head_clone']  = 'Clone language';
 $_['alert_warning']  = '<strong>Warning!</strong> Do not leave this page until the operation is complete.';
 $_['alert_success']  = '<strong>Success!</strong> Operation has been completed.';
-$_['alert_info']  = '<strong>Sorry!</strong> This feature is not implemented in this version.';
+$_['alert_info']  = 'More features will be implemented in future versions.';
 $_['alert_reload']  = '<strong>Warning!</strong> Necessarily to refresh this page to get the actual data!';
 $_['alert_warning']  = '<strong>Warning!</strong> Make a backup of the database before using the tools.';
 $_['message_duplicate'] = 'Processed duplicates: ';
@@ -195,3 +201,7 @@ $_['message_defragmentation'] = 'Ordered attributes: ';
 $_['message_defragmentation_group'] = 'Ordered groups: ';
 $_['message_create_categories'] = 'Category attributes are formed: ';
 $_['message_inject_to_products'] = 'Injected attributes to products: ';
+$_['message_clone_attribute'] = 'Cloned attributes: ';
+$_['message_clone_group'] = 'Cloned groups: ';
+$_['message_clone_value'] = 'Cloned values: ';
+$_['message_clone_error'] = 'Clone is impossible! ';

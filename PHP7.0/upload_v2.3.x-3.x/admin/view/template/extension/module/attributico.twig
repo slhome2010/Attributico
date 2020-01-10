@@ -57,7 +57,7 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane" id="tab-general">
-                                <div class="col-xs-3">
+                                <div class="col-sm-3">
                                     <ul class="nav nav-tabs tabs-left" id="verticalTab">
                                         <li><a href="#tab-common" data-toggle="tab">{{legend_general}}</a></li>
                                         <li><a href="#tab-children" data-toggle="tab">{{legend_children}}</a></li>
@@ -66,97 +66,113 @@
                                         <li><a href="#tab-algorithm" data-toggle="tab">{{legend_algorithm}}</a></li>
                                     </ul>
                                 </div>
-                                <div class="col-xs-9">
+                                <div class="col-sm-9">
                                     <div class="tab-content">
                                         <div class="tab-pane" id="tab-common">
                                             <legend>{{legend_general}}</legend>
                                             <div class="form-group">
-                                                <label class="col-sm-4 control-label" for="input-attributico_splitter">{{entry_splitter}}</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" name="attributico_splitter" value="{{attributico_splitter}}" class="form-control" id="input-attributico_splitter" />
-                                                </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_sortorder"><span data-toggle="tooltip" title="{{help_sortorder}}">{{entry_sortorder}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_sortorder %}
-                                                            <input type="checkbox" name="attributico_sortorder" value="1" checked="checked" id="input-attributico_sortorder" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_sortorder" value="1" id="input-attributico_sortorder" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-sm-4 control-label" for="input-attributico_splitter">{{entry_splitter}}</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="attributico_splitter" value="{{attributico_splitter}}" class="form-control" id="input-attributico_splitter" />
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_smart_scroll"><span data-toggle="tooltip" title="{{help_smart_scroll}}">{{entry_smart_scroll}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_smart_scroll %}
-                                                            <input type="checkbox" name="attributico_smart_scroll" value="1" checked="checked" id="input-attributico_smart_scroll" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_smart_scroll" value="1" id="input-attributico_smart_scroll" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-sm-4 control-label" for="input-attributico_sortorder"><span data-toggle="tooltip" title="{{help_sortorder}}">{{entry_sortorder}}</span></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_sortorder %}
+                                                                <input type="checkbox" name="attributico_sortorder" value="1" checked="checked" id="input-attributico_sortorder" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_sortorder" value="1" id="input-attributico_sortorder" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_empty"><span data-toggle="tooltip" title="{{help_empty}}">{{entry_empty}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_empty %}
-                                                            <input type="checkbox" name="attributico_empty" value="1" checked="checked" id="input-attributico_empty" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_empty" value="1" id="input-attributico_empty" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-sm-4 control-label" for="input-attributico_smart_scroll"><span data-toggle="tooltip" title="{{help_smart_scroll}}">{{entry_smart_scroll}}</span></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_smart_scroll %}
+                                                                <input type="checkbox" name="attributico_smart_scroll" value="1" checked="checked" id="input-attributico_smart_scroll" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_smart_scroll" value="1" id="input-attributico_smart_scroll" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_about_blank"><span data-toggle="tooltip" title="{{help_about_blank}}">{{entry_about_blank}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_about_blank %}
-                                                            <input type="checkbox" name="attributico_about_blank" value="1" checked="checked" id="input-attributico_about_blank" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_about_blank" value="1" id="input-attributico_about_blank" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-sm-4 control-label" for="input-attributico_empty"><span data-toggle="tooltip" title="{{help_empty}}">{{entry_empty}}</span></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_empty %}
+                                                                <input type="checkbox" name="attributico_empty" value="1" checked="checked" id="input-attributico_empty" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_empty" value="1" id="input-attributico_empty" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_lazyload"><span data-toggle="tooltip" title="{{help_lazyload}}">{{entry_lazyload}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_lazyload %}
-                                                            <input type="checkbox" name="attributico_lazyload" value="1" checked="checked" id="input-attributico_lazyload" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_lazyload" value="1" id="input-attributico_lazyload" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-sm-4 control-label" for="input-attributico_about_blank"><span data-toggle="tooltip" title="{{help_about_blank}}">{{entry_about_blank}}</span></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_about_blank %}
+                                                                <input type="checkbox" name="attributico_about_blank" value="1" checked="checked" id="input-attributico_about_blank" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_about_blank" value="1" id="input-attributico_about_blank" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_cache"><span data-toggle="tooltip" title="{{help_cache}}">{{entry_cache}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_cache %}
-                                                            <input type="checkbox" name="attributico_cache" value="1" checked="checked" id="input-attributico_cache" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_cache" value="1" id="input-attributico_cache" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-md-4 col-sm-6 control-label" for="input-attributico_lazyload"><span data-toggle="tooltip" title="{{help_lazyload}}">{{entry_lazyload}}</span></label>
+                                                    <div class="col-md-8 col-sm-6">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_lazyload %}
+                                                                <input type="checkbox" name="attributico_lazyload" value="1" checked="checked" id="input-attributico_lazyload" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_lazyload" value="1" id="input-attributico_lazyload" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <label class="col-sm-4 control-label" for="input-attributico_multistore"><span data-toggle="tooltip" title="{{help_multistore}}">{{entry_multistore}}</span></label>
-                                                <div class="col-sm-8">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            {% if attributico_multistore %}
-                                                            <input type="checkbox" name="attributico_multistore" value="1" checked="checked" id="input-attributico_multistore" />
-                                                            {% else %}
-                                                            <input type="checkbox" name="attributico_multistore" value="1" id="input-attributico_multistore" />
-                                                            {% endif %}
-                                                        </label>
+                                                <div class="row">
+                                                    <label class="col-md-4 col-sm-6 control-label" for="input-attributico_cache"><span data-toggle="tooltip" title="{{help_cache}}">{{entry_cache}}</span></label>
+                                                    <div class="col-md-8 col-sm-6">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_cache %}
+                                                                <input type="checkbox" name="attributico_cache" value="1" checked="checked" id="input-attributico_cache" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_cache" value="1" id="input-attributico_cache" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-4 col-sm-6 control-label" for="input-attributico_multistore"><span data-toggle="tooltip" title="{{help_multistore}}">{{entry_multistore}}</span></label>
+                                                    <div class="col-md-8 col-sm-6">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                {% if attributico_multistore %}
+                                                                <input type="checkbox" name="attributico_multistore" value="1" checked="checked" id="input-attributico_multistore" />
+                                                                {% else %}
+                                                                <input type="checkbox" name="attributico_multistore" value="1" id="input-attributico_multistore" />
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -285,42 +301,50 @@
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{help_product_text}}">{{entry_product_text}}</span></label>
                                                 <div class="col-sm-9">
-                                                    <label class="radio-inline">
-                                                        {% if attributico_product_text == '1' %}
-                                                        <input type="radio" name="attributico_product_text" value="1" checked="checked" />
-                                                        {{text_renew}}
-                                                        {% else %}
-                                                        <input type="radio" name="attributico_product_text" value="1" />
-                                                        {{text_renew}}
-                                                        {% endif %}
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        {% if attributico_product_text == '2' %}
-                                                        <input type="radio" name="attributico_product_text" value="2" checked="checked" />
-                                                        {{text_keep}}
-                                                        {% else %}
-                                                        <input type="radio" name="attributico_product_text" value="2" />
-                                                        {{text_keep}}
-                                                        {% endif %}
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        {% if attributico_product_text == '3' %}
-                                                        <input type="radio" name="attributico_product_text" value="3" checked="checked" />
-                                                        {{text_duty}}
-                                                        {% else %}
-                                                        <input type="radio" name="attributico_product_text" value="3" />
-                                                        {{text_duty}}
-                                                        {% endif %}
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        {% if attributico_product_text == '4' %}
-                                                        <input type="radio" name="attributico_product_text" value="4" checked="checked" />
-                                                        {{text_duty_only}}
-                                                        {% else %}
-                                                        <input type="radio" name="attributico_product_text" value="4" />
-                                                        {{text_duty_only}}
-                                                        {% endif %}
-                                                    </label>
+                                                    <div class="radio">
+                                                        <label>
+                                                            {% if attributico_product_text == '1' %}
+                                                            <input type="radio" name="attributico_product_text" value="1" checked="checked" />
+                                                            {{text_clear}}
+                                                            {% else %}
+                                                            <input type="radio" name="attributico_product_text" value="1" />
+                                                            {{text_clear}}
+                                                            {% endif %}
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            {% if attributico_product_text == '2' %}
+                                                            <input type="radio" name="attributico_product_text" value="2" checked="checked" />
+                                                            {{text_keep}}
+                                                            {% else %}
+                                                            <input type="radio" name="attributico_product_text" value="2" />
+                                                            {{text_keep}}
+                                                            {% endif %}
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            {% if attributico_product_text == '3' %}
+                                                            <input type="radio" name="attributico_product_text" value="3" checked="checked" />
+                                                            {{text_duty}}
+                                                            {% else %}
+                                                            <input type="radio" name="attributico_product_text" value="3" />
+                                                            {{text_duty}}
+                                                            {% endif %}
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            {% if attributico_product_text == '4' %}
+                                                            <input type="radio" name="attributico_product_text" value="4" checked="checked" />
+                                                            {{text_duty_only}}
+                                                            {% else %}
+                                                            <input type="radio" name="attributico_product_text" value="4" />
+                                                            {{text_duty_only}}
+                                                            {% endif %}
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -336,31 +360,11 @@
                                 <div class="tab-content">
                                     {% for language in languages %}
                                     <div class="tab-pane" id="tab-attribute_language{{language.language_id}}">
-                                        <div class="fancyfilter" id="tab-attribute_filter{{language.language_id}}"></div>                                        
+                                        <div class="fancyfilter" id="tab-attribute_filter{{language.language_id}}"></div>
                                         <div class="form-group">
                                             <ul id="attribute_group_tree{{language.language_id}}" name="attribute_group_tree{{language.language_id}}" class="filetree"></ul>
                                         </div>
-                                        <div id="options_attribute_group_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                            <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                <input type="checkbox" id="autoCollapse_attribute_group_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                {% if attributico_sortorder == '1' %}
-                                                <input type="checkbox" id="sortOrder_attribute_group_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                {% else %}
-                                                <input type="checkbox" id="sortOrder_attribute_group_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                {% endif %}
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="lazyLoad{{language.language_id}}">
-                                                {% if attributico_lazyload == '1' %}
-                                                <input type="checkbox" id="lazyLoad_attribute_group_tree{{language.language_id}}" checked="checked"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                {% else %}
-                                                <input type="checkbox" id="lazyLoad_attribute_group_tree{{language.language_id}}"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                {% endif %}
-                                            </label>
-                                        </div>
+                                        <div class="dialog-options" id="options_attribute_group_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                     </div>
                                     {% endfor %}
                                 </div>
@@ -375,31 +379,11 @@
                                 <div class="tab-content">
                                     {% for language in languages %}
                                     <div class="tab-pane" id="tab-duty_language{{language.language_id}}">
-                                        <div class="fancyfilter" id="tab-duty_filter{{language.language_id}}"></div> 
+                                        <div class="fancyfilter" id="tab-duty_filter{{language.language_id}}"></div>
                                         <div class="form-group">
                                             <ul id="duty_attribute_tree{{language.language_id}}" name="duty_attribute_tree{{language.language_id}}" class="filetree"></ul>
                                         </div>
-                                        <div id="options_duty_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                            <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                <input type="checkbox" id="autoCollapse_duty_attribute_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                {% if attributico_sortorder == '1' %}
-                                                <input type="checkbox" id="sortOrder_duty_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                {% else %}
-                                                <input type="checkbox" id="sortOrder_duty_attribute_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                {% endif %}
-                                            </label>
-                                            <br>
-                                            <label class="checkbox-inline" for="lazyLoad{{language.language_id}}">
-                                                {% if attributico_lazyload == '1' %}
-                                                <input type="checkbox" id="lazyLoad_duty_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                {% else %}
-                                                <input type="checkbox" id="lazyLoad_duty_attribute_tree{{language.language_id}}"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                {% endif %}
-                                            </label>
-                                        </div>
+                                        <div class="dialog-options" id="options_duty_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                     </div>
                                     {% endfor %}
                                 </div>
@@ -429,43 +413,11 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="category_tree{{language.language_id}}" name="category_tree{{language.language_id}}" class="filetree"></div>
-                                                            <div id="options_category_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                                                <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                                    <input type="checkbox" id="autoCollapse_category_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                                    {% if attributico_sortorder == '1' %}
-                                                                    <input type="checkbox" id="sortOrder_category_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="sortOrder_category_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="multiSelect{{language.language_id}}">
-                                                                    {% if attributico_multiselect == '1' %}
-                                                                    <input type="checkbox" id="multiSelect_category_tree{{language.language_id}}" checked="checked"> <b>{{text_multiSelect[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="multiSelect_category_tree{{language.language_id}}"> <b>{{text_multiSelect[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_category_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                                         </td>
                                                         <td class="left">
                                                             <div id="category_attribute_tree{{language.language_id}}" name="category_attribute_tree{{language.language_id}}" class="filetree"></div>
-                                                            <div id="options_category_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                                                <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                                    <input type="checkbox" id="autoCollapse_category_attribute_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                                    {% if attributico_sortorder == '1' %}
-                                                                    <input type="checkbox" id="sortOrder_category_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="sortOrder_category_attribute_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_category_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -479,27 +431,7 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="attribute_tree{{language.language_id}}" name="attribute_tree{{language.language_id}}" class="filetree"></div>
-                                                            <div id="options_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                                                <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                                    <input type="checkbox" id="autoCollapse_attribute_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                                    {% if attributico_sortorder == '1' %}
-                                                                    <input type="checkbox" id="sortOrder_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="sortOrder_attribute_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad{{language.language_id}}">
-                                                                    {% if attributico_lazyload == '1' %}
-                                                                    <input type="checkbox" id="lazyLoad_attribute_tree{{language.language_id}}" checked="checked"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="lazyLoad_attribute_tree{{language.language_id}}"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_attribute_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -527,43 +459,11 @@
                                                     <tr>
                                                         <td class="left" style="width: 50%;">
                                                             <div id="attribute_product_tree{{language.language_id}}" name="attribute_product_tree{{language.language_id}}" class="filetree"></div>
-                                                            <div id="options_attribute_product_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                                                <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                                    <input type="checkbox" id="autoCollapse_attribute_product_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="sortOrder{{language.language_id}}">
-                                                                    {% if attributico_sortorder == '1' %}
-                                                                    <input type="checkbox" id="sortOrder_attribute_product_tree{{language.language_id}}" checked="checked"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="sortOrder_attribute_product_tree{{language.language_id}}"> <b>{{text_sortOrder[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                                <br>
-                                                                <label class="checkbox-inline" for="lazyLoad{{language.language_id}}">
-                                                                    {% if attributico_lazyload == '1' %}
-                                                                    <input type="checkbox" id="lazyLoad_attribute_product_tree{{language.language_id}}" checked="checked"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="lazyLoad_attribute_product_tree{{language.language_id}}"> <b>{{text_lazyLoad[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_attribute_product_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                                         </td>
                                                         <td class="left">
                                                             <div id="product_tree{{language.language_id}}" name="product_tree{{language.language_id}}" class="filetree"></div>
-                                                            <div id="options_product_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}">
-                                                                <label class="checkbox-inline" for="autoCollapse{{language.language_id}}">
-                                                                    <input type="checkbox" id="autoCollapse_product_tree{{language.language_id}}" checked> <b>{{text_autoCollapse[ language.language_id]}}</b>
-                                                                </label> 
-                                                                <br>
-                                                                <label class="checkbox-inline" for="diver{{language.language_id}}">
-                                                                    {% if attributico_diver == '1' %}
-                                                                    <input type="checkbox" id="diver_product_tree{{language.language_id}}" checked="checked"> <b>{{text_Diver[ language.language_id]}}</b>
-                                                                    {% else %}
-                                                                    <input type="checkbox" id="diver_product_tree{{language.language_id}}"> <b>{{text_Diver[ language.language_id]}}</b>
-                                                                    {% endif %}
-                                                                </label>
-                                                            </div>
+                                                            <div class="dialog-options" id="options_product_tree{{language.language_id}}" title="{{text_Options[ language.language_id]}}"></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -702,7 +602,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree1" name="group_check_tree1" class="options"></div>
+                                                                    <div id="detach_tree{{config_language}}" name="detach_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_detach_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('detached')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -732,7 +633,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="group_check_tree2" name="group_check_tree2" class="options"></div>
+                                                                    <div id="deduplicate_tree{{config_language}}" name="deduplicate_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_deduplicate_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('deduplicate')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
@@ -773,9 +675,11 @@
                                                                 </td>
                                                             <tr>
                                                                 <td>
-                                                                    <div id="category_check_tree1" name="category_check_tree1" class="options"></div>
+                                                                    <div id="category_check_tree{{config_language}}" name="category_check_tree{{config_language}}" class="options"></div>
+                                                                    <div class="dialog-options" id="options_category_check_tree{{config_language}}" title="{{text_Options[language['language_id']]}}"></div>
                                                                 </td>
-                                                                <td><button type="button" onclick=" return tools('createcategory')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                                                <td><button type="button" onclick=" return tools('createcategory')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button>
+                                                                </td>
                                                                 <td>
                                                                     <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
                                                                     <div class="task-complete"><img class="task-complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /> </div>
@@ -814,6 +718,90 @@
                                                 </div>
                                             </div>
                                             <div class="tab-pane" id="tab-standart">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <colgroup>
+                                                            <col class="col-xs-12 col-md-10">
+                                                            <col class="col-xs-4 col-md-1">
+                                                            <col class="col-xs-4 col-md-1">
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{head_settings}}</th>
+                                                                <th>{{head_command}}</th>
+                                                                <th>{{head_status}}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="options">
+                                                                        <div>
+                                                                            <label class="control-label"><span data-toggle="tooltip" title="{{help_clone_options}}">{{head_clone}}</span></label>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-6">
+                                                                                <label class="checkbox-inline" for="clone-language-group">
+                                                                                    <input type="checkbox" name="clone-language-group" id="clone-language-group" value="group" checked="checked">
+                                                                                    {{entry_attribute_groups}}
+                                                                                </label>
+                                                                                <label class="checkbox-inline" for="clone-language-attribute">
+                                                                                    <input type="checkbox" name="clone-language-attribute" id="clone-language-attribute" value="attribute" checked="checked">
+                                                                                    {{entry_attributes}}
+                                                                                </label>
+                                                                                <label class="checkbox-inline" for="clone-language-value">
+                                                                                    <input type="checkbox" name="clone-language-value" id="clone-language-value" value="value" checked="checked">
+                                                                                    {{entry_product_text}}
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="clone-language-method" value="0" checked="checked" />
+                                                                                    {{text_insert}}
+                                                                                </label>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="clone-language-method" value="1" />
+                                                                                    {{text_rewrite}}
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-6">
+                                                                                <label class="control-label" for="clone-language-source">{{entry_from}}</label>
+                                                                                <select name="clone-language-source" id="clone-language-source" class="form-control">
+                                                                                    {% for language in languages %}
+                                                                                    {% if language['language_id'] == config_language %}
+                                                                                    <option value="{{language['language_id']}}" selected="selected">{{language['name']}}</option>
+                                                                                    {% else %}
+                                                                                    <option value="{{language['language_id']}}">{{language['name']}}</option>
+                                                                                    {% endif %}
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <label class="control-label" for="clone-language-target">{{entry_from}}</label>
+                                                                                <select name="clone-language-target" id="clone-language-target" class="form-control">
+                                                                                    {% for language in languages %}
+                                                                                    {% if language['language_id'] == config_language %}
+                                                                                    <option value="{{language['language_id']}}" selected="selected">{{language['name']}}</option>
+                                                                                    {% else %}
+                                                                                    <option value="{{language['language_id']}}">{{language['name']}}</option>
+                                                                                    {% endif %}
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><button type="button" onclick=" return tools('clone')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                                                <td>
+                                                                    <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
+                                                                    <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                                 <div class="alert alert-info" role="alert"> {{alert_info}} </div>
                                             </div>
                                         </div>
@@ -843,9 +831,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    let selNodes = null;
-    let selCategories = null;
+<script type="text/javascript">    
     const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
     const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const CATEGORY_TREE = $('[name ^= "category_tree"]');
@@ -854,72 +840,101 @@
     const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
     const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
     const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "group_check_tree"]');
+    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
     const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
     const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const config_language = '{{config_language}}';
     const token = '{{token}}';
     const user_token = '{{user_token}}';
     const extension = '{{extension}}'; // для v2.3 другая структура каталогов
     const edit = '{{edit}}'; // для v1.5 другая функция входа в товар
-    let contextmenu = [];
-    const textNewAttribute = {{text_New_attribute|json_encode()}};
-    const textNewGroup = {{text_New_group|json_encode()}};
-    const textConfirm = {{text_confirm|json_encode()}};
-    let currentCategory = 0;
-    const FILTERSETTINGS = {{filter_settings|json_encode()}};
-    let filterItems = [];
+    const textNewAttribute = {{ text_New_attribute| json_encode()}};
+    const textNewGroup = {{ text_New_group| json_encode()}};
+    const textConfirm = {{ text_confirm| json_encode()}};
+    const FILTERSETTINGS = {{ filter_settings| json_encode()}};
     const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
+    let selNodes = null;
+    let selCategories = null;
+    let currentCategory = 0;
+    let currentAttribute = 0;
+    let filterItems = [];
+    let contextmenuConfig = [];
+    let dialogItems = [];
+    let clipboardNodes = [];
+    let clipboardTitles = [];
+    let pasteMode = null;
 
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-        contextmenu[lng_id] = [
-            {title: {{text_Edit|json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
-            {title: {{text_Delete|json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
-            {title: {{text_Copy|json_encode()}}[lng_id] + "<kbd>Ctrl+C</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
-            {title: {{text_Paste|json_encode()}}[lng_id] + "<kbd>Ctrl+V</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
-            {title: "----"},
-            {title: {{text_Expande|json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
-            {title: {{text_Collapse|json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "collapse", uiIcon: "ui-icon-folder-collapsed"},
-            {title: {{text_Options|json_encode()}}[lng_id], cmd: "options", uiIcon: "ui-icon-gear"},
-            {title: "----"},
-            {title: {{text_New_group|json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plus"},
-            {title: {{text_New_attribute|json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-arrowreturn-1-e"}
+        contextmenuConfig[lng_id] = [
+            { title: {{ text_Edit| json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
+            { title: {{ text_Delete| json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
+            { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>Ctrl+C</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
+            { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>Ctrl+V</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
+            { title: "----" },
+            { title: {{ text_Expande| json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
+            { title: {{ text_Collapse| json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "collapse", uiIcon: "ui-icon-folder-collapsed"},
+            { title: {{ text_Options| json_encode()}}[lng_id], cmd: "options", uiIcon: "ui-icon-gear"},
+            { title: "----" },
+            { title: {{ text_New_group| json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plus"},
+            { title: {{ text_New_attribute| json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-arrowreturn-1-e"}
         ];
 
         filterItems[lng_id] = {
-        title : {{text_filter|json_encode()}}[lng_id],
-        button: {{button_filter_action|json_encode()}}[lng_id],
-        checkbox: {
-            autoComplete: {{text_autoComplete|json_encode()}}[lng_id],
-            attributesOnly: {{text_Attributes_only|json_encode()}}[lng_id],
-            leavesOnly: {{text_Leaves_only|json_encode()}}[lng_id],
-        },
-        spancheckbox: {
-            hideMode: {{text_Hide_unmatched_nodes|json_encode()}}[lng_id],
-            autoExpand: {{text_Auto_expand|json_encode()}}[lng_id],
-            counter: {{text_Counter_badges|json_encode()}}[lng_id],
-            hideExpandedCounter: {{text_hideExpandedCounter|json_encode()}}[lng_id],
-            highlight: {{text_Highlight|json_encode()}}[lng_id],
-            fuzzy: {{text_Fuzzy|json_encode()}}[lng_id],
-            regex: {{text_Regular_expression|json_encode()}}[lng_id],
-        },
-        dropdown: {
-            empty: {{f_empty|json_encode()}}[lng_id],
-            digital: {{f_digital|json_encode()}}[lng_id],
-            html: {{f_html|json_encode()}}[lng_id],
-            default: {{f_default|json_encode()}}[lng_id],
-        }
-    };
+            title: {{ text_filter | json_encode() }}[lng_id],
+            button: {{ button_filter_action | json_encode() }} [lng_id],
+            checkbox: {
+                autoComplete: {{ text_autoComplete | json_encode() }} [lng_id],
+                attributesOnly: {{ text_Attributes_only | json_encode() }} [lng_id],
+                leavesOnly: {{ text_Leaves_only | json_encode() }} [lng_id],
+            },
+            spancheckbox: {
+                hideMode: {{ text_Hide_unmatched_nodes | json_encode() }} [lng_id],
+                autoExpand: {{ text_Auto_expand | json_encode() }} [lng_id],
+                counter: {{ text_Counter_badges | json_encode() }} [lng_id],
+                hideExpandedCounter: {{ text_hideExpandedCounter | json_encode() }} [lng_id],
+                highlight: {{ text_Highlight | json_encode() }} [lng_id],
+                fuzzy: {{ text_Fuzzy | json_encode() }} [lng_id],
+                regex: {{ text_Regular_expression | json_encode() }} [lng_id],
+            },
+            dropdown: {
+                empty: {{ f_empty | json_encode() }} [lng_id],
+                digital: {{ f_digital | json_encode() }} [lng_id],
+                html: {{ f_html | json_encode() }} [lng_id],
+                default: {{ f_default | json_encode() }} [lng_id],
+            }
+        };
+
+        dialogItems[lng_id] = {
+            sortorder: {
+                label: {{ text_sortOrder | json_encode() }}[lng_id],
+                selector: 'sortOrder',
+                state: {{ attributico_sortorder }}
+            },
+            lazyload: {
+                label: {{ text_lazyLoad | json_encode() }} [lng_id],
+                selector: 'lazyLoad',
+                state: {{ attributico_lazyload }}
+            },
+            autocollapse: {
+                label: {{ text_autoCollapse | json_encode() }} [lng_id],
+                selector: 'autoCollapse',
+                state: '1'
+            },
+            hierarchy: {
+                label: {{ text_multiSelect | json_encode() }} [lng_id],
+                selector: 'multiSelect',
+                state: {{ attributico_multiselect }}
+            },
+            divergency: {
+                label: {{ text_Diver | json_encode() }} [lng_id],
+                selector: 'diver',
+                state: '0'
+            }
+        };
     });
 
-$(document).ready(function() {
     $("[data-toggle='tooltip']").tooltip();
-
-    $('.fancyfilter').each(bildFilter);
-
-    initTrees();
-
-});
 </script>
 <script type="text/javascript">
     $('#tab-attribute_language a:first').tab('show');

@@ -340,11 +340,12 @@ class ModelCatalogAttributico extends Model
         // in foreach
         $maxorder = $this->db->query("SELECT MAX(`sort_order`) AS maxorder FROM " . DB_PREFIX . "attribute");
         $this->db->query("INSERT INTO " . DB_PREFIX . "attribute SET attribute_group_id = '" . (int)$data['attribute_group_id'] . "', sort_order = '" . ((int)$maxorder->row['maxorder'] + 1) . "'");
-
+        // этот id будет добавлен к имени при добавлении: Новый атрибут_234
         $attribute_id = $this->db->getLastId();
 
         foreach ($data['attribute_description'] as $language_id => $value) {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language_id . "',
+             name = '" . $this->db->escape($value['name'] . '_' . $attribute_id) . "'");
         }
 
         return $attribute_id;
@@ -418,11 +419,12 @@ class ModelCatalogAttributico extends Model
         // in foreach
         $maxorder = $this->db->query("SELECT MAX(`sort_order`) AS maxorder FROM " . DB_PREFIX . "attribute_group");
         $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group SET sort_order = '" . ((int)$maxorder->row['maxorder'] + 1) . "'");
-
+        // этот id будет добавлен к имени при добавлении: Новая группа_234
         $attribute_group_id = $this->db->getLastId();
 
         foreach ($data['attribute_group_description'] as $language_id => $value) {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int)$attribute_group_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int)$attribute_group_id . "', language_id = '" . (int)$language_id .
+             "', name = '" . $this->db->escape($value['name'] . '_' . $attribute_group_id) . "'");
         }
 
         return $attribute_group_id;
