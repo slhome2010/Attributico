@@ -56,8 +56,8 @@ export default class CategoryTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {
-                    addAttributeToCategory(node, data, data.otherNode.tree.$div.context.id.indexOf('attribute_tree'));
+                dragDrop: function (node, data) {                   
+                    addAttributeToCategory(node, data, data.otherNode.tree.$div[0].id.indexOf('attribute_tree'));
                 }
             },
             select: function (event, data) {
