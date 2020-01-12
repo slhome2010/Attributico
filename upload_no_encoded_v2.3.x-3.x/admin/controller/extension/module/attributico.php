@@ -23,11 +23,11 @@ class ControllerModuleAttributico extends Controller
         $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
         $this->document->addStyle('view/stylesheet/attributico.css');
 
-        if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists(DIR_APPLICATION . 'view/javascript/attributico.js')) {
+       // if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists(DIR_APPLICATION . 'view/javascript/attributico.js')) {
             $this->document->addScript('view/javascript/attributico.js');
-        } else {
-            $this->document->addScript('view/javascript/attributico.min.js');
-        }
+       // } else {
+       //     $this->document->addScript('view/javascript/attributico.min.js');
+       // }
 
         $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
         $edit = version_compare(VERSION, '2.0.0', '>=') ? "edit" : "update";
