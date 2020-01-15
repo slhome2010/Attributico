@@ -479,6 +479,7 @@ class ControllerModuleAttributico extends Controller
         $categories = isset($this->request->get['categories']) ? $this->request->get['categories'] : array();
         $duty = isset($this->request->get['duty']) ? $this->request->get['duty'] : false;
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
+        $language_id = isset($this->request->get['language_id']) ? (int) $this->request->get['language_id'] : '';
 
         if (isset($this->session->data['languages'])) {
             $languages = $this->session->data['languages'];
@@ -490,7 +491,7 @@ class ControllerModuleAttributico extends Controller
         $this->load->model('catalog/attributico');
         $results = $duty ? $this->model_catalog_attributico->getDutyValues($attribute_id) : $this->model_catalog_attributico->getAttributeValues($attribute_id, $categories);
 
-        if ($results) {
+        if ($results && !$language_id) {
             foreach ($languages as $language) {
                 if (isset($results[$language['language_id']])) {
                     if ($view_mode == 'template') {
@@ -527,6 +528,10 @@ class ControllerModuleAttributico extends Controller
                     $json[$language['language_id']][] = $select;
                 }
             }
+        } else if ($results) {
+            $json = $results[$language_id];
+        } else if ($language_id) {
+            $json[] = ['text' => 'No data...'];
         }
 
         $this->response->addHeader('Content-Type: application/json');
@@ -1112,6 +1117,7 @@ class ControllerModuleAttributico extends Controller
     public function addAttribute()
     {
         $data = array();
+        $data['new'] = true;
         $name = isset($this->request->get['name']) ? $this->request->get['name'] : array('0', '0');
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
         $attribute_group_id = '';
@@ -1148,6 +1154,7 @@ class ControllerModuleAttributico extends Controller
     public function addAttributes()
     {
         $data = array();
+        $data['new'] = false;
         $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
         $attributes = isset($this->request->get['attributes']) ? $this->request->get['attributes'] : array('0', '0');
         $attribute_group_id = '';
@@ -1159,8 +1166,7 @@ class ControllerModuleAttributico extends Controller
             return 0;
         }
 
-        $languages = $this->session->data['languages'];
-        $data['sort_order'] = '';
+        $languages = $this->session->data['languages'];        
         $this->load->model('catalog/attributico');
         $this->cache->delete('attributico');
 

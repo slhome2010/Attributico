@@ -43,10 +43,39 @@ export const getLanguageId = $.ui.fancytree._FancytreeNodeClass.prototype.getLan
  * @returns boolean
  *
  **/
-export const permission = $.ui.fancytree._FancytreeNodeClass.prototype.permission = function (actions) {   
+export const hasPermission = $.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {   
     let permission = false;
     for (let i = 0; i < actions.length; i++) {
-        permission = permission || !this.key.indexOf(actions[i]) && !this.unselectable;
+        permission = permission || (this.key.indexOf(actions[i]) > -1) && !this.unselectable;
     }
     return permission;
+};
+
+export const isDuty = $.ui.fancytree._FancytreeNodeClass.prototype.isDuty = function () {
+    if ( this.key.indexOf('duty') > -1 ) {
+        return true;
+    } else {
+        return false;
+    }    
+};
+export const isTemplate = $.ui.fancytree._FancytreeNodeClass.prototype.isTemplate = function () {
+    if ( this.key.indexOf('template') > -1 ) {
+        return true;
+    } else {
+        return false;
+    }    
+};
+export const isValue = $.ui.fancytree._FancytreeNodeClass.prototype.isValue = function () {
+    if ( this.key.indexOf('value') > -1 ) {
+        return true;
+    } else {
+        return false;
+    }    
+};
+export const isAttribute = $.ui.fancytree._FancytreeNodeClass.prototype.isAttribute = function () {
+    if ( this.key.indexOf('attribute') > -1 ) {
+        return true;
+    } else {
+        return false;
+    }    
 };

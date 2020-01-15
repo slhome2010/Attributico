@@ -3,7 +3,7 @@ import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
 import { reloadAttribute } from '../../functions/Syncronisation';
-import { permission } from '../../functions/Plugin/NodeMethod';
+import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../../functions/LoadError';
 
 export default class AttributeGroupTree {
@@ -52,7 +52,7 @@ export default class AttributeGroupTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.permission(['group', 'attribute', 'template', 'value'])) {
+                    if (!data.node.hasPermission(['group', 'attribute', 'template', 'value'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
@@ -76,7 +76,7 @@ export default class AttributeGroupTree {
                         },
                         url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
                     }).done(function (result) {
-                        if (data.node.key.indexOf('template') + 1) {
+                        if (data.node.isTemplate()) {
                             if (data.node.parent.isLazy()) {
                                 parent.getNextSibling().load(true).done(function (result) {
                                     reloadAttribute(data.node, false);
@@ -84,7 +84,7 @@ export default class AttributeGroupTree {
                             } else {
                                 reloadAttribute(data.node, true);
                             }
-                        } else if (data.node.key.indexOf('value') + 1) {
+                        } else if (data.node.isValue()) {
                             if (data.node.parent.isLazy()) {
                                 parent.getPrevSibling().load(true).done(function (result) {
                                     parent.load(true).done(function (result) {
@@ -228,10 +228,10 @@ export default class AttributeGroupTree {
             keydown: function (e, data) {
                 let command = new KeydownCommand(e, data);
                 command.permissions = {
-                    remove: data.node.permission(['group', 'attribute', 'template', 'value']),
+                    remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,
                     addSibling: true,
-                    copy: data.node.permission(['attribute']),
+                    copy: data.node.hasPermission(['attribute']),
                     paste: true
                 };
                 command.execute();
@@ -256,9 +256,9 @@ export default class AttributeGroupTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['group', 'attribute', 'template', 'value']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group', 'attribute', 'template', 'value']));
-                        data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value']));
+                        data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },

@@ -345,7 +345,7 @@ class ModelCatalogAttributico extends Model
 
         foreach ($data['attribute_description'] as $language_id => $value) {
             $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language_id . "',
-             name = '" . $this->db->escape($value['name'] . '_' . $attribute_id) . "'");
+             name = '" . $this->db->escape($value['name']) . ($data['new'] ? '_' . $attribute_id : '') . "'");
         }
 
         return $attribute_id;

@@ -3,6 +3,7 @@ import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { reloadAttribute } from '../../functions/Syncronisation';
 import { loadError } from '../../functions/LoadError';
+import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
@@ -50,10 +51,46 @@ export default class DutyTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.permission(['group', 'attribute', 'duty'])) {
+                    if (!data.node.hasPermission(['group', 'attribute', 'duty'])) {
                         return false;
                     }
                     // Return false to prevent edit mode
+                },
+                edit: (event, data) => {
+                    const handler = (e) => {                        
+                        if (e.altKey && e.shiftKey) {
+                            data.input.dropmenu({
+                                'source': function (request, response) {
+                                    $.ajax({
+                                        data: {
+                                            'user_token': user_token,
+                                            'token': token,                                            
+                                            'language_id': parseInt(element.id.replace(/\D+/ig, '')),                                            
+                                            'attribute_id': parseInt(data.node.key.replace(/\D+/ig, ''))                            
+                                        },
+                                        url: 'index.php?route=' + extension + 'module/attributico/getValuesList',
+                                        dataType: 'json',
+                                        success: function (json) {
+                                            response($.map(json, function (item) {
+                                                return {                                                    
+                                                    label: item.text,
+                                                    value: item.text
+                                                };
+                                            }));
+                                        }
+                                    });
+                                },
+                                'select': function (item) {
+                                    data.input.val(item.value);
+                                   // data.node.key = 'duty_' + item.value;
+                                }
+                            });
+                        }
+                    }
+
+                    if (data.node.isDuty()){
+                        data.input.on("click", handler);
+                    }                    
                 },
                 save: (event, data) => {
                     var parent = data.node.getParent();
@@ -68,11 +105,11 @@ export default class DutyTree {
                         },
                         url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
                     }).done(function (result) {
-                        if (data.node.key.indexOf('template') + 1) {
+                        if (data.node.isTemplate()) {
                             parent.getNextSibling().load(true).done(function (result) {
                                 reloadAttribute(data.node, false);
                             });
-                        } else if (data.node.key.indexOf('value') + 1) {
+                        } else if (data.node.isValue()) {
                             parent.getPrevSibling().load(true).done(function (result) {
                                 parent.load(true).done(function (result) {
                                     //   parent.setExpanded();
@@ -105,7 +142,7 @@ export default class DutyTree {
             keydown: function (e, data) {
                 let command = new KeydownCommandDuty(e, data);
                 command.permissions = {
-                    remove: data.node.permission(['duty']),
+                    remove: data.node.hasPermission(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,
@@ -127,14 +164,14 @@ export default class DutyTree {
                 //console.log(data.tree.$div.context.id, ' has loaded');
                 if (smartScroll.is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
-                   
+
                 data.tree.$div.contextmenu({
                     delegate: "span.fancytree-title",
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", node.permission(['duty']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.permission(['group', 'attribute', 'duty']));                        
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['duty']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();

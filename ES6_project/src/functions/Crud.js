@@ -56,7 +56,7 @@ export function deleteAttribute(node) {
     }
 }
 
-export function copyAttributes(targetNode) {
+export function pasteNodes(targetNode) {
     let node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
 
     if (node.key.indexOf('group') + 1) {
@@ -189,10 +189,10 @@ export function copyPaste(action, targetNode) {
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source
                 // todo
-                copyAttributes(targetNode, clipboardTitles);
+                pasteNodes(targetNode);
                 clipboardNodes[indx].remove();
             } else {
-                copyAttributes(targetNode, clipboardTitles);
+                pasteNodes(targetNode);
             }
             clipboardNodes = [];
             clipboardTitles = [];
