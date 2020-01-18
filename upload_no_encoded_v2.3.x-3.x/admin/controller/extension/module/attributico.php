@@ -532,9 +532,9 @@ class ControllerModuleAttributico extends Controller
                 }
             }
         } else if ($results) {
-            $json = $results[$language_id];
-           // $json = array_unique($values);
-            array_multisort($json);
+            $values = $results[$language_id];
+            $json = array_unique($values, SORT_REGULAR);
+            array_multisort($json, SORT_REGULAR);
         } else if ($language_id) {
             $json[] = ['text' => 'No data...'];
         }

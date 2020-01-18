@@ -59,7 +59,7 @@ export default class DutyTree {
                 edit: (event, data) => {
                     const handler = (e) => {                        
                         if (e.altKey && e.shiftKey) {
-                            $(data.node.span).addClass("fancytree-icon-loading");
+                            $(data.node.span).addClass("fancytree-loading");
                             data.input.dropmenu({
                                 'source': function (request, response) {
                                     $.ajax({
