@@ -6,6 +6,7 @@ import { reloadAttribute } from '../../functions/Syncronisation';
 import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
+import { editDuty } from '../Events/EditDuty';
 
 export default class AttributeGroupTree {
     constructor(element) {
@@ -53,14 +54,12 @@ export default class AttributeGroupTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.hasPermission(['group', 'attribute', 'template', 'value'])) {
+                    if (!data.node.hasPermission(['group', 'attribute', 'template', 'value', 'duty'])) {
                         return false;
                     }
                     // Return false to prevent edit mode                    
                 },
-                edit: function (event, data) {
-                    // Editor was opened (available as data.input)
-                },
+                edit: (event, data) => editDuty(event, data), // Editor was opened (available as data.input)                
                 beforeClose: function (event, data) {
                     // Return false to prevent cancel/save (data.input is available)
                 },
@@ -152,10 +151,11 @@ export default class AttributeGroupTree {
                             'target': targetNode.key,
                             'direct': data.hitMode
                         },
-                        url: url
-                    }).done(function () {
-                        reloadAttribute(subjectNode, selfreload);
-                        deSelectNodes(subjectNode);
+                        url: url,
+                        success: function () {
+                            reloadAttribute(subjectNode, selfreload);
+                            deSelectNodes(subjectNode);
+                        }
                     });
                 },
                 draggable: { // modify default jQuery draggable options
@@ -210,7 +210,7 @@ export default class AttributeGroupTree {
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
                         data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
