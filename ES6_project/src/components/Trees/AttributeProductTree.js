@@ -1,7 +1,7 @@
 import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
-import { loadError } from '../../functions/LoadError';
+import { loadError } from '../Events/LoadError';
 
 export default class AttributeProductTree {
     constructor(element) {

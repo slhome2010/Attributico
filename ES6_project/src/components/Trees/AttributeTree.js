@@ -2,7 +2,7 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, selectControl } from '../../functions/Select';
-import { loadError } from '../../functions/LoadError';
+import { loadError } from '../Events/LoadError';
 
 // ------------------- attribute tree (Attribute group in tab-category) ----------------------------------------
 export default class AttributeTree {

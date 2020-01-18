@@ -12,6 +12,13 @@ class ControllerModuleAttributico extends Controller
     private $debug_mode = false;
     private $avcahe = array();
     private $token;
+    private $settings = array(
+        '1' => array("template", "value"),
+        '2' => array("duty"),
+        '3' => array("duty"),
+        '4' => array("template", "value"),
+        '5' => array("template", "value"),
+    );
 
     public function index()
     {
@@ -23,11 +30,7 @@ class ControllerModuleAttributico extends Controller
         $this->document->addStyle('view/javascript/fancytree/skin-custom/custom.css');
         $this->document->addStyle('view/stylesheet/attributico.css');
 
-       // if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' && file_exists(DIR_APPLICATION . 'view/javascript/attributico.js')) {
-            $this->document->addScript('view/javascript/attributico.js');
-       // } else {
-       //     $this->document->addScript('view/javascript/attributico.min.js');
-       // }
+        $this->document->addScript('view/javascript/attributico.js');
 
         $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
         $edit = version_compare(VERSION, '2.0.0', '>=') ? "edit" : "update";
@@ -410,7 +413,7 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-        
+
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
             $this->data['column_left'] = $this->load->controller('common/column_left');
@@ -530,6 +533,8 @@ class ControllerModuleAttributico extends Controller
             }
         } else if ($results) {
             $json = $results[$language_id];
+           // $json = array_unique($values);
+            array_multisort($json);
         } else if ($language_id) {
             $json[] = ['text' => 'No data...'];
         }
@@ -589,13 +594,7 @@ class ControllerModuleAttributico extends Controller
         if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
-            $settings = array(
-                '1' => array("template", "value"),
-                '2' => array("duty"),
-                '3' => array("duty"),
-                '4' => array("template", "value"),
-                '5' => array("template", "value"),
-            );
+            $settings = $this->settings;
         }
         $children = array(
             "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
@@ -855,13 +854,7 @@ class ControllerModuleAttributico extends Controller
         if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
-            $settings = array(
-                '1' => array("template", "value"),
-                '2' => array("duty"),
-                '3' => array("duty"),
-                '4' => array("template", "value"),
-                '5' => array("template", "value"),
-            );
+            $settings = $this->settings;
         }
         $children = array(
             "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
@@ -1113,7 +1106,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($acceptedTitle));
     }
-
+    /* Add New attribute or group */
     public function addAttribute()
     {
         $data = array();
@@ -1150,7 +1143,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($id));
     }
-
+    /* Paste attributes */
     public function addAttributes()
     {
         $data = array();
@@ -1166,7 +1159,7 @@ class ControllerModuleAttributico extends Controller
             return 0;
         }
 
-        $languages = $this->session->data['languages'];        
+        $languages = $this->session->data['languages'];
         $this->load->model('catalog/attributico');
         $this->cache->delete('attributico');
 
@@ -1194,18 +1187,18 @@ class ControllerModuleAttributico extends Controller
         $combine = array_combine($keys, $titles);
 
         foreach ($combine as $key => $value) {
-            $d = explode("_", $key);
-            if ($d[0] == 'group') {
-                $data['group'][] = $d[1];
+            $node_type = explode("_", $key);
+            if ($node_type[0] == 'group') {
+                $data['group'][] = $node_type[1];
             }
-            if ($d[0] == 'attribute') {
-                $data['attribute'][] = $d[1];
+            if ($node_type[0] == 'attribute') {
+                $data['attribute'][] = $node_type[1];
             }
-            if ($d[0] == 'template') {
-                $data['template'][] = ['attribute_id' => $d[1], 'value' => $value];
+            if ($node_type[0] == 'template') {
+                $data['template'][] = ['attribute_id' => $node_type[1], 'value' => $value];
             }
-            if ($d[0] == 'value') {
-                $data['value'][] = ['attribute_id' => $d[1], 'value' => $value];
+            if ($node_type[0] == 'value') {
+                $data['value'][] = ['attribute_id' => $node_type[1], 'value' => $value];
             }
         }
 
@@ -1542,13 +1535,7 @@ class ControllerModuleAttributico extends Controller
         if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
-            $settings = array(
-                '1' => array("template", "value"),
-                '2' => array("duty"),
-                '3' => array("duty"),
-                '4' => array("template", "value"),
-                '5' => array("template", "value"),
-            );
+            $settings = $this->settings;
         }
 
         $rootData = array(
@@ -1700,7 +1687,7 @@ class ControllerModuleAttributico extends Controller
                     $count_obj = $this->model_catalog_attributico_tools->cloneLanguage($source_lng, $target_lng, $method, $node);
 
                     $task_result .= $language->get('message_clone_group') . "  " . (string) $count_obj->group . " "
-                        . $language->get('message_clone_attribute') . "  " . (string) $count_obj->attribute . " "                        
+                        . $language->get('message_clone_attribute') . "  " . (string) $count_obj->attribute . " "
                         . $language->get('message_clone_value') . "  " . (string) $count_obj->value;
                 } else {
                     $task_result = $language->get('message_clone_error');

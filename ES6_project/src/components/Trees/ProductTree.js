@@ -1,6 +1,6 @@
 import { ContextmenuCommand } from "../ContextMenuCommand";
 import { KeydownCommand } from "../KeyDownCommand";
-import { loadError } from "../../functions/LoadError";
+import { loadError } from "../Events/LoadError";
 
 export default class ProductTree {
     constructor(element) {

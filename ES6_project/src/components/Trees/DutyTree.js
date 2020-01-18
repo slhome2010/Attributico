@@ -1,9 +1,9 @@
 import { ContextmenuCommandDuty } from '../ContextMenuCommand';
 import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
-import { reloadAttribute } from '../../functions/Syncronisation';
-import { loadError } from '../../functions/LoadError';
+import { loadError } from '../Events/LoadError';
 import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+import { saveAfterEdit } from '../Events/SaveAfterEdit';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
@@ -59,6 +59,7 @@ export default class DutyTree {
                 edit: (event, data) => {
                     const handler = (e) => {                        
                         if (e.altKey && e.shiftKey) {
+                            $(data.node.span).addClass("fancytree-icon-loading");
                             data.input.dropmenu({
                                 'source': function (request, response) {
                                     $.ajax({
@@ -92,44 +93,7 @@ export default class DutyTree {
                         data.input.on("click", handler);
                     }                    
                 },
-                save: (event, data) => {
-                    var parent = data.node.getParent();
-                    $.ajax({
-                        data: {
-                            'user_token': user_token,
-                            'token': token,
-                            'key': data.node.key,
-                            'name': data.input.val(),
-                            'language_id': this.lng_id,
-                            'oldname': data.orgTitle
-                        },
-                        url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
-                    }).done(function (result) {
-                        if (data.node.isTemplate()) {
-                            parent.getNextSibling().load(true).done(function (result) {
-                                reloadAttribute(data.node, false);
-                            });
-                        } else if (data.node.isValue()) {
-                            parent.getPrevSibling().load(true).done(function (result) {
-                                parent.load(true).done(function (result) {
-                                    //   parent.setExpanded();
-                                    (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
-                                });
-                            }).done(function (result) {
-                                reloadAttribute(data.node, false);
-                            });
-                        } else {
-                            reloadAttribute(data.node, false);
-                        }
-                        data.node.setTitle(result.acceptedTitle);
-                    }).fail(function (result) {
-                        data.node.setTitle(data.orgTitle);
-                    }).always(function () {
-                        $(data.node.span).removeClass("pending");
-                    });
-                    // Optimistically assume that save will succeed. Accept the user input
-                    return true;
-                },
+                save: (event, data) => saveAfterEdit(event, data),
                 close: function (event, data) {
                     if (data.save) {
                         $(data.node.span).addClass("pending");

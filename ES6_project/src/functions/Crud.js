@@ -149,10 +149,6 @@ export function deleteDuty(node) {
     });    
 }
 
-/* export let clipboardNodes = [];
-export let clipboardTitles = [];
-export let pasteMode = null; */
-
 export function copyPaste(action, targetNode) {
     switch (action) {
         case "cut":
@@ -188,9 +184,9 @@ export function copyPaste(action, targetNode) {
             }
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source
-                // todo
-                pasteNodes(targetNode);
-                clipboardNodes[indx].remove();
+                // TODO
+                // pasteNodes(targetNode);
+                // clipboardNodes[indx].remove();
             } else {
                 pasteNodes(targetNode);
             }

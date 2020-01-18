@@ -3,7 +3,7 @@ import { reactivateCategory } from '../../functions/Syncronisation';
 import { addAttributeToCategory } from '../../functions/Crud';
 import { KeydownCommandCategory } from '../KeyDownCommand';
 import { ContextmenuCommandCategory } from '../ContextMenuCommand';
-import { loadError } from '../../functions/LoadError';
+import { loadError } from '../Events/LoadError';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {

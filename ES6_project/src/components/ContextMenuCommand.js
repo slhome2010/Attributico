@@ -7,7 +7,7 @@
 /* import  'jquery.fancytree'; */
 import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
-import CollapseExpande from './Commands/CollapseExpande';
+import CollapseExpande from './Events/CollapseExpande';
 
 export class ContextmenuCommand {
     constructor(ui) {        

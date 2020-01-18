@@ -4,7 +4,8 @@ import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
 import { reloadAttribute } from '../../functions/Syncronisation';
 import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
-import { loadError } from '../../functions/LoadError';
+import { loadError } from '../Events/LoadError';
+import { saveAfterEdit } from '../Events/SaveAfterEdit'
 
 export default class AttributeGroupTree {
     constructor(element) {
@@ -55,7 +56,7 @@ export default class AttributeGroupTree {
                     if (!data.node.hasPermission(['group', 'attribute', 'template', 'value'])) {
                         return false;
                     }
-                    // Return false to prevent edit mode
+                    // Return false to prevent edit mode                    
                 },
                 edit: function (event, data) {
                     // Editor was opened (available as data.input)
@@ -63,55 +64,7 @@ export default class AttributeGroupTree {
                 beforeClose: function (event, data) {
                     // Return false to prevent cancel/save (data.input is available)
                 },
-                save: (event, data) => {
-                    let parent = data.node.getParent();
-                    $.ajax({
-                        data: {
-                            'user_token': user_token,
-                            'token': token,
-                            'key': data.node.key,
-                            'name': data.input.val(),
-                            'language_id': this.lng_id,
-                            'oldname': data.orgTitle
-                        },
-                        url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
-                    }).done(function (result) {
-                        if (data.node.isTemplate()) {
-                            if (data.node.parent.isLazy()) {
-                                parent.getNextSibling().load(true).done(function (result) {
-                                    reloadAttribute(data.node, false);
-                                });
-                            } else {
-                                reloadAttribute(data.node, true);
-                            }
-                        } else if (data.node.isValue()) {
-                            if (data.node.parent.isLazy()) {
-                                parent.getPrevSibling().load(true).done(function (result) {
-                                    parent.load(true).done(function (result) {
-                                        //   parent.setExpanded();
-                                        (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
-                                    });
-                                }).done(function (result) {
-                                    reloadAttribute(data.node, false);
-                                });
-                            } else {
-                                reloadAttribute(data.node, true);
-                            }
-                        } else {
-                            reloadAttribute(data.node, false);
-                        }
-                        // Server might return an error or a modified title
-                        data.node.setTitle(result.acceptedTitle); // in case server modified it                        //
-                        // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
-                    }).fail(function (result) {
-                        // Ajax error: reset title (and maybe issue a warning)
-                        data.node.setTitle(data.orgTitle);
-                    }).always(function () {
-                        $(data.node.span).removeClass("pending");
-                    });
-                    // Optimistically assume that save will succeed. Accept the user input
-                    return true;
-                },
+                save: (event, data) => saveAfterEdit(event, data),
                 close: function (event, data) {
                     if (data.save) {
                         $(data.node.span).addClass("pending");
@@ -250,7 +203,7 @@ export default class AttributeGroupTree {
                 //console.log(data.tree.$div.context.id, ' has loaded');
                 if (smartScroll.is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
-                    
+
                 data.tree.$div.contextmenu({
                     delegate: "span.fancytree-title",
                     menu: contextmenuConfig[this.lng_id],

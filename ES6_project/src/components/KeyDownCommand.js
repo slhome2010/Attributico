@@ -5,7 +5,7 @@
  **/
 import { deSelectNodes } from '../functions/Select'
 import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
-import CollapseExpande from './Commands/CollapseExpande';
+import CollapseExpande from './Events/CollapseExpande';
 
 export class KeydownCommand {
     constructor(event, data) {
