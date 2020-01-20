@@ -881,17 +881,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
-    const CATEGORY_TREE = $('[name ^= "category_tree"]');
-    const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
-    const DUTY_ATTRIBUTE_TREE = $('[name ^= "duty_attribute_tree"]');
-    const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
-    const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
-    const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
-    const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
-    const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
     const config_language = '<?php echo $config_language; ?>';
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';

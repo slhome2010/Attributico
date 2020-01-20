@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Arvo-Regular
+font link: https://fonts.google.com/specimen/Arvo
+font author: Anton Koovit
+font author site: http://files.korkork.com/
+Slogan Font: Renner-Thin.otf
+
+icon designer: Edward Boatman
+icon designer link: /edward
+        
+{"bg":"#156EAC","icon":"#F6575E","font":"#ffffff","slogan":"#ffffff"}
+      

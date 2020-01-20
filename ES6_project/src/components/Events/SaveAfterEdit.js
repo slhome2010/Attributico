@@ -26,12 +26,7 @@ export function saveAfterEdit(event, data) {
             });
         } else if (data.node.isValue() && affilateTemplate != null) {
             affilateTemplate.resetLazy();
-            affilateTemplate.load(true).done(function (result) {
-                /*  parent.load(true).done(function (result) {
-                     //   parent.setExpanded();
-                     (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
-                 });
-             }).done(function (result) { */
+            affilateTemplate.load(true).done(function (result) {               
                 reloadAttribute(data.node, false);
             });
         } else {

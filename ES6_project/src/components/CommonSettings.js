@@ -1,4 +1,5 @@
 import { reloadAttribute } from "../functions/Syncronisation";
+import { CATEGORY_SYNCRO_TREES } from '../constants/global'
 
 /**
 * Common settings change event hundlers
@@ -40,19 +41,15 @@ export default function commonSettings() {
                 'token': token
             },
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
-            success: function (json) {
-                let size = CATEGORY_SYNCRO_TREES.size();
-                CATEGORY_SYNCRO_TREES.each(function (indx, element) {
+            success: function (json) { 
+                $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
                     let tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
                     tree.reload().done(function () {
-                        tree.options.source.data.isPending = false;
-                        if (indx + 1 == size) {
-                            reloadAttribute();
-                            // reactivateCategory();
-                        }
+                        tree.options.source.data.isPending = false;                        
                     });
                 });
+                reloadAttribute();
             }
         });
     });
@@ -64,19 +61,15 @@ export default function commonSettings() {
                 'token': token
             },
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
-            success: function (json) {
-                let size = CATEGORY_SYNCRO_TREES.size();
-                CATEGORY_SYNCRO_TREES.each(function (indx, element) {
+            success: function (json) {                
+                $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
                     let tree = $("#" + element.id).fancytree("getTree");
                     tree.options.source.data.multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
                     tree.reload().done(function () {
-                        tree.options.source.data.isPending = false;
-                        if (indx + 1 == size) {
-                            reloadAttribute();
-                            // reactivateCategory();
-                        }
+                        tree.options.source.data.isPending = false;                       
                     });
                 });
+                reloadAttribute();
             }
         });
     });

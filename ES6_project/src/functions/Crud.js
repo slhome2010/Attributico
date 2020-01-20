@@ -1,6 +1,7 @@
 import {findUnselectedSibling, getLanguageId, getParentByKey} from './Plugin/NodeMethod';
 import {getSelectedKeys, getSelectedTitles, deSelectNodes} from './Select'
 import {reactivateCategory, reloadAttribute} from './Syncronisation'
+import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -159,7 +160,7 @@ export function copyPaste(action, targetNode) {
                 selNodes.forEach(function (node, i) {
                     clipboardNodes[i] = [];
                     clipboardTitles[i] = [];
-                    ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
+                    $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
                         let tree = $("#" + element.id).fancytree("getTree");
                         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                         clipboardNodes[i][lng_id] = tree.getNodeByKey(node.key);
@@ -169,7 +170,7 @@ export function copyPaste(action, targetNode) {
             } else {
                 clipboardNodes[0] = [];
                 clipboardTitles[0] = [];
-                ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
+                $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
                     let tree = $("#" + element.id).fancytree("getTree");
                     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                     clipboardNodes[0][lng_id] = tree.getNodeByKey(targetNode.key);
