@@ -3,6 +3,7 @@ import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, selectControl } from '../../functions/Select';
 import { loadError } from '../Events/LoadError';
+import { smartScroll } from '../../constants/global';
 
 // ------------------- attribute tree (Attribute group in tab-category) ----------------------------------------
 export default class AttributeTree {
@@ -105,7 +106,7 @@ export default class AttributeTree {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
                     
                 data.tree.$div.contextmenu({

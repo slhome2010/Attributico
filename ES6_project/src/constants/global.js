@@ -9,3 +9,4 @@ export const PRODUCT_TREE = '[name ^= "product_tree"]';
 export const GROUP_CHECK_TREE = '[name ^= "deduplicate_tree"], [name ^= "detach_tree"]';
 export const CATEGORY_CHECK_TREE = '[name ^= "category_check_tree"]';
 export const CATEGORY_SYNCRO_TREES = '[name ^= "category_check_tree"], [name ^= "category_tree"]';
+export const smartScroll = 'input[name = "attributico_smart_scroll"]:checkbox';

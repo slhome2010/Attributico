@@ -108,7 +108,7 @@ export function deleteAttributesFromCategory(node) {
     });
     selNodes = null;
 }
-
+// data.otherNode это узел источника
 export function addAttributeToCategory(targetnode, data, remove) {
     $.ajax({
         data: {

@@ -890,18 +890,10 @@
     const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
-    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
-    let selNodes = null;
-    let selCategories = null;
-    let currentCategory = 0;
-    let currentAttribute = 0;
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;         
     let filterItems = [];
     let contextmenuConfig = [];
-    let dialogItems = [];
-    let clipboardNodes = [];
-    let clipboardTitles = [];
-    let pasteMode = null;
+    let dialogItems = [];   
     
     ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));

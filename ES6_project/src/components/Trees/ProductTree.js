@@ -1,6 +1,7 @@
 import { ContextmenuCommand } from "../ContextMenuCommand";
 import { KeydownCommand } from "../KeyDownCommand";
 import { loadError } from "../Events/LoadError";
+import { smartScroll } from "../../constants/global";
 
 export default class ProductTree {
     constructor(element) {
@@ -57,7 +58,7 @@ export default class ProductTree {
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({

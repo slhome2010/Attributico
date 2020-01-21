@@ -5,6 +5,7 @@ import { loadError } from '../Events/LoadError';
 import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { saveAfterEdit } from '../Events/SaveAfterEdit';
 import { editDuty } from '../Events/EditDuty';
+import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
@@ -91,7 +92,7 @@ export default class DutyTree {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({

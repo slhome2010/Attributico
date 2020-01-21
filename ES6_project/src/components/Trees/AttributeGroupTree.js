@@ -7,6 +7,7 @@ import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
+import { smartScroll } from '../../constants/global';
 
 export default class AttributeGroupTree {
     constructor(element) {
@@ -201,7 +202,7 @@ export default class AttributeGroupTree {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({

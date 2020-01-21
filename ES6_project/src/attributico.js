@@ -9,7 +9,6 @@ import initTrees from './containers/InitTrees'
 import tools from './functions/WindowContext/Tools'
 import apply from './functions/WindowContext/Apply'
 import { checkForUpdates, dutyUpgrade } from './functions/WindowContext/Upgrade'
-import { reloadAttribute } from './functions/Syncronisation';
 import './functions/Plugin/Dropmenu.js';
 import buildDialog from './containers/BuildDialog';
 import dialogOptionEvents from './components/DialogOption';
@@ -20,22 +19,30 @@ window.apply = apply;
 window.checkForUpdates = checkForUpdates;
 window.dutyUpgrade = dutyUpgrade;
 
+window.selNodes = null;
+window.selCategories = null;
+window.currentCategory = 0;
+window.currentAttribute = 0;
+window.clipboardNodes = [];
+window.clipboardTitles = [];
+window.pasteMode = null;
+
 // document ready actions
-$(function () {
-    var t0 = performance.now();
+$(function () {    
+    let t0 = performance.now();
 
     $('.fancyfilter').each(buildFilter);
     $('.dialog-options').each(buildDialog);
 
     initTrees();
 
-    var ajaxFinished = 0;
-    var totalAjax = 19; //Total of ajax functions you have
+    let ajaxFinished = 0;
+    let totalAjax = 19; //Total of ajax functions you have
 
     $(document).ajaxComplete(function () { //Listener for a complete Ajax function
         ajaxFinished += 1;
         if (ajaxFinished == totalAjax) { //here you know that all tasks are finish
-            var t1 = performance.now();
+            let t1 = performance.now();
             console.log("Call to initTrees took " + (t1 - t0) + " milliseconds.");
         }
     });

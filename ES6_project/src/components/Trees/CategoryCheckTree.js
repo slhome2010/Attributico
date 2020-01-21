@@ -1,4 +1,5 @@
 import { ContextmenuCommand } from '../ContextMenuCommand';
+import { smartScroll } from '../../constants/global';
 export default class CategoryCheckTree {
     constructor(element) {
         this.tree = $(element);
@@ -21,7 +22,7 @@ export default class CategoryCheckTree {
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({

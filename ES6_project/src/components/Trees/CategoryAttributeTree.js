@@ -4,6 +4,8 @@ import { addAttributeToCategory } from '../../functions/Crud';
 import { KeydownCommandCategory } from '../KeyDownCommand';
 import { ContextmenuCommandCategory } from '../ContextMenuCommand';
 import { loadError } from '../Events/LoadError';
+import { smartScroll } from '../../constants/global';
+import { isAttribute } from '../../functions/Plugin/NodeMethod';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {
@@ -123,7 +125,8 @@ export default class CategoryAttributeTree {
                     return true;
                 },
                 dragDrop: function (node, data) {
-                    addAttributeToCategory(node.getParent().isRootNode() ? node : node.getParent(), data, false);
+                    let targetnode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
+                    addAttributeToCategory(targetnode, data, false);
                 }
             },
             beforeSelect: function (event, data) {
@@ -144,10 +147,10 @@ export default class CategoryAttributeTree {
             keydown: function (e, data) {
                 let command = new KeydownCommandCategory(e, data);
                 command.permissions = {
-                    remove: !data.node.key.indexOf('attribute'),
+                    remove: data.node.isAttribute(),
                     addChild: true,
                     addSibling: false,
-                    copy: !data.node.key.indexOf('attribute'),
+                    copy: data.node.isAttribute(),
                     paste: true
                 };
                 command.execute();
@@ -158,7 +161,7 @@ export default class CategoryAttributeTree {
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
                 //data.tree.$container.each(function(index,element){console.log("CategoryAttributeTree", element)});
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
                     
                 data.tree.$div.contextmenu({
@@ -166,10 +169,10 @@ export default class CategoryAttributeTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "rename", false);
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
-                        data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
+                        data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
                         node.setActive();
                     },

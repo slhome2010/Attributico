@@ -2,6 +2,7 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { loadError } from '../Events/LoadError';
+import { smartScroll } from '../../constants/global';
 
 export default class AttributeProductTree {
     constructor(element) {
@@ -96,7 +97,7 @@ export default class AttributeProductTree {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({

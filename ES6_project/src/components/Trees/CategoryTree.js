@@ -1,6 +1,7 @@
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { addAttributeToCategory } from '../../functions/Crud';
+import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- category tree ------------------------------------------------
 export default class CategoryTree {
@@ -56,7 +57,8 @@ export default class CategoryTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {                   
+                dragDrop: function (node, data) {    
+                    // Если источником является дерево атрибутов, то удалять не надо. Если дерево атрибутов категории, то удаляем.               
                     addAttributeToCategory(node, data, data.otherNode.tree.$div[0].id.indexOf('attribute_tree'));
                 }
             },
@@ -81,7 +83,7 @@ export default class CategoryTree {
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
-                if (smartScroll.is(":checked"))
+                if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
                 data.tree.$div.contextmenu({
