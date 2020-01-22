@@ -1,6 +1,6 @@
-import {findUnselectedSibling, getLanguageId, getParentByKey} from './Plugin/NodeMethod';
-import {getSelectedKeys, getSelectedTitles, deSelectNodes} from './Select'
-import {reactivateCategory, reloadAttribute} from './Syncronisation'
+import { findUnselectedSibling, getLanguageId, getParentByKey } from './Plugin/NodeMethod';
+import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
+import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
 import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
@@ -89,65 +89,64 @@ export function pasteNodes(targetNode) {
         });
     }
 }
-
-export function deleteAttributesFromCategory(node) {
-    let category_id = node.getParent().key;
+// sourceNode = data.otherNode это узел источника
+// Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
+export function deleteAttributesFromCategory(sourceNode) {
+    let category_id = sourceNode.getParent().key;
 
     $.ajax({
         data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [node.key],
+            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
             'category_id': category_id,
-            'categories': selCategories ? getSelectedKeys(selCategories) : [category_id]
+            'categories': selCategories ? getSelectedKeys(selCategories) : []
         },
         url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
         success: function () {
             reactivateCategory();
-            reloadAttribute(node, true); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
+            reloadAttribute(sourceNode, true); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
         }
     });
-    selNodes = null;
+    deSelectNodes();
 }
-// data.otherNode это узел источника
-export function addAttributeToCategory(targetnode, data, remove) {
+
+export function addAttributeToCategory(targetNode, data, remove) {
+    let sourceNode = data.otherNode;    
     $.ajax({
         data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [data.otherNode.key],
-            'category_id': targetnode.key,
-            'categories': selCategories ? getSelectedKeys(selCategories) : [targetnode.key]
+            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
+            'category_id': targetNode.key,
+            'categories': selCategories ? getSelectedKeys(selCategories) : []
         },
         url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST'
     }).done(function () {
-        if (!remove) {
-            deSelectNodes(data.otherNode);
-            data.otherNode.tree.visit(function (node) { // при дбавлении надо засинхронизировать дерево атрибутов где были lazy вдруг это были первые
-                if (node.isLazy()) {
-                    node.load(true);
-                }
-            });
-            reactivateCategory(targetnode);
-            reloadAttribute(data.otherNode, false);
+        if (!remove) {            
+            smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
+            reactivateCategory(targetNode);
+            reloadAttribute(sourceNode, false);
+            deSelectNodes();
         } else {
-            deleteAttributesFromCategory(data.otherNode);
+            deSelectCategories(); // чтобы не удалялось в отмеченных категориях
+            deleteAttributesFromCategory(sourceNode);
         }
     });
 }
 
-export function deleteDuty(node) {    
+export function deleteDuty(node) {
     $.ajax({
         data: {
             'user_token': user_token,
             'token': token,
             'key': node.key,
             'language_id': node.getLanguageId(),
-            'name': '',            
+            'name': '',
         },
-        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',        
-        success: function () {           
+        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
+        success: function () {
             reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
         }
-    });    
+    });
 }
 
 export function copyPaste(action, targetNode) {

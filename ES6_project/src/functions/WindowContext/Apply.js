@@ -1,3 +1,5 @@
+import { CATEGORY_TREE, CATEGORY_CHECK_TREE, ATTRIBUTE_SYNCRO_TREES } from "../../constants/global";
+
 export default function apply() {
     $('[id ^= "tree"].settings').each(function (indx, element) {
         $(element).fancytree("getTree").generateFormElements();
@@ -21,15 +23,15 @@ export default function apply() {
         $('input[id ^= "multiSelect"]:checkbox').prop("checked", $('input[name = "attributico_multiselect"]:checkbox').is(":checked"));
         $('input[id ^= "sortOrder"]:checkbox').prop("checked", $('input[name = "attributico_sortorder"]:checkbox').is(":checked"));
         $('input[id ^= "lazyLoad"]:checkbox').prop("checked", $('input[name = "attributico_lazyload"]:checkbox').is(":checked"));
-        CATEGORY_TREE.each(function (indx, element) {
+        $(CATEGORY_TREE).each(function (indx, element) {
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
         });
-        CATEGORY_CHECK_TREE.each(function (indx, element) {
+        $(CATEGORY_CHECK_TREE).each(function (indx, element) {
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.selectMode = $('input[id ^= "multiSelect"]:checkbox').is(":checked") ? 3 : 2;
         });
-        ATTRIBUTE_SYNCRO_TREES.each(function (indx, element) { // reload function is located inside as asynchronous request
+        $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) { // reload function is located inside as asynchronous request
             var tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.sortOrder = $('input[id ^= "sortOrder"]:checkbox').is(":checked");
             tree.options.source.data.lazyLoad = $('input[id ^= "lazyLoad"]:checkbox').is(":checked");

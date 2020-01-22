@@ -19,16 +19,22 @@ export function getSelectedTitles(selNodes) {
     return selTitles;
 }
 
-export function deSelectNodes(node) {
+export function deSelectNodes() {
     if (selNodes) {
         selNodes.forEach(function (node) {
             node.setSelected(false);
-        });
-        //   node.tree.visit(function (node) {
-        //       node.setSelected(false);
-        //   });
+        });       
     }
     selNodes = null;
+}
+
+export function deSelectCategories() {
+    if (selCategories) {
+        selCategories.forEach(function (category) {
+            category.setSelected(false);
+        });       
+    }
+    selCategories = null;
 }
 
 export function selectControl(data) {

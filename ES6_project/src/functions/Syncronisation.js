@@ -67,10 +67,24 @@ export function reloadAttribute() {
             node.setActive();
         }
         // reactivateCategory(node);
-         /*  parent.load(true).done(function (result) {
-                     //   parent.setExpanded();
-                     (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
-                 });
-             }).done(function (result) { */
+        /*  parent.load(true).done(function (result) {
+                    //   parent.setExpanded();
+                    (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
+                });
+            }).done(function (result) { */
     }
+}
+
+export function smartReload(tree, nodeList) {
+    nodeList.forEach(function (node) {
+        findedNode = tree.getNodeByKey(node.key);
+        findedNode.getChildren().forEach(function (child) {
+            if (child.isTemplate() || child.isValue()) {
+                child.resetLazy();
+                child.load(true).done(function (result) {
+                    console.log(tree.$div[0].id, child.key);
+                });
+            }
+        });
+    });
 }
