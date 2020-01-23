@@ -78,6 +78,7 @@ export class ContextmenuCommandCategory extends ContextmenuCommand {
     }
 
     addChild() {
+       // console.log(this.tree.getRootNode(),this.tree.getRootNode().getFirstChild());
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }

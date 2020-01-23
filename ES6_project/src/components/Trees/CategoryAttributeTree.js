@@ -54,6 +54,7 @@ export default class CategoryAttributeTree {
                     }
                 },
                 edit: (event, data) => {
+                    $(data.node.span).addClass("fancytree-loading");
                     data.input.dropmenu({
                         'source': function (request, response) {
                             $.ajax({
@@ -158,9 +159,7 @@ export default class CategoryAttributeTree {
             focusTree: function (e, data) {
                 data.tree.$container.focus();
             },
-            init: (event, data) => {
-                //console.log(data.tree.$div.context.id, ' has loaded');
-                //data.tree.$container.each(function(index,element){console.log("CategoryAttributeTree", element)});
+            init: (event, data) => {               
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
                     
