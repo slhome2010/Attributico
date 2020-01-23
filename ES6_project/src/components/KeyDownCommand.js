@@ -6,6 +6,7 @@
 import { deSelectNodes } from '../functions/Select'
 import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
+import { isCategory } from '../functions/Plugin/NodeMethod';
 
 export class KeydownCommand {
     constructor(event, data) {
@@ -65,7 +66,9 @@ export class KeydownCommand {
             case 81:
                 //  ctrl+Q  cmd = "addChild";
                 if (this.access.addChild && this.e.ctrlKey) {
-                    this.addChild();
+                    if (this.node.isCategory() || this.node.getLevel() !== 1) {
+                        this.addChild();
+                    }
                 }
                 break;
             case 67:

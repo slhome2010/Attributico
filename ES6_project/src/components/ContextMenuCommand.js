@@ -8,6 +8,7 @@
 import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
 import CollapseExpande from './Events/CollapseExpande';
+import { isCategory } from '../functions/Plugin/NodeMethod';
 
 export class ContextmenuCommand {
     constructor(ui) {        
@@ -36,8 +37,8 @@ export class ContextmenuCommand {
                 }
                 this.remove();
                 break;
-            case "addChild":
-                if (this.node.getLevel() !== 1) {
+            case "addChild":                
+                if (this.node.isCategory() || this.node.getLevel() !== 1) {
                     this.addChild();
                 }
                 break;
@@ -78,7 +79,7 @@ export class ContextmenuCommandCategory extends ContextmenuCommand {
     }
 
     addChild() {
-       // console.log(this.tree.getRootNode(),this.tree.getRootNode().getFirstChild());
+        // getRootNode().getFirstChild() даст узел с level=1 category_25, например.
         this.tree.getRootNode().getFirstChild().editCreateNode("child"); // add child attribute to root category
     }
 }
