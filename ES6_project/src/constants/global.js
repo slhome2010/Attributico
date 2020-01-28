@@ -6,7 +6,7 @@ export const ATTRIBUTE_TREE = '[name ^= "attribute_tree"]';
 export const ATTRIBUTE_PRODUCT_TREE = '[name ^= "attribute_product_tree"]';
 export const PRODUCT_TREE = '[name ^= "product_tree"]';
 export const DEDUPLICATE_TREE = '[name ^= "deduplicate_tree"]';
-export const DETACH_TREE = '[name ^= "deduplicate_tree"]';
+export const DETACH_TREE = '[name ^= "detach_tree"]';
 export const ATTRIBUTE_SYNCRO_TREES = ATTRIBUTE_GROUP_TREE + ',' + DUTY_ATTRIBUTE_TREE + ',' + ATTRIBUTE_TREE + ',' + ATTRIBUTE_PRODUCT_TREE + ',' + DEDUPLICATE_TREE + ',' + DETACH_TREE;
 export const GROUP_CHECK_TREE = DEDUPLICATE_TREE + ',' + DETACH_TREE;
 export const CATEGORY_CHECK_TREE = '[name ^= "category_check_tree"]';
