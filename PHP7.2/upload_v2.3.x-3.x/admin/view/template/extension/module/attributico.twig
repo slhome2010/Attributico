@@ -832,17 +832,7 @@
     </div>
 </div>
 <script type="text/javascript">    
-    const ATTRIBUTE_SYNCRO_TREES = $('[name ^= "attribute_group_tree"], [name ^= "attribute_tree"], [name ^= "duty_attribute_tree"], [name ^= "attribute_product_tree"], [name ^= "group_check_tree"]');
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
-    const CATEGORY_TREE = $('[name ^= "category_tree"]');
-    const CATEGORY_ATTRIBUTE_TREE = $('[name ^= "category_attribute_tree"]');
-    const DUTY_ATTRIBUTE_TREE = $('[name ^= "duty_attribute_tree"]');
-    const ATTRIBUTE_TREE = $('[name ^= "attribute_tree"]');
-    const ATTRIBUTE_PRODUCT_TREE = $('[name ^= "attribute_product_tree"]');
-    const PRODUCT_TREE = $('[name ^= "product_tree"]');
-    const GROUP_CHECK_TREE = $('[name ^= "deduplicate_tree"], [name ^= "detach_tree"]');
-    const CATEGORY_CHECK_TREE = $('[name ^= "category_check_tree"]');
-    const CATEGORY_SYNCRO_TREES = $('[name ^= "category_check_tree"], [name ^= "category_tree"]');
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
     const config_language = '{{config_language}}';
     const token = '{{token}}';
     const user_token = '{{user_token}}';
@@ -851,18 +841,10 @@
     const textNewAttribute = {{ text_New_attribute| json_encode()}};
     const textNewGroup = {{ text_New_group| json_encode()}};
     const textConfirm = {{ text_confirm| json_encode()}};
-    const FILTERSETTINGS = {{ filter_settings| json_encode()}};
-    const smartScroll = $('input[name = "attributico_smart_scroll"]:checkbox');
-    let selNodes = null;
-    let selCategories = null;
-    let currentCategory = 0;
-    let currentAttribute = 0;
+    const FILTERSETTINGS = {{ filter_settings| json_encode()}};    
     let filterItems = [];
     let contextmenuConfig = [];
-    let dialogItems = [];
-    let clipboardNodes = [];
-    let clipboardTitles = [];
-    let pasteMode = null;
+    let dialogItems = [];   
 
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
