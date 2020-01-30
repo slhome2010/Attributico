@@ -11,12 +11,13 @@ export default function tools(task) {
     // alert("POST data:\n" + jQuery.param($("#form-attributico").serializeArray()));
     $.ajax({
         data: {
-            'user_token': user_token,
-            'token': token,
+            /* 'user_token': user_token,
+            'token': token, */
             'task': task,
             'options': $("#form-attributico").serialize()
         },
-        url: 'index.php?route=' + extension + 'module/attributico/tools',
+        url: 'index.php?route=' + extension + 'module/attributico/tools' + '&user_token=' + user_token + '&token=' + token,
+        type: 'POST',
         beforeSend: function () {
             //  $("#column-2 .complete-img").hide();
             $("#column-2 .loader-img").show();

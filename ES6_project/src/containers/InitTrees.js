@@ -28,6 +28,24 @@ export default function initTrees() {
         tree.render();
     });
 
+    /* 
+        * Build deduplicate tree and detach tree for tools
+        * This tree must have fixed position for correctly form serializing
+        */
+    GROUP_CHECK_TREE.each(function (indx, element) {
+        let tree = new GroupCheckTree(element);
+        tree.render();
+    });
+
+    /**
+     * Build category attribute tree for tools
+     * This tree must have fixed position for correctly form serializing
+     **/
+    CATEGORY_CHECK_TREE.each(function (indx, element) {
+        let tree = new CategoryCheckTree(element);
+        tree.render();
+    });
+
     // ------------------------ main attribute table --------------------
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let tree = new AttributeGroupTree(element);
@@ -44,14 +62,14 @@ export default function initTrees() {
         let tree = new CategoryAttributeTree(element);
         tree.render();
     });
-    
+
     ATTRIBUTE_TREE.each(function (indx, element) {
         let tree = new AttributeTree(element);
         tree.render();
     });
 
     // ---------------------- duty attribute table ------------------
-     DUTY_ATTRIBUTE_TREE.each(function (indx, element) {
+    DUTY_ATTRIBUTE_TREE.each(function (indx, element) {
         let tree = new DutyTree(element);
         tree.render();
     });
@@ -61,27 +79,9 @@ export default function initTrees() {
         let tree = new AttributeProductTree(element);
         tree.render();
     });
-   
+
     PRODUCT_TREE.each(function (indx, element) {
         let tree = new ProductTree(element);
-        tree.render();
-    });
-
-    /* 
-    * Build deduplicate tree and detach tree for tools
-    * This tree must have fixed position for correctly form serializing
-    */
-    GROUP_CHECK_TREE.each(function (indx, element) {
-        let tree = new GroupCheckTree(element);
-        tree.render();
-    });
-
-    /**
-     * Build category attribute tree for tools
-     * This tree must have fixed position for correctly form serializing
-     **/
-    CATEGORY_CHECK_TREE.each(function (indx, element) {
-        let tree = new CategoryCheckTree(element);
         tree.render();
     });
 
