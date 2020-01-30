@@ -16,8 +16,10 @@ import AttributeProductTree from '../components/Trees/AttributeProductTree';
 import ProductTree from '../components/Trees/ProductTree';
 import GroupCheckTree from '../components/Trees/GroupCheckTree';
 import CategoryCheckTree from '../components/Trees/CategoryCheckTree';
-import { ATTRIBUTE_GROUP_TREE, CATEGORY_TREE, CATEGORY_ATTRIBUTE_TREE, ATTRIBUTE_TREE, DUTY_ATTRIBUTE_TREE,
-         PRODUCT_TREE, ATTRIBUTE_PRODUCT_TREE, GROUP_CHECK_TREE, CATEGORY_CHECK_TREE} from '../constants/global'
+import {
+    ATTRIBUTE_GROUP_TREE, CATEGORY_TREE, CATEGORY_ATTRIBUTE_TREE, ATTRIBUTE_TREE, DUTY_ATTRIBUTE_TREE,
+    PRODUCT_TREE, ATTRIBUTE_PRODUCT_TREE, GROUP_CHECK_TREE, CATEGORY_CHECK_TREE
+} from '../constants/global'
 
 export default function initTrees() {
 
@@ -27,6 +29,24 @@ export default function initTrees() {
     **/
     $('[id ^= "tree"]').each(function (indx, element) {
         let tree = new ChildConfigTree(element);
+        tree.render();
+    });
+
+    /* 
+        * Build deduplicate tree and detach tree for tools
+        * This tree must have fixed position for correctly form serializing
+        */
+    GROUP_CHECK_TREE.each(function (indx, element) {
+        let tree = new GroupCheckTree(element);
+        tree.render();
+    });
+
+    /**
+     * Build category attribute tree for tools
+     * This tree must have fixed position for correctly form serializing
+     **/
+    CATEGORY_CHECK_TREE.each(function (indx, element) {
+        let tree = new CategoryCheckTree(element);
         tree.render();
     });
 
@@ -46,14 +66,14 @@ export default function initTrees() {
         let tree = new CategoryAttributeTree(element);
         tree.render();
     });
-    
+
     $(ATTRIBUTE_TREE).each(function (indx, element) {
         let tree = new AttributeTree(element);
         tree.render();
     });
 
     // ---------------------- duty attribute table ------------------
-     $(DUTY_ATTRIBUTE_TREE).each(function (indx, element) {
+    $(DUTY_ATTRIBUTE_TREE).each(function (indx, element) {
         let tree = new DutyTree(element);
         tree.render();
     });
@@ -63,27 +83,9 @@ export default function initTrees() {
         let tree = new AttributeProductTree(element);
         tree.render();
     });
-   
+
     $(PRODUCT_TREE).each(function (indx, element) {
         let tree = new ProductTree(element);
-        tree.render();
-    });
-
-    /* 
-    * Build deduplicate tree and detach tree for tools
-    * This tree must have fixed position for correctly form serializing
-    */
-    $(GROUP_CHECK_TREE).each(function (indx, element) {
-        let tree = new GroupCheckTree(element);
-        tree.render();
-    });
-
-    /**
-     * Build category attribute tree for tools
-     * This tree must have fixed position for correctly form serializing
-     **/
-    $(CATEGORY_CHECK_TREE).each(function (indx, element) {
-        let tree = new CategoryCheckTree(element);
         tree.render();
     });
 

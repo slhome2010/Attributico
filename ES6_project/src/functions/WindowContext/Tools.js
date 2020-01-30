@@ -10,13 +10,12 @@ export default function tools(task) {
     //var complete_img = '<img class= "complete-img" src="view/javascript/fancytree/skin-custom/accept.png"/>  ';
     // alert("POST data:\n" + jQuery.param($("#form-attributico").serializeArray()));
     $.ajax({
-        data: {
-            'user_token': user_token,
-            'token': token,
+        data: {            
             'task': task,
             'options': $("#form-attributico").serialize()
         },
-        url: 'index.php?route=' + extension + 'module/attributico/tools',
+        url: 'index.php?route=' + extension + 'module/attributico/tools' + '&user_token=' + user_token + '&token=' + token,
+        type: 'POST',
         beforeSend: function () {
             //  $("#column-2 .complete-img").hide();
             $("#column-2 .loader-img").show();
