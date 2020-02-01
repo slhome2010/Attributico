@@ -1582,12 +1582,12 @@ class ControllerModuleAttributico extends Controller
     public function tools()
     {
         $language = $this->getLanguage($this->config->get('config_language_id'));
-        $task = isset($this->request->get['task']) ? $this->request->get['task'] : "";
+        $task = isset($this->request->post['task']) ? $this->request->post['task'] : "";
         $task_result = $language->get('alert_success') . "  ";
 
         $options = array();
-        if (isset($this->request->get['options'])) {
-            parse_str(htmlspecialchars_decode($this->request->get['options']), $options);
+        if (isset($this->request->post['options'])) {
+            parse_str(htmlspecialchars_decode($this->request->post['options']), $options);
         }
 
         if ($this->session->data['free']) {
