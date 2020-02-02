@@ -36,7 +36,7 @@ export default function initTrees() {
         * Build deduplicate tree and detach tree for tools
         * This tree must have fixed position for correctly form serializing
         */
-    GROUP_CHECK_TREE.each(function (indx, element) {
+    $(GROUP_CHECK_TREE).each(function (indx, element) {
         let tree = new GroupCheckTree(element);
         tree.render();
     });
@@ -45,7 +45,7 @@ export default function initTrees() {
      * Build category attribute tree for tools
      * This tree must have fixed position for correctly form serializing
      **/
-    CATEGORY_CHECK_TREE.each(function (indx, element) {
+    $(CATEGORY_CHECK_TREE).each(function (indx, element) {
         let tree = new CategoryCheckTree(element);
         tree.render();
     });
