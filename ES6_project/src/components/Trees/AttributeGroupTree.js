@@ -8,15 +8,17 @@ import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';
+import { dndMergeNode, dndSortNode, dndReplaceParent } from '../../actions'
 
 export default class AttributeGroupTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-attribute';
         this.tree = $("#attribute_group_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
-
+        this.store = store;
+        
         this.config = {
             autoCollapse: true,
             autoScroll: true,
@@ -76,14 +78,14 @@ export default class AttributeGroupTree {
                 focusOnClick: true,
                 preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
                 preventRecursiveMoves: false, // Prevent dropping nodes on own descendants
-                dragStart: function (node, data) {
+                dragStart: (node, data) => {
                     //  if (data.node.isRootNode() || data.node.getLevel() !== 3) {
                     if (data.node.isRootNode() || data.node.getLevel() > 3) {
                         return false;
                     }
                     return true;
                 },
-                dragEnter: function (targetNode, data) {
+                dragEnter: (targetNode, data)  => {
                     let targetLevel = targetNode.getLevel();
                     let subjectLevel = data.otherNode.getLevel();
                     let subjectNode = data.otherNode;
@@ -105,7 +107,7 @@ export default class AttributeGroupTree {
                     }
                     return ["over"];
                 },
-                dragDrop: function (targetNode, data) {
+                dragDrop: (targetNode, data)  => {
                     let subjectNode = data.otherNode;
                     let targetLevel = targetNode.getLevel();
                     let subjectLevel = subjectNode.getLevel();
@@ -113,6 +115,7 @@ export default class AttributeGroupTree {
                     let replace = targetNode.getParent() !== subjectNode.getParent();
                     let merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
                     let url = '';
+                    let dispatchAction = null;
 
                     if (merge && !confirm(textConfirm)) {
                         return;
@@ -137,11 +140,14 @@ export default class AttributeGroupTree {
                     if (merge) {
                         url = 'index.php?route=' + extension + 'module/attributico/mergeAttributeGroup';
                         selfreload = true;
+                        dispatchAction = dndMergeNode;
                     } else if (replace) {
                         url = 'index.php?route=' + extension + 'module/attributico/replaceAttributeGroup';
                         selfreload = false;
+                        dispatchAction = dndReplaceParent;
                     } else {
                         url = 'index.php?route=' + extension + 'module/attributico/sortAttributeGroup';
+                        dispatchAction = dndSortNode;
                     }
                     $.ajax({
                         data: {
@@ -153,9 +159,10 @@ export default class AttributeGroupTree {
                             'direct': data.hitMode
                         },
                         url: url,
-                        success: function () {
+                        success: () => {
                             reloadAttribute(subjectNode, selfreload);
                             deSelectNodes(subjectNode);
+                            this.store.dispatch(dispatchAction());
                         }
                     });
                 },

@@ -21,7 +21,7 @@ import {
     PRODUCT_TREE, ATTRIBUTE_PRODUCT_TREE, GROUP_CHECK_TREE, CATEGORY_CHECK_TREE
 } from '../constants/global'
 
-export default function initTrees() {
+export default function initTrees(store) {
 
     /**
     * Building trees and configuring child nodes. (selectMode must be 2, see generateFormElements() description)
@@ -52,7 +52,7 @@ export default function initTrees() {
 
     // ------------------------ main attribute table --------------------
     $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
-        let tree = new AttributeGroupTree(element);
+        let tree = new AttributeGroupTree(element,store);
         tree.render();
     });
 

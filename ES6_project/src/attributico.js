@@ -13,6 +13,8 @@ import './functions/Plugin/Dropmenu.js';
 import buildDialog from './containers/BuildDialog';
 import dialogOptionEvents from './components/DialogOption';
 import commonSettings from './components/CommonSettings';
+import configureStore from './store';
+import reducer from './reducers';
 
 window.tools = tools;
 window.apply = apply;
@@ -28,13 +30,19 @@ window.clipboardTitles = [];
 window.pasteMode = null;
 
 // document ready actions
-$(function () {    
+$(function () {
     let t0 = performance.now();
 
     $('.fancyfilter').each(buildFilter);
     $('.dialog-options').each(buildDialog);
 
-    initTrees();
+    const initialState = {};
+    const store = configureStore(
+        reducer, initialState,
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__
+    );
+    const unsubscribe = store.subscribe(() => console.log(store.getState()))
+    initTrees(store);
 
     let ajaxFinished = 0;
     let totalAjax = 19; //Total of ajax functions you have
@@ -74,7 +82,7 @@ $(function () {
      *
      **/
     commonSettings();
-    
+
     /**
      * Context menu dialog events
      *
@@ -89,9 +97,9 @@ $(function () {
             Ok: function () {
                 $(this).dialog("close");
             }
-        }       
+        }
     });
-    
+
     dialogOptionEvents();
-    
+
 }); // end of document ready
