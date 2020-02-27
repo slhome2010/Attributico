@@ -1,22 +1,31 @@
 import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE } from '../constants/actions'
 
-export function dndMergeNode (node) {
+export function dndMergeNode (tree,sourceNode,targetNode,selNodes) {
 	return {
 		type: DND_MERGE_NODE,
-		node
+		tree,
+		sourceNode,
+		targetNode,
+		selNodes
 	}
 }
 
-export function dndReplaceParent (node) {
+export function dndReplaceParent (tree,sourceNode,targetNode,selNodes) {
 	return {
 		type: DND_REPLACE_PARENT,
-		node
+		tree,
+		sourceNode,
+		targetNode,
+		selNodes
 	}
 }
 
-export function dndSortNode (node) {
+export function dndSortNode (tree,sourceNode,targetNode,selNodes) {
 	return {
 		type: DND_SORT_NODE,
-		node
+		tree,
+		sourceNode,
+		targetNode,
+		selNodes
 	}
 }

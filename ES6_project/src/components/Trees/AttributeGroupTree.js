@@ -122,12 +122,11 @@ export default class AttributeGroupTree {
                     }
 
                     if (selNodes) {
-                        $.each(selNodes, function (i, subjectNode) {
+                        $.each(selNodes, function (i, selNode) {
                             if (merge) {
-                                subjectNode.remove();
+                                selNode.remove();
                             } else {
-                                subjectNode.moveTo(targetNode, data.hitMode);
-                                selfreload = true; // for correctly sorting if multiselect
+                                selNode.moveTo(targetNode, data.hitMode);                                
                             }
                         });
                     } else {
@@ -147,6 +146,7 @@ export default class AttributeGroupTree {
                         dispatchAction = dndReplaceParent;
                     } else {
                         url = 'index.php?route=' + extension + 'module/attributico/sortAttributeGroup';
+                        selfreload = selNodes ? true : false; // for correctly sorting if multiselect
                         dispatchAction = dndSortNode;
                     }
                     $.ajax({
@@ -160,9 +160,9 @@ export default class AttributeGroupTree {
                         },
                         url: url,
                         success: () => {
+                            this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));
                             reloadAttribute(subjectNode, selfreload);
-                            deSelectNodes(subjectNode);
-                            this.store.dispatch(dispatchAction());
+                            deSelectNodes();                            
                         }
                     });
                 },
