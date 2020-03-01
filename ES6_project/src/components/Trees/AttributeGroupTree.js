@@ -161,7 +161,7 @@ export default class AttributeGroupTree {
                         url: url,
                         success: () => {
                             this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));
-                            reloadAttribute(subjectNode, selfreload);
+                            //reloadAttribute(subjectNode, selfreload);
                             deSelectNodes();                            
                         }
                     });

@@ -15,6 +15,7 @@ import dialogOptionEvents from './components/DialogOption';
 import commonSettings from './components/CommonSettings';
 import configureStore from './store';
 import reducer from './reducers';
+import Observer from './observers';
 
 window.tools = tools;
 window.apply = apply;
@@ -41,7 +42,10 @@ $(function () {
         reducer, initialState,
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__
     );
-    const unsubscribe = store.subscribe(() => console.log(store.getState()))
+
+    const observer = new Observer(store);
+    observer.init();
+
     initTrees(store);
 
     let ajaxFinished = 0;
