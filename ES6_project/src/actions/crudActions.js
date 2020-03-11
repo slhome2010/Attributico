@@ -1,4 +1,4 @@
-import { COPY_NODE, RENAME_NODE, ADD_NODE, DELETE_NODE } from '../constants/actions'
+import { COPY_NODE, RENAME_NODE, UPDATE_NODE, DELETE_NODE } from '../constants/actions'
 
 export function copyNode (node) {
 	return {
@@ -14,9 +14,9 @@ export function renameNode (node) {
 	}
 }
 
-export function addNode (node) {
+export function updateNode (node) {
 	return {
-		type: ADD_NODE,
+		type: UPDATE_NODE,
 		node
 	}
 }

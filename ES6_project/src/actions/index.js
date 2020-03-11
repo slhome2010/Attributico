@@ -1,10 +1,10 @@
-import { copyNode, renameNode, addNode, deleteNode } from './crudActions'
+import { copyNode, renameNode, updateNode, deleteNode } from './crudActions'
 import { dndMergeNode, dndReplaceParent, dndSortNode } from './dndActions'
 
 export {
     copyNode,
     renameNode,
-    addNode, 
+    updateNode, 
     deleteNode,
     dndMergeNode, 
     dndReplaceParent, 

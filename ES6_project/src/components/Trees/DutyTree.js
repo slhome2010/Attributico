@@ -9,12 +9,13 @@ import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-duty';
         this.tree = $("#duty_attribute_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_duty_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_duty_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -59,7 +60,7 @@ export default class DutyTree {
                     // Return false to prevent edit mode
                 },
                 edit: (event, data) => editDuty(event, data),
-                save: (event, data) => saveAfterEdit(event, data),
+                save: (event, data) => saveAfterEdit(event, data, this.store),
                 close: function (event, data) {
                     if (data.save) {
                         $(data.node.span).addClass("pending");

@@ -11,9 +11,9 @@ export default class Observer {
     }
 
     /* Clear Filter if tree reload */
-    clearFilter(tree) {        
-        if (tree.isFilterActive()) {  
-                     
+    clearFilter(tree) {
+        if (tree.isFilterActive()) {
+
             tree.clearFilter();
 
             $('input[name *= "search"]').val("");
@@ -24,7 +24,7 @@ export default class Observer {
 
     treeReload() {
         let state = this.store.getState().dndReducer;
-        
+        console.log(this.store.getState());
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
             let tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -33,12 +33,14 @@ export default class Observer {
                 tree.reload().done(function () {
                     /* Зачем нужен флаг, что дерево в процессе перезагрузки?  */
                     tree.options.source.data.isPending = false;
-                    /* В каждом дереве установим активный узел */
-                    let localActiveNode = tree.getNodeByKey(state.activeNode.key);
-                    if (localActiveNode && localActiveNode !== undefined) {
-                        localActiveNode.setActive();
-                        /* newnode.makeVisible();
-                        newnode.scrollIntoView(); */
+                    /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
+                    let activeNode = tree.getNodeByKey(state.activeNode.key);
+                    let altActiveNode = tree.getNodeByKey(state.altActiveNode.key);
+                    if (activeNode !== null) {
+                        activeNode.setActive();
+                        /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
+                    } else if (altActiveNode !== null) {
+                        altActiveNode.setActive();
                     }
                 });
             }

@@ -1,7 +1,8 @@
-import { reloadAttribute } from '../../functions/Syncronisation';
+//import { reloadAttribute } from '../../functions/Syncronisation';
 import { isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+import { updateNode } from '../../actions';
 
-export function saveAfterEdit(event, data) {
+export function saveAfterEdit(event, data, store) {
     let parent = data.node.getParent();
     let lng_id = parseInt(data.tree.$div[0].id.replace(/\D+/ig, ''));
     $.ajax({
@@ -17,20 +18,23 @@ export function saveAfterEdit(event, data) {
     }).done(function (result) {
         let affilateValue = parent.getNextSibling();
         let affilateTemplate = parent.getPrevSibling();
-
+        /* Edit template */
         if (data.node.isTemplate() && affilateValue != null) {
-            // Делаем аффилированный узел lazy, чтоб не перезагружать все дерево
+            // Делаем аффилированный узел lazy, чтоб не перезагружать все активное дерево
             affilateValue.resetLazy();
             affilateValue.load(true).done(function (result) {
-                reloadAttribute(data.node, false);
+                /* Остальные деревья перезагружаем */
+                store.dispatch(updateNode(data.node));
             });
+        /* Edit value */
         } else if (data.node.isValue() && affilateTemplate != null) {
             affilateTemplate.resetLazy();
-            affilateTemplate.load(true).done(function (result) {               
-                reloadAttribute(data.node, false);
+            affilateTemplate.load(true).done(function (result) {
+                store.dispatch(updateNode(data.node));
             });
+        /* Edit Attribute or Group */
         } else {
-            reloadAttribute(data.node, false);
+            store.dispatch(updateNode(data.node));
         }
         // Server might return an error or a modified title
         data.node.setTitle(result.acceptedTitle); // in case server modified it                        //

@@ -2,7 +2,7 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-import { reloadAttribute } from '../../functions/Syncronisation';
+//import { reloadAttribute } from '../../functions/Syncronisation';
 import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
@@ -66,7 +66,7 @@ export default class AttributeGroupTree {
                 beforeClose: function (event, data) {
                     // Return false to prevent cancel/save (data.input is available)
                 },
-                save: (event, data) => saveAfterEdit(event, data),
+                save: (event, data) => saveAfterEdit(event, data, this.store),
                 close: function (event, data) {
                     if (data.save) {
                         $(data.node.span).addClass("pending");
@@ -208,7 +208,7 @@ export default class AttributeGroupTree {
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
-                //console.log(data.tree.$div.context.id, ' has loaded');
+               /*  console.log(data.tree.$div[0].id, ' has initialised'); */
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
