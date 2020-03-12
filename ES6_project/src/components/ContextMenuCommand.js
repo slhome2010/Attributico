@@ -11,12 +11,13 @@ import CollapseExpande from './Events/CollapseExpande';
 import { isCategory } from '../functions/Plugin/NodeMethod';
 
 export class ContextmenuCommand {
-    constructor(ui) {        
+    constructor(ui, store) {        
         this.ui = ui;
         this.node = $.ui.fancytree.getNode(ui.target);
         this.tree = $.ui.fancytree.getTree(ui.target);        
         this.selector = this.tree.$div[0].id;
         this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
+        this.store = store;
     }
 
     execute() {
@@ -47,10 +48,10 @@ export class ContextmenuCommand {
                 break;
             // case "cut":
             case "copy":
-                copyPaste(this.ui.cmd, this.node);
+                copyPaste(this.ui.cmd, this.node, this.store);
                 break;
             case "paste":
-                copyPaste(this.ui.cmd, this.node);
+                copyPaste(this.ui.cmd, this.node, this.store);
                 deSelectNodes(this.node);
                 break;
             default:

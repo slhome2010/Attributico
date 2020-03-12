@@ -1,9 +1,9 @@
 import { COPY_NODE, RENAME_NODE, UPDATE_NODE, DELETE_NODE } from '../constants/actions'
 
-export function copyNode (node) {
+export function copyNode (targetNode) {
 	return {
-		type: COPY_NODE,
-		node
+		type: COPY_NODE,		
+		targetNode
 	}
 }
 

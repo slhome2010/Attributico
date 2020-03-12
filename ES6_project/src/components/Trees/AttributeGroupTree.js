@@ -186,8 +186,8 @@ export default class AttributeGroupTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data)  => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,
@@ -223,8 +223,8 @@ export default class AttributeGroupTree {
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

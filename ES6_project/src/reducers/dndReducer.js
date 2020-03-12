@@ -1,4 +1,4 @@
-import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE } from '../constants/actions'
+import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE } from '../constants/actions'
 
 export default function dnd(state = {}, action) {
     switch (action.type) {
@@ -45,6 +45,17 @@ export default function dnd(state = {}, action) {
                 activeNode: action.node,
                 altActiveNode: action.node.getParent(),
                 selfReload: false
+            }
+        case COPY_NODE:
+            console.log('CruD Reduced action', action.type)
+            return {
+                ...state,
+                tree: action.targetNode.tree,
+                sourceNode: null,
+                targetNode: action.targetNode,
+                activeNode: action.targetNode,
+                altActiveNode: action.targetNode.getParent(),
+                selfReload: true
             }
         default:
             return state;

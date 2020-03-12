@@ -2,6 +2,7 @@ import { findUnselectedSibling, getLanguageId, getParentByKey } from './Plugin/N
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
 import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
+import { copyNode } from '../actions';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -57,7 +58,7 @@ export function deleteAttribute(node) {
     }
 }
 
-export function pasteNodes(targetNode) {
+export function pasteNodes(targetNode, store) {
     let node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
 
     if (node.key.indexOf('group') + 1) {
@@ -70,7 +71,8 @@ export function pasteNodes(targetNode) {
             },
             url: 'index.php?route=' + extension + 'module/attributico/addAttributes',
             success: function () {
-                reloadAttribute(targetNode, true);
+                store.dispatch(copyNode(targetNode));
+                //reloadAttribute(targetNode, true);
             }
         });
     }
@@ -149,7 +151,7 @@ export function deleteDuty(node) {
     });
 }
 
-export function copyPaste(action, targetNode) {
+export function copyPaste(action, targetNode, store) {
     switch (action) {
         case "cut":
         case "copy":
@@ -188,7 +190,7 @@ export function copyPaste(action, targetNode) {
                 // pasteNodes(targetNode);
                 // clipboardNodes[indx].remove();
             } else {
-                pasteNodes(targetNode);
+                pasteNodes(targetNode, store);
             }
             clipboardNodes = [];
             clipboardTitles = [];
