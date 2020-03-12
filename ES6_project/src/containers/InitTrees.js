@@ -74,7 +74,7 @@ export default function initTrees(store) {
 
     // ---------------------- duty attribute table ------------------
     $(DUTY_ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new DutyTree(element);
+        let tree = new DutyTree(element,store);
         tree.render();
     });
 
