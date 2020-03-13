@@ -1,8 +1,8 @@
-import { findUnselectedSibling, getLanguageId, getParentByKey } from './Plugin/NodeMethod';
+import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
 import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
-import { copyNode } from '../actions';
+import { copyNode, deleteNode } from '../actions';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -28,10 +28,9 @@ export function addAttribute(activeNode, activeKey, lng_id) {
     });
 }
 
-export function deleteAttribute(node) {
+export function deleteAttribute(node, store) {
     let level = node.getLevel();
     if (level === 2 || level === 3 || level === 5) {
-        let siblingNode = node.findUnselectedSibling();
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -42,16 +41,17 @@ export function deleteAttribute(node) {
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
+                store.dispatch(deleteNode(node)); // Надо до remove
+
                 if (selNodes) {
-                    // TODO selNodes всегда есть, можно убрать if else???. Проверить корректность удаления кэша в модели
+                    // TODO selNodes всегда есть?, можно убрать if else???. Проверить корректность удаления кэша в модели
                     $.each(selNodes, function (i, o) {
                         o.remove();
                     });
                 } else {
                     node.remove();
                 }
-                reloadAttribute(siblingNode, level === 5 ? true : false);
-                //   siblingNode.setActive(true);
+
                 selNodes = null;
             }
         });
@@ -59,34 +59,33 @@ export function deleteAttribute(node) {
 }
 
 export function pasteNodes(targetNode, store) {
-    let node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
-
-    if (node.key.indexOf('group') + 1) {
+    let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
+    let sourceNode = clipboardNodes[0][1];
+    if (parentNode.isGroup()) {
         $.ajax({
             data: {
                 'user_token': user_token,
                 'token': token,
-                'target': node.key,
+                'target': parentNode.key,
                 'attributes': clipboardTitles
             },
             url: 'index.php?route=' + extension + 'module/attributico/addAttributes',
             success: function () {
-                store.dispatch(copyNode(targetNode));
-                //reloadAttribute(targetNode, true);
+                store.dispatch(copyNode(sourceNode, parentNode));
             }
         });
     }
-    if (node.key.indexOf('category') + 1) {
+    if (parentNode.isCategory()) {
         $.ajax({
             data: {
-                'attributes': selNodes ? getSelectedKeys(selNodes) : [clipboardNodes[0][1].key],
-                'category_id': node.key,
-                'categories': selCategories ? getSelectedKeys(selCategories) : [node.key]
+                'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
+                'category_id': parentNode.key,
+                'categories': selCategories ? getSelectedKeys(selCategories) : [parentNode.key]
             },
             url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
             type: 'POST',
             success: function () {
-                reactivateCategory(node);
+                reactivateCategory(parentNode);
             }
         });
     }
@@ -113,7 +112,7 @@ export function deleteAttributesFromCategory(sourceNode) {
 }
 
 export function addAttributeToCategory(targetNode, data, remove) {
-    let sourceNode = data.otherNode;    
+    let sourceNode = data.otherNode;
     $.ajax({
         data: {
             'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
@@ -123,7 +122,7 @@ export function addAttributeToCategory(targetNode, data, remove) {
         url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST'
     }).done(function () {
-        if (!remove) {            
+        if (!remove) {
             smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             reactivateCategory(targetNode);
             reloadAttribute(sourceNode, false);

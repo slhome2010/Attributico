@@ -1,9 +1,10 @@
-import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE } from '../constants/actions'
+import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE } from '../constants/actions'
+import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
 export default function dnd(state = {}, action) {
     switch (action.type) {
         case DND_MERGE_NODE:
-            console.log('DnD Reduced action', action.type)
+            /* console.log('DnD Reduced action', action.type) */
             return {
                 ...state,
                 tree: action.tree,
@@ -14,7 +15,7 @@ export default function dnd(state = {}, action) {
                 selfReload: false
             }
         case DND_REPLACE_PARENT:
-            console.log('DnD Reduced action', action.type)
+            /*  console.log('DnD Reduced action', action.type) */
             return {
                 ...state,
                 tree: action.tree,
@@ -25,7 +26,7 @@ export default function dnd(state = {}, action) {
                 selfReload: false
             }
         case DND_SORT_NODE:
-            console.log('DnD Reduced action', action.type)
+            /*  console.log('DnD Reduced action', action.type) */
             return {
                 ...state,
                 tree: action.tree,
@@ -36,7 +37,7 @@ export default function dnd(state = {}, action) {
                 selfReload: action.selNodes ? true : false
             }
         case UPDATE_NODE:
-            console.log('CruD Reduced action', action.type)
+            /*  console.log('CruD Reduced action', action.type) */
             return {
                 ...state,
                 tree: action.node.tree,
@@ -47,15 +48,26 @@ export default function dnd(state = {}, action) {
                 selfReload: false
             }
         case COPY_NODE:
-            console.log('CruD Reduced action', action.type)
+            /* console.log('CruD Reduced action', action.type) */
             return {
                 ...state,
                 tree: action.targetNode.tree,
-                sourceNode: null,
+                sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
-                activeNode: action.targetNode,
-                altActiveNode: action.targetNode.getParent(),
+                activeNode: action.targetNode.getFirstChild(),
+                altActiveNode: action.targetNode,
                 selfReload: true
+            }
+        case DELETE_NODE:
+            /* console.log('CruD Reduced action', action.node) */
+            return {
+                ...state,
+                tree: action.node.tree,
+                sourceNode: action.node,
+                targetNode: null,
+                activeNode: action.node.findUnselectedSibling(),
+                altActiveNode: action.node.getParent(),
+                selfReload: action.node.getLevel() === 5 ? true : false
             }
         default:
             return state;

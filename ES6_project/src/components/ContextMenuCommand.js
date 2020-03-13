@@ -60,7 +60,7 @@ export class ContextmenuCommand {
     }
 
     remove() {
-        deleteAttribute(this.node)
+        deleteAttribute(this.node, this.store);
     }
 
     addChild() {

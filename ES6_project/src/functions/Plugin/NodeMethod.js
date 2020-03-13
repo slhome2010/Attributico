@@ -79,6 +79,13 @@ export const isAttribute = $.ui.fancytree._FancytreeNodeClass.prototype.isAttrib
         return false;
     }    
 };
+export const isGroup = $.ui.fancytree._FancytreeNodeClass.prototype.isGroup = function () {
+    if ( this.key.indexOf('group') > -1 ) {
+        return true;
+    } else {
+        return false;
+    }    
+};
 export const isCategory = $.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
     if ( this.key.indexOf('category') > -1 ) {
         return true;
