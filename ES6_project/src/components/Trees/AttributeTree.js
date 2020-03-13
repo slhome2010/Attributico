@@ -7,12 +7,13 @@ import { smartScroll } from '../../constants/global';
 
 // ------------------- attribute tree (Attribute group in tab-category) ----------------------------------------
 export default class AttributeTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-category';
         this.tree = $("#attribute_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -83,8 +84,8 @@ export default class AttributeTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
@@ -120,8 +121,8 @@ export default class AttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

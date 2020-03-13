@@ -9,10 +9,11 @@ import { isAttribute } from '../../functions/Plugin/NodeMethod';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
         this.tree = $("#category_attribute_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_category_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");        
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -145,8 +146,8 @@ export default class CategoryAttributeTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommandCategory(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommandCategory(e, data, this.store);
                 command.permissions = {
                     remove: data.node.isAttribute(),
                     addChild: true,
@@ -175,8 +176,8 @@ export default class CategoryAttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommandCategory(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommandCategory(ui, this.store);
                         command.execute();
                     }
                 });

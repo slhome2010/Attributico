@@ -64,6 +64,7 @@ export class ContextmenuCommand {
     }
 
     addChild() {
+        // Store не надо, т.к. будет saveAfterEdit
         addAttribute(this.node, 'attribute', this.lng_id);
     }
 

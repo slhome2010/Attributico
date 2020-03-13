@@ -5,11 +5,12 @@ import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- category tree ------------------------------------------------
 export default class CategoryTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-category';
         this.tree = $("#category_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_category_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -68,8 +69,8 @@ export default class CategoryTree {
                 data.tree.options.autoCollapse = false;
                 data.node.setExpanded(!(data.node.expanded && !selCategories.length));
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
@@ -98,8 +99,8 @@ export default class CategoryTree {
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

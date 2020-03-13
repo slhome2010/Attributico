@@ -37,7 +37,7 @@ export default function initTrees(store) {
         * This tree must have fixed position for correctly form serializing
         */
     $(GROUP_CHECK_TREE).each(function (indx, element) {
-        let tree = new GroupCheckTree(element);
+        let tree = new GroupCheckTree(element,store);
         tree.render();
     });
 
@@ -46,7 +46,7 @@ export default function initTrees(store) {
      * This tree must have fixed position for correctly form serializing
      **/
     $(CATEGORY_CHECK_TREE).each(function (indx, element) {
-        let tree = new CategoryCheckTree(element);
+        let tree = new CategoryCheckTree(element,store);
         tree.render();
     });
 
@@ -58,17 +58,17 @@ export default function initTrees(store) {
 
     // ----------------------- category table --------------------------
     $(CATEGORY_TREE).each(function (indx, element) {
-        let tree = new CategoryTree(element);
+        let tree = new CategoryTree(element,store);
         tree.render();
     });
 
     $(CATEGORY_ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new CategoryAttributeTree(element);
+        let tree = new CategoryAttributeTree(element,store);
         tree.render();
     });
 
     $(ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new AttributeTree(element);
+        let tree = new AttributeTree(element,store);
         tree.render();
     });
 
@@ -80,12 +80,12 @@ export default function initTrees(store) {
 
     // ------------------- product  attribute table -----------------
     $(ATTRIBUTE_PRODUCT_TREE).each(function (indx, element) {
-        let tree = new AttributeProductTree(element);
+        let tree = new AttributeProductTree(element,store);
         tree.render();
     });
 
     $(PRODUCT_TREE).each(function (indx, element) {
-        let tree = new ProductTree(element);
+        let tree = new ProductTree(element,store);
         tree.render();
     });
 

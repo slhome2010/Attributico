@@ -9,7 +9,7 @@ import CollapseExpande from './Events/CollapseExpande';
 import { isCategory } from '../functions/Plugin/NodeMethod';
 
 export class KeydownCommand {
-    constructor(event, data) {
+    constructor(event, data, store) { 
         this.e = event;
         this.node = data.node;
         this.tree = data.tree;
@@ -22,6 +22,7 @@ export class KeydownCommand {
             copy: true,
             paste: true
         };
+        this.store = store;
     }
 
     set permissions(newPermissions) {
@@ -74,14 +75,14 @@ export class KeydownCommand {
             case 67:
                 // Ctrl-C copy
                 if (this.access.copy && this.e.ctrlKey) {
-                    copyPaste("copy", this.node);
+                    copyPaste("copy", this.node, this.store);
                     return false;
                 }
                 break;
             case 86:
                 // Ctrl-V paste
                 if (this.access.paste && this.e.ctrlKey) {
-                    copyPaste("paste", this.node);
+                    copyPaste("paste", this.node, this.store);
                     deSelectNodes(this.node);
                     return false;
                 }
@@ -96,7 +97,7 @@ export class KeydownCommand {
     }
 
     remove() {
-        deleteAttribute(this.node)
+        deleteAttribute(this.node, this.store);
     }
 
     addChild() {

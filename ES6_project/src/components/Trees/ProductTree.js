@@ -4,11 +4,12 @@ import { loadError } from "../Events/LoadError";
 import { smartScroll } from "../../constants/global";
 
 export default class ProductTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
         this.tree = $("#product_tree" + this.lng_id);
         this.diver = $('input[id = "diver_product_tree' + this.lng_id + '"]:checkbox').is(":checked");      
         this.sortOrder = $('input[id = "sortOrder_product_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {     
             autoCollapse: true,
@@ -42,8 +43,8 @@ export default class ProductTree {
                 // index.php?route=catalog/product/update for 1.5.5
             },
             click: function (event, data) { },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
@@ -71,8 +72,8 @@ export default class ProductTree {
                         });                        
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

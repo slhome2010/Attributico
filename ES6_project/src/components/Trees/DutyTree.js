@@ -70,8 +70,8 @@ export default class DutyTree {
             beforeSelect: function (event, data) {
                 return false;
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommandDuty(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommandDuty(e, data, this.store);
                 command.permissions = {
                     remove: data.node.hasPermission(['duty']),
                     addChild: false,
@@ -107,8 +107,8 @@ export default class DutyTree {
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommandDuty(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommandDuty(ui, this.store);
                         command.execute();
                     }
                 });

@@ -2,11 +2,12 @@ import { ContextmenuCommand } from '../ContextMenuCommand';
 import { smartScroll } from '../../constants/global';
 //import { KeydownCommand } from '../KeyDownCommand';
 export default class GroupCheckTree {
-    constructor(element) {
+    constructor(element,store) {
         this.tree = $(element);
         this.lng_id = config_language;
         this.sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
-
+        this.store = store;
+        
         this.config = {
             checkbox: true,
             selectMode: 3,
@@ -36,8 +37,8 @@ export default class GroupCheckTree {
                         });                        
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });
