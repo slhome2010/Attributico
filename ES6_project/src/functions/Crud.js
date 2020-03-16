@@ -134,7 +134,7 @@ export function addAttributeToCategory(targetNode, data, remove) {
     });
 }
 
-export function deleteDuty(node) {
+export function deleteDuty(node, store) {
     $.ajax({
         data: {
             'user_token': user_token,
@@ -145,7 +145,8 @@ export function deleteDuty(node) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
         success: function () {
-            reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            store.dispatch(deleteNode(node)); // Надо до remove
+           // reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
         }
     });
 }

@@ -123,6 +123,6 @@ export class KeydownCommandCategory extends KeydownCommand {
 export class KeydownCommandDuty extends KeydownCommand {
 
     remove() {
-        deleteDuty(this.node);
+        deleteDuty(this.node, this.store);
     }
 }

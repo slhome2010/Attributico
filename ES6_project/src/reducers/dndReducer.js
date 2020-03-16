@@ -2,6 +2,8 @@ import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NO
 import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
 export default function dnd(state = {}, action) {
+    console.log('Reduced action', action.type)
+
     switch (action.type) {
         case DND_MERGE_NODE:
             /* console.log('DnD Reduced action', action.type) */
@@ -67,7 +69,7 @@ export default function dnd(state = {}, action) {
                 targetNode: null,
                 activeNode: action.node.findUnselectedSibling(),
                 altActiveNode: action.node.getParent(),
-                selfReload: action.node.getLevel() === 5 ? true : false
+                selfReload: action.node.isDuty() || action.node.isTemplate() || action.node.isValue() ? true : false
             }
         default:
             return state;

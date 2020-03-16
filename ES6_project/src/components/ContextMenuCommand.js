@@ -89,6 +89,6 @@ export class ContextmenuCommandCategory extends ContextmenuCommand {
 export class ContextmenuCommandDuty extends ContextmenuCommand {
 
     remove() {
-        deleteDuty(this.node);
+        deleteDuty(this.node, this.store);
     }
 }

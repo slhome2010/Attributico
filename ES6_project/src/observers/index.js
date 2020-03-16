@@ -24,7 +24,7 @@ export default class Observer {
 
     treeReload() {
         let state = this.store.getState().dndReducer;
-        /* console.log(this.store.getState()); */
+        /* console.log('state', state); */
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
             let tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -34,14 +34,17 @@ export default class Observer {
                     /* Зачем нужен флаг, что дерево в процессе перезагрузки?  */
                     tree.options.source.data.isPending = false;
                     /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
-                    let activeNode = tree.getNodeByKey(state.activeNode.key);
-                    let altActiveNode = tree.getNodeByKey(state.altActiveNode.key);
-                   /*  console.log('activeNode', activeNode.key);
-                    console.log('altActiveNode', altActiveNode.key); */
+                    /* console.log('tree', tree._id); */
+                    let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : null;
+                    let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
+
                     if (activeNode !== null) {
+                        console.log('activeNode', activeNode.key);
                         activeNode.setActive();
+
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
+                        console.log('altActiveNode', altActiveNode.key);
                         altActiveNode.setActive();
                     }
                 });
