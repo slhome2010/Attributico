@@ -37,6 +37,7 @@ export function reloadAttribute() {
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             tree.reload().done(function () {
                 tree.options.source.data.isPending = false;
+                console.log('tree', tree._id);
                 if (activeNode !== null) {
                     tree.getNodeByKey(activeNode.key).setActive(true);
                     /* tree.getNodeByKey(activeNode.key).makeVisible();

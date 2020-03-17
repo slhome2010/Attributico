@@ -58,10 +58,11 @@ export default class CategoryTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {    
-                    // Если источником является дерево атрибутов, то удалять не надо. Если дерево атрибутов категории, то удаляем.
+                dragDrop: (node, data) => {    
+                    // Если источником является дерево атрибутов, то удалять не надо т.к. это ADD. 
+                    // Если дерево атрибутов категории, то удаляем, т.к. это REPLACE.
                     let noRemove = data.otherNode.tree.$div[0].id.indexOf('attribute_tree');               
-                    addAttributeToCategory(node, data, noRemove);
+                    addAttributeToCategory(node, data, noRemove, this.store);
                 }
             },
             select: function (event, data) {

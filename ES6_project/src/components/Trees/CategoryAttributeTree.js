@@ -126,9 +126,9 @@ export default class CategoryAttributeTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {
+                dragDrop: (node, data) => {
                     let targetnode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
-                    addAttributeToCategory(targetnode, data, false);
+                    addAttributeToCategory(targetnode, data, false, this.store);
                 }
             },
             beforeSelect: function (event, data) {

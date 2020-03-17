@@ -34,7 +34,7 @@ export default class Observer {
                     /* Зачем нужен флаг, что дерево в процессе перезагрузки?  */
                     tree.options.source.data.isPending = false;
                     /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
-                    /* console.log('tree', tree._id); */
+                    /* console.log(tree.$div[0].id, ' has reloaded'); */
                     let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : null;
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 

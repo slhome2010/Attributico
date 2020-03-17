@@ -3,6 +3,7 @@ import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories }
 import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
 import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
 import { copyNode, deleteNode } from '../actions';
+import { dndAddNode } from '../actions/dndActions';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -111,7 +112,7 @@ export function deleteAttributesFromCategory(sourceNode) {
     deSelectNodes();
 }
 
-export function addAttributeToCategory(targetNode, data, remove) {
+export function addAttributeToCategory(targetNode, data, remove, store) {
     let sourceNode = data.otherNode;
     $.ajax({
         data: {
@@ -125,7 +126,9 @@ export function addAttributeToCategory(targetNode, data, remove) {
         if (!remove) {
             smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             reactivateCategory(targetNode);
-            reloadAttribute(sourceNode, false);
+            // Надо перезагружать, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)
+            /* reloadAttribute(sourceNode, false); */
+            store.dispatch(dndAddNode(sourceNode,targetNode,selNodes));
             deSelectNodes();
         } else {
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
@@ -145,8 +148,7 @@ export function deleteDuty(node, store) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
         success: function () {
-            store.dispatch(deleteNode(node)); // Надо до remove
-           // reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            store.dispatch(deleteNode(node)); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit           
         }
     });
 }
@@ -188,8 +190,8 @@ export function copyPaste(action, targetNode, store) {
                 // Cut mode: check for recursion and remove source
                 // TODO
                 // pasteNodes(targetNode);
-                // clipboardNodes[indx].remove();
-            } else {
+                // clipboardNodes[indx].remove();                
+            } else {               
                 pasteNodes(targetNode, store);
             }
             clipboardNodes = [];
