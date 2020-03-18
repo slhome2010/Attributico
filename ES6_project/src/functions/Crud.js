@@ -77,7 +77,8 @@ export function pasteNodes(targetNode, store) {
         });
     }
     if (parentNode.isCategory()) {
-        $.ajax({
+        addAttributeToCategory(sourceNode, parentNode, false, store);
+        /* $.ajax({
             data: {
                 'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
                 'category_id': parentNode.key,
@@ -88,7 +89,7 @@ export function pasteNodes(targetNode, store) {
             success: function () {
                 reactivateCategory(parentNode);
             }
-        });
+        }); */
     }
 }
 // sourceNode = data.otherNode это узел источника
@@ -112,8 +113,7 @@ export function deleteAttributesFromCategory(sourceNode) {
     deSelectNodes();
 }
 
-export function addAttributeToCategory(targetNode, data, remove, store) {
-    let sourceNode = data.otherNode;
+export function addAttributeToCategory(sourceNode, targetNode, remove, store) {    
     $.ajax({
         data: {
             'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],

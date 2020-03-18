@@ -62,7 +62,7 @@ export default class CategoryTree {
                     // Если источником является дерево атрибутов, то удалять не надо т.к. это ADD. 
                     // Если дерево атрибутов категории, то удаляем, т.к. это REPLACE.
                     let noRemove = data.otherNode.tree.$div[0].id.indexOf('attribute_tree');               
-                    addAttributeToCategory(node, data, noRemove, this.store);
+                    addAttributeToCategory(data.otherNode, node, noRemove, this.store);
                 }
             },
             select: function (event, data) {
