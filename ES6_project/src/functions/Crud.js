@@ -81,12 +81,12 @@ export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
             deSelectNodes();            
         } else {
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
-            deleteAttributesFromCategory(sourceNode);
+            deleteAttributesFromCategory(sourceNode, store);
         }
     });
 }
 
-export function deleteAttributesFromCategory(sourceNode) {
+export function deleteAttributesFromCategory(sourceNode, store) {
     let category_id = sourceNode.getParent().key;
 
     $.ajax({
@@ -100,7 +100,8 @@ export function deleteAttributesFromCategory(sourceNode) {
         success: function () {
             reactivateCategory();
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            reloadAttribute(sourceNode, true); 
+            store.dispatch(deleteNode(sourceNode));
+           // reloadAttribute(sourceNode, true); 
         }
     });
     deSelectNodes();

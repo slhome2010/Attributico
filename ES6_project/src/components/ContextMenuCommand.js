@@ -77,7 +77,7 @@ export class ContextmenuCommand {
 export class ContextmenuCommandCategory extends ContextmenuCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node);
+        deleteAttributesFromCategory(this.node, this.store);
     }
 
     addChild() {
