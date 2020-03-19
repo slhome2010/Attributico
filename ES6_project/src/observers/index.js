@@ -25,6 +25,7 @@ export default class Observer {
     treeReload() {
         let state = this.store.getState().dndReducer;
         /* console.log('state', state); */
+        /* console.log('state.tree ', state.tree.$div[0].id); */
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
             let tree = $("#" + element.id).fancytree("getTree");
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -39,12 +40,11 @@ export default class Observer {
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 
                     if (activeNode !== null) {
-                        console.log('activeNode', activeNode.key);
+                        /* console.log('activeNode', activeNode.key); */
                         activeNode.setActive();
-
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
-                        console.log('altActiveNode', altActiveNode.key);
+                        /* console.log('altActiveNode', altActiveNode.key); */
                         altActiveNode.setActive();
                     }
                 });
