@@ -1,4 +1,3 @@
-//import { reloadAttribute } from '../../functions/Syncronisation';
 import { isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { updateNode } from '../../actions';
 

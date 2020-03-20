@@ -2,7 +2,6 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-//import { reloadAttribute } from '../../functions/Syncronisation';
 import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
@@ -160,8 +159,7 @@ export default class AttributeGroupTree {
                         },
                         url: url,
                         success: () => {
-                            this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));
-                            //reloadAttribute(subjectNode, selfreload);
+                            this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));                            
                             deSelectNodes();                            
                         }
                     });

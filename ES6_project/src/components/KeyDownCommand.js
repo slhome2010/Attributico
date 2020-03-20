@@ -112,7 +112,7 @@ export class KeydownCommand {
 export class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node, this.store);
+        deleteAttributesFromCategory(this.node, null, this.store);
     }
 
     addChild() {

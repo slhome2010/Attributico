@@ -1,6 +1,6 @@
 import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
-import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
+import { reactivateCategory, smartReload } from './Syncronisation'
 import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
 import { copyNode, deleteNode } from '../actions';
 import { dndAddNode } from '../actions/dndActions';
@@ -62,7 +62,6 @@ export function deleteAttribute(node, store) {
 // sourceNode = data.otherNode это узел источника
 // Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
 export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
-    /* let sourceNode = data.otherNode; */
     $.ajax({
         data: {
             'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
@@ -78,15 +77,16 @@ export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
             reactivateCategory(targetNode);
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
             store.dispatch(dndAddNode(sourceNode, targetNode, selNodes));
-            deSelectNodes();            
+            deSelectNodes();
         } else {
+            // Это либо смена сатегории либо копипаст из CategoryAttributeTree
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
-            deleteAttributesFromCategory(sourceNode, store);
+            deleteAttributesFromCategory(sourceNode, targetNode, store);
         }
     });
 }
 
-export function deleteAttributesFromCategory(sourceNode, store) {
+export function deleteAttributesFromCategory(sourceNode, targetNode, store) {
     let category_id = sourceNode.getParent().key;
 
     $.ajax({
@@ -98,10 +98,9 @@ export function deleteAttributesFromCategory(sourceNode, store) {
         url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
         success: function () {
-            reactivateCategory();
+            reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(deleteNode(sourceNode));
-           // reloadAttribute(sourceNode, true); 
+            store.dispatch(deleteNode(sourceNode));            
         }
     });
     deSelectNodes();
@@ -119,7 +118,7 @@ export function deleteDuty(node, store) {
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
         success: function () {
             // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
-            store.dispatch(deleteNode(node));            
+            store.dispatch(deleteNode(node));
         }
     });
 }
@@ -138,8 +137,11 @@ export function copyPaste(action, actionNode, store) {
                     $(TREE_SELECTOR).each(function (indx, element) {
                         let tree = $("#" + element.id).fancytree("getTree");
                         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-                        clipboardNodes[i][lng_id] = tree.getNodeByKey(node.key);
-                        clipboardTitles[i][lng_id] = tree.getNodeByKey(node.key).title;
+                        let selNode = tree.getNodeByKey(node.key);
+                        if (selNode !== null) {
+                            clipboardNodes[i][lng_id] = selNode;
+                            clipboardTitles[i][lng_id] = selNode.title;
+                        }
                     });
                 });
             } else {
@@ -148,8 +150,11 @@ export function copyPaste(action, actionNode, store) {
                 $(TREE_SELECTOR).each(function (indx, element) {
                     let tree = $("#" + element.id).fancytree("getTree");
                     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-                    clipboardNodes[0][lng_id] = tree.getNodeByKey(actionNode.key);
-                    clipboardTitles[0][lng_id] = tree.getNodeByKey(actionNode.key).title;
+                    let selNode = tree.getNodeByKey(actionNode.key);
+                    if (selNode !== null) {
+                        clipboardNodes[0][lng_id] =selNode;
+                        clipboardTitles[0][lng_id] = selNode.title;
+                    }
                 });
             }
             break;
@@ -167,7 +172,7 @@ export function copyPaste(action, actionNode, store) {
                 pasteNodes(actionNode, store);
             }
             clipboardNodes = [];
-            clipboardTitles = [];            
+            clipboardTitles = [];
             pasteMode = null;
             break;
         default:
@@ -193,6 +198,6 @@ export function pasteNodes(targetNode, store) {
         });
     }
     if (parentNode.isCategory()) {
-        addAttributeToCategory(sourceNode, parentNode, false, store);       
+        addAttributeToCategory(sourceNode, parentNode, false, store);
     }
 }
