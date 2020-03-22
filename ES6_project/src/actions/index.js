@@ -1,6 +1,6 @@
 import { copyNode, renameNode, updateNode, deleteNode } from './crudActions'
-import { dndMergeNode, dndReplaceParent, dndSortNode } from './dndActions'
-
+import { dndMergeNode, dndReplaceParent, dndSortNode, dndAddNode } from './dndActions'
+import { checkOptions } from './checkActions'
 export {
     copyNode,
     renameNode,
@@ -8,5 +8,7 @@ export {
     deleteNode,
     dndMergeNode, 
     dndReplaceParent, 
-    dndSortNode	
+    dndSortNode,
+    dndAddNode,
+    checkOptions	
 }

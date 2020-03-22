@@ -85,7 +85,7 @@ $(function () {
      * Common settings change event hundlers
      *
      **/
-    commonSettings();
+    commonSettings(store);
 
     /**
      * Context menu dialog events

@@ -28,6 +28,7 @@ export default class Observer {
         /* console.log('state.tree ', state.tree.$div[0].id); */
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
             let tree = $("#" + element.id).fancytree("getTree");
+            let currentActiveNode = tree.getActiveNode();
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             if ((tree !== state.tree) || state.selfReload) { // not reload active tree
                 this.clearFilter(tree);
@@ -36,7 +37,7 @@ export default class Observer {
                     tree.options.source.data.isPending = false;
                     /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
                     /* console.log(tree.$div[0].id, ' has reloaded'); */
-                    let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : null;
+                    let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 
                     if (activeNode !== null) {
@@ -51,7 +52,7 @@ export default class Observer {
             }
         }.bind(this));
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
-        if (!state.selfReload) {
+        if (!state.selfReload && state.activeNode !== null) {
             state.activeNode.setActive();
         }
     }

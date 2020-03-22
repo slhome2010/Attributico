@@ -1,4 +1,4 @@
-import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, DND_ADD_NODE } from '../constants/actions'
+import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, DND_ADD_NODE, CHECK_OPTIONS } from '../constants/actions'
 import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
 export default function dnd(state = {}, action) {
@@ -74,6 +74,16 @@ export default function dnd(state = {}, action) {
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode.getParent(),
                 selfReload: false
+            }
+            case CHECK_OPTIONS:            
+            return {
+                ...state,
+                tree: null,
+                sourceNode: null,
+                targetNode: null,
+                activeNode: null,
+                altActiveNode: null,
+                selfReload: true
             }
         default:
             return state;

@@ -8,3 +8,6 @@ export const DND_REPLACE_PARENT = 'DND_REPLACE_PARENT';
 export const DND_SORT_NODE = 'DND_SORT_NODE';
 
 export const DND_ADD_NODE = 'DND_ADD_NODE';
+
+export const CHECK_OPTIONS = 'CHECK_OPTIONS';
+

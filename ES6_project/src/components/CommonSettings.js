@@ -1,11 +1,12 @@
 import { reloadAttribute } from "../functions/Syncronisation";
 import { CATEGORY_SYNCRO_TREES } from '../constants/global'
+import { checkOptions } from "../actions";
 
 /**
 * Common settings change event hundlers
 *
 **/
-export default function commonSettings() {
+export default function commonSettings(store) {
 
     // access to autoadd radio
     $('[name = "attributico_product_text"]').each(function (indx, element) {
@@ -49,7 +50,7 @@ export default function commonSettings() {
                         tree.options.source.data.isPending = false;                        
                     });
                 });
-                reloadAttribute();
+                store.dispatch(checkOptions());
             }
         });
     });
@@ -69,7 +70,7 @@ export default function commonSettings() {
                         tree.options.source.data.isPending = false;                       
                     });
                 });
-                reloadAttribute();
+                store.dispatch(checkOptions());
             }
         });
     });
