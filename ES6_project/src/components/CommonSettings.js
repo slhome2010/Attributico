@@ -1,4 +1,3 @@
-import { reloadAttribute } from "../functions/Syncronisation";
 import { CATEGORY_SYNCRO_TREES } from '../constants/global'
 import { checkOptions } from "../actions";
 

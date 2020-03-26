@@ -27,53 +27,17 @@ export function reactivateCategory() {
 }
 
 export function reloadAttribute() {
-    if (arguments.length == 0) {
-        $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
-            const tree = $("#" + element.id).fancytree("getTree");
-            let activeNode = tree.getActiveNode();
+    $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
+        const tree = $("#" + element.id).fancytree("getTree");
+        let activeNode = tree.getActiveNode();
 
-            ClearFilter(tree);
-
-            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-            tree.reload().done(function () {
-                tree.options.source.data.isPending = false;
-                console.log('tree', tree._id);
-                if (activeNode !== null) {
-                    tree.getNodeByKey(activeNode.key).setActive(true);
-                    /* tree.getNodeByKey(activeNode.key).makeVisible();
-                    tree.getNodeByKey(activeNode.key).scrollIntoView(); */
-                }
-            });
-        });
-    } else {
-        var node = arguments[0];
-        var self = arguments[1];
-        $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
-            var tree = $("#" + element.id).fancytree("getTree");
-            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-            if ((tree !== node.tree) || self) { // not reload active tree
-                ClearFilter(tree);
-                tree.reload().done(function () {
-                    tree.options.source.data.isPending = false;
-                    var newnode = tree.getNodeByKey(node.key); // || node.getNextSibling() || node.getPrevSibling() || node.getParent(); // ????
-                    if (newnode && newnode !== undefined) {
-                        newnode.setActive();
-                        /* newnode.makeVisible();
-                        newnode.scrollIntoView(); */
-                    }
-                });
+        tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
+        tree.reload().done(function () {
+            if (activeNode !== null) {
+                tree.getNodeByKey(activeNode.key).setActive(true);
             }
         });
-        if (!self) {
-            node.setActive();
-        }
-        // reactivateCategory(node);
-        /*  parent.load(true).done(function (result) {
-                    //   parent.setExpanded();
-                    (data.node.tree.getNodeByKey(data.node.key) || data.node.getPrevSibling() || data.node.getNextSibling()).setActive();
-                });
-            }).done(function (result) { */
-    }
+    });
 }
 
 export function smartReload(tree, nodeList) {

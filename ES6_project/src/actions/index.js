@@ -10,5 +10,5 @@ export {
     dndReplaceParent, 
     dndSortNode,
     dndAddNode,
-    checkOptions	
+    checkOptions    
 }
