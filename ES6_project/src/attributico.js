@@ -75,7 +75,7 @@ $(function () {
      * Alerts for tools when tasks is running
      * Placed in div = column-2, because column-1 is vtabs
      **/
-    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+    $('a[data-toggle="pill"]').on('click', function (e) {
         $("#column-2 .alert-success").hide();
         $("#column-2 .task-complete").hide();
         $("#column-2 .alert-info").show();
