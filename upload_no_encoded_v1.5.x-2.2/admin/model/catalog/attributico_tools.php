@@ -231,16 +231,7 @@ class ModelCatalogAttributicoTools extends Model {
                       , " . DB_PREFIX . "language hl
                       WHERE p2c.category_id = '" . (int) $category_id . "'
                       ORDER BY p.product_id, hca.attribute_id";
-        /* Будут добавлены только записи с несовпадающими ключами и непустым Duty */
-        /*  $sql_no_duty = "INSERT IGNORE INTO " . DB_PREFIX . "product_attribute(product_id, attribute_id, language_id, text)
-          SELECT p.product_id, hca.attribute_id, hl.language_id, had.duty FROM " . DB_PREFIX . "product p
-          LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id)
-          LEFT JOIN " . DB_PREFIX . "category_attribute hca ON (hca.category_id = '" . (int) $category_id . "')
-          LEFT JOIN " . DB_PREFIX . "attribute_description had ON (had.attribute_id = hca.attribute_id AND had.duty != '')
-          , " . DB_PREFIX . "language hl
-          WHERE p2c.category_id = '" . (int) $category_id . "' AND had.language_id = hl.language_id
-          ORDER BY p.product_id, hca.attribute_id";
-         */
+        
         switch ($method) {
             case '1':    // text = ''
                 $sql = "INSERT INTO " . DB_PREFIX . "product_attribute(product_id, attribute_id, language_id, text)

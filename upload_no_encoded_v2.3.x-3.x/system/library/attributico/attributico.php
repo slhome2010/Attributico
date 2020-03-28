@@ -3,12 +3,7 @@ class Tree
 {
 
     private $options = array();
-    private $rootNode = array();
-
-    public function set($key, $value)
-    {
-        $this->options[$key] = $value;
-    }
+    private $rootNode = array();   
 
     public function __construct(Node $node, $options = array())
     {
@@ -16,6 +11,11 @@ class Tree
             $this->options[$key] = $value;
         }
         $this->rootNode[0] = $node->nodeData;
+    }
+
+    public function set($key, $value)
+    {
+        $this->options[$key] = $value;
     }
 
     public function render()

@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.0.8');
+define('MODULE_VERSION', 'v3.0.9');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -1504,10 +1504,10 @@ class ControllerModuleAttributico extends Controller
 
     public function uninstall()
     {
-        $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "category_attribute");
+        /* $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "category_attribute");
         if ($this->duty_check()) {
             $this->db->query("ALTER TABLE " . DB_PREFIX . "attribute_description DROP COLUMN `duty`");
-        }
+        } */
         $this->cache->delete('attributico');
     }
 
@@ -1669,9 +1669,7 @@ class ControllerModuleAttributico extends Controller
                 }
                 break;
             case 'cache':
-
                 $this->cache->delete('attributico');
-
                 break;
             case 'clone':
                 $source_lng = isset($options['clone-language-source']) ? $options['clone-language-source'] : $this->config->get('config_language_id');
