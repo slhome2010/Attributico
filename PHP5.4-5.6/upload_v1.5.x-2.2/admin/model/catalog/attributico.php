@@ -397,19 +397,25 @@ class ModelCatalogAttributico extends Model
 
         if (isset($data['value'])) {
             foreach ($data['value'] as $instance) {
-                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
-                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
-                 ");
-                // AND language_id = '" . (int)$language_id . "'");
+                if ($instance['value'] != '') {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
+                 AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                 AND language_id = '" . (int) $language_id . "'");
+                    //");
+                } else {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE TRIM(text) LIKE ''
+                        AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                        AND language_id = '" . (int) $language_id . "'");
+                }
             }
         }
 
         if (isset($data['template'])) {
             foreach ($data['template'] as $instance) {
-                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE text LIKE '" . $instance['value'] . "'
-                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
-                 ");
-                // AND language_id = '" . (int)$language_id . "'");
+                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE TRIM(text) LIKE '" . $instance['value'] . "'
+                 AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                 AND language_id = '" . (int) $language_id . "'");
+                //");
             }
         }
     }
