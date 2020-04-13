@@ -1,8 +1,7 @@
 import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
-import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
-import { copyNode, deleteNode, dndAddNode } from '../actions';
+import { copyNode, deleteNode, dndAddNode, reactivateNode } from '../actions';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -75,6 +74,7 @@ export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
             smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             deSelectCategories();
             reactivateCategory(targetNode);
+            /* store.dispatch(reactivateNode(targetNode)); */
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
             store.dispatch(dndAddNode(sourceNode, targetNode, selNodes));
             deSelectNodes();
