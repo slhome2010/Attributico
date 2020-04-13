@@ -1,16 +1,5 @@
 import { ATTRIBUTE_SYNCRO_TREES, CATEGORY_TREE } from '../constants/global'
 
-/* Clear Filter if tree reload */
-function ClearFilter(tree) {
-    if (tree.isFilterActive()) {
-        tree.clearFilter();
-
-        $('input[name *= "search"]').val("");
-        $('span[id *= "matches"]').text("");
-        $("[id ^=loadImg]").hide();
-    }
-}
-
 /* Functions for trees handling logic */
 export function reactivateCategory() {
     let node = arguments.length !== 0 ? arguments[0] : null;

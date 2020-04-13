@@ -38,10 +38,7 @@ $(function () {
     $('.dialog-options').each(buildDialog);
 
     const initialState = {};
-    const store = configureStore(
-        reducer, initialState,
-        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__
-    );
+    const store = configureStore( reducer, initialState );
 
     const observer = new Observer(store);
     observer.init();

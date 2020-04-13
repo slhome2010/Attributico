@@ -1,7 +1,6 @@
 import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
-import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
 import { copyNode, deleteNode, dndAddNode } from '../actions';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
