@@ -236,7 +236,8 @@
                                   if(textarea.val()=='')                                   
                                     textarea.val(duty);
                                 } else 
-                                  textarea.val(duty); 
+                                    if (duty != '')
+                                     textarea.val(duty); 
                             });
                         }
                     });
