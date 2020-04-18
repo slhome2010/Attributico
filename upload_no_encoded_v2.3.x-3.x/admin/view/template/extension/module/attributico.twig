@@ -352,6 +352,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane active" id="tab-attribute">
+                                {% if duty_check %}
                                 <ul class="nav nav-tabs" id="tab-attribute_language">
                                     {% for language in languages %}
                                     <li><a href="#tab-attribute_language{{language.language_id}}" data-toggle="tab"><img src="{{language.src}}" title="{{language.name}}" /> {{language.name}}</a></li>
@@ -368,6 +369,13 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                                {% else %}
+                                <div class="jumbotron">
+                                    <h1>{{text_attention}}</h1>
+                                    <p>{{help_upgrade}}</p>
+                                    <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();">{{entry_upgrade}}</a></p>
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="tab-pane" id="tab-duty">
                                 {% if duty_check %}

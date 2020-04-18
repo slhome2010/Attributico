@@ -371,23 +371,31 @@
                                 </div>
                             </div>
                             <div class="tab-pane active" id="tab-attribute">
-                                <ul class="nav nav-tabs" id="tab-attribute_language">
-                                    <?php foreach ($languages as $language) { ?>
-                                        <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
-                                                <?php echo $language['name']; ?></a></li>
-                                    <?php } ?>
-                                </ul>
-                                <div class="tab-content">
-                                    <?php foreach ($languages as $language) { ?>
-                                        <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
-                                            <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
-                                            <div class="form-group">
-                                                <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
+                                <?php if ($duty_check) { ?>
+                                    <ul class="nav nav-tabs" id="tab-attribute_language">
+                                        <?php foreach ($languages as $language) { ?>
+                                            <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
+                                                    <?php echo $language['name']; ?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <?php foreach ($languages as $language) { ?>
+                                            <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
+                                                <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
+                                                <div class="form-group">
+                                                    <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
+                                                </div>
+                                                <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                             </div>
-                                            <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
-                                        </div>
-                                    <?php } ?>
-                                </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } else { ?>
+                                    <div class="jumbotron">
+                                        <h1><?php echo $text_attention; ?></h1>
+                                        <p><?php echo $help_upgrade; ?></p>
+                                        <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();"><?php echo $entry_upgrade; ?></a></p>
+                                    </div>
+                                <?php } ?>
                             </div>
                             <div class="tab-pane" id="tab-duty">
                                 <?php if ($duty_check) { ?>
@@ -881,7 +889,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const config_language = '<?php echo $config_language; ?>';
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';
@@ -890,11 +898,11 @@
     const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;         
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
     let filterItems = [];
     let contextmenuConfig = [];
-    let dialogItems = [];   
-    
+    let dialogItems = [];
+
     ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [{
