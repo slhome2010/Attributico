@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.0.9');
+define('MODULE_VERSION', 'v3.1.0');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -82,7 +82,14 @@ class ControllerModuleAttributico extends Controller
             }
             $this->request->post['attributico_filter'] = serialize($filter_settings);
 
+            if (($this->config->get('module_attributico_status'))) {
+                $this->request->post['module_attributico_status'] = $this->config->get('module_attributico_status');
+            } else {
+                $this->request->post['module_attributico_status'] = 0;
+            }
+
             $this->model_setting_setting->editSetting('attributico', $this->request->post);
+            $this->model_setting_setting->editSetting('module_attributico', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
 
             if (version_compare(VERSION, '2.0.1', '>=')) { // иначе вылетает из админки
@@ -413,7 +420,7 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-
+        
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
             $this->data['column_left'] = $this->load->controller('common/column_left');
@@ -1497,9 +1504,11 @@ class ControllerModuleAttributico extends Controller
         $data['attributico_cache'] = '1';
         $data['attributico_lazyload'] = '1';
         $data['attributico_children'] = 'a:5:{i:1;a:2:{i:0;s:8:"template";i:1;s:5:"value";}i:2;a:1:{i:0;s:4:"duty";}i:3;a:1:{i:0;s:4:"duty";}i:4;a:2:{i:0;s:8:"template";i:1;s:5:"value";}i:5;a:2:{i:0;s:8:"template";i:1;s:5:"value";}}';
+        $data['module_attributico_status'] = '1';
 
         $this->load->model('setting/setting');
         $this->model_setting_setting->editSetting('attributico', $data);
+        $this->model_setting_setting->editSetting('module_attributico', $data);
     }
 
     public function uninstall()
