@@ -106,10 +106,13 @@ class ControllerModuleAttributico extends Controller
         if ($this->session->data['free']) {
             $this->data['heading_title'] = $this->language->get('heading_title') . ' View ' . MODULE_VERSION . '(free)';
         }
-
-        $duty_check = $this->duty_check();
-        $this->data['duty_check'] = empty($duty_check) ? false : true;
-
+        
+        $this->data['duty_check'] = $this->duty_check();
+        $this->data['status'] = $this->config->get('module_attributico_status');
+        if (!$this->data['status']) {
+            $this->error['warning'] = $this->language->get('error_status');
+        }
+        
         if (isset($this->session->data['a_debug_mode'])) {
             $this->debug_mode = $this->session->data['a_debug_mode'];
         }
@@ -1517,13 +1520,22 @@ class ControllerModuleAttributico extends Controller
         if ($this->duty_check()) {
             $this->db->query("ALTER TABLE " . DB_PREFIX . "attribute_description DROP COLUMN `duty`");
         } */
+        $data['module_attributico_status'] = 0;
+
+        $this->load->model('setting/setting');        
+        $this->model_setting_setting->editSetting('module_attributico', $data);
         $this->cache->delete('attributico');
     }
 
     public function duty_check()
     {
         $query = $this->db->query("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='" . DB_DATABASE . "' AND TABLE_NAME='" . DB_PREFIX . "attribute_description' AND COLUMN_NAME='duty'");
-        return $query->row;
+        
+        if (!empty($query->row)) {
+            return true;
+        } else {
+            return false;
+        }        
     }
 
     public function dutyUpgrade()
