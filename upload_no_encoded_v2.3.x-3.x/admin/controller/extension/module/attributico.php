@@ -109,7 +109,7 @@ class ControllerModuleAttributico extends Controller
         
         $this->data['duty_check'] = $this->duty_check();
         $this->data['status'] = $this->config->get('module_attributico_status');
-        if (!$this->data['status']) {
+        if (!$this->data['status'] && !$this->data['duty_check']) {
             $this->error['warning'] = $this->language->get('error_status');
         }
         
