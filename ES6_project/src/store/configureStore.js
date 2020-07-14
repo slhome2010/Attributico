@@ -19,5 +19,5 @@ function logger({ getState }) {
 }
 
 export default function configureStore(reducer, initialState) {
-  return createStore(reducer, initialState);
+  return createStore(reducer, initialState, enhance);
 }

@@ -23,7 +23,7 @@ export default class Observer {
     }
 
     treeReload() {
-        let state = this.store.getState().dndReducer;
+        let state = {...this.store.getState().dndReducer, ...this.store.getState().crudReducer};        
         /* console.log('state', state); */
         /* console.log('state.tree ', state.tree.$div[0].id); */
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
