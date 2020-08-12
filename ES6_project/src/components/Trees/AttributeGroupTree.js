@@ -196,12 +196,12 @@ export default class AttributeGroupTree {
                 command.execute();
             },
             filter: {
-                autoApply: true, // Re-apply last filter if lazy data is loaded
-                counter: true, // Show a badge with number of matching child nodes near parent icons
-                fuzzy: false, // Match single characters in order, e.g. 'fb' will match 'FooBar'
-                hideExpandedCounter: true, // Hide counter badge, when parent is expanded
-                highlight: true, // Highlight matches by wrapping inside <mark> tags
-                mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+                autoApply: $("#fs_" + this.currentTab + "_autoApply" + this.lng_id).is(":checked"), // Re-apply last filter if lazy data is loaded
+                counter: $("#fs_" + this.currentTab + "_counter" + this.lng_id).is(":checked"), // Show a badge with number of matching child nodes near parent icons
+                fuzzy: $("#fs_" + this.currentTab + "_fuzzy" + this.lng_id).is(":checked"), // Match single characters in order, e.g. 'fb' will match 'FooBar'
+                hideExpandedCounter: $("#fs_" + this.currentTab + "_hideExpandedCounter" + this.lng_id).is(":checked"), // Hide counter badge, when parent is expanded
+                highlight: $("#fs_" + this.currentTab + "_highlight" + this.lng_id).is(":checked"), // Highlight matches by wrapping inside <mark> tags
+                mode: $("#fs_" + this.currentTab + "_hideMode" + this.lng_id).is(":checked") ? "hide" : "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
             },
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
