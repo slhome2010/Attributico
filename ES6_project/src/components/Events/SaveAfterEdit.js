@@ -36,7 +36,7 @@ export function saveAfterEdit(event, data, store) {
             store.dispatch(updateNode(data.node));
         }
         // Server might return an error or a modified title
-        data.node.setTitle(result.acceptedTitle); // in case server modified it                        //
+        data.node.setTitle(result.acceptedTitle); // in case server modified it                    
         // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
     }).fail(function (result) {
         // Ajax error: reset title (and maybe issue a warning)

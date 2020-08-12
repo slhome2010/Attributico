@@ -57,7 +57,9 @@ export default class DutyTree {
                     if (!data.node.hasPermission(['group', 'attribute', 'duty'])) {
                         return false;
                     }
-                    // Return false to prevent edit mode
+                    // Reset filter setting _highlight to false for exclude tag <mark> from title
+                    this.tree.options.filter['highlight'] = false; 
+                    this.tree.clearFilter();
                 },
                 edit: (event, data) => editDuty(event, data),
                 save: (event, data) => saveAfterEdit(event, data, this.store),

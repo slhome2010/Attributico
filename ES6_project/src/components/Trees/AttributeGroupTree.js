@@ -59,7 +59,9 @@ export default class AttributeGroupTree {
                     if (!data.node.hasPermission(['group', 'attribute', 'template', 'value', 'duty'])) {
                         return false;
                     }
-                    // Return false to prevent edit mode                    
+                    // Reset filter setting _highlight to false for exclude tag <mark> from title
+                    this.tree.options.filter['highlight'] = false; 
+                    this.tree.clearFilter();                  
                 },
                 edit: (event, data) => editDuty(event, data), // Editor was opened (available as data.input)                
                 beforeClose: function (event, data) {
