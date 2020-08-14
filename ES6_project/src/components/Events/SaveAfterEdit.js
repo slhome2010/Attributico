@@ -23,21 +23,21 @@ export function saveAfterEdit(event, data, store) {
             affilateValue.resetLazy();
             affilateValue.load(true).done(function (result) {
                 /* Остальные деревья перезагружаем */
-                store.dispatch(updateNode(data.node));
+               /*  store.dispatch(updateNode(data.node)); */
             });
         /* Edit value */
         } else if (data.node.isValue() && affilateTemplate != null) {
             affilateTemplate.resetLazy();
             affilateTemplate.load(true).done(function (result) {
-                store.dispatch(updateNode(data.node));
-            });
-        /* Edit Attribute or Group */
-        } else {
-            store.dispatch(updateNode(data.node));
-        }
+                /* store.dispatch(updateNode(data.node)); */
+            });        
+        } 
         // Server might return an error or a modified title
-        data.node.setTitle(result.acceptedTitle); // in case server modified it                    
         // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
+        // in case server modified it 
+        data.node.setTitle(result.acceptedTitle);                   
+        // Reduce action for reload trees with new title
+        store.dispatch(updateNode(data.node));
     }).fail(function (result) {
         // Ajax error: reset title (and maybe issue a warning)
         data.node.setTitle(data.orgTitle);
