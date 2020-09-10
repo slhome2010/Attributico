@@ -7,6 +7,7 @@ import { deSelectNodes } from '../functions/Select'
 import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
 import { isCategory } from '../functions/Plugin/NodeMethod';
+import RefreshTree from './Events/RefreshTree';
 
 export class KeydownCommand {
     constructor(event, data, store) { 
@@ -51,6 +52,12 @@ export class KeydownCommand {
                 //     ctrl+B  cmd = "expande/collapse";
                 if (this.e.ctrlKey) {
                     CollapseExpande(this.tree);
+                }
+                break;
+                case 82:
+                //     shift+R  cmd = "refresh";
+                if (this.e.shiftKey) {
+                    RefreshTree(this.tree);
                 }
                 break;
             case 46:

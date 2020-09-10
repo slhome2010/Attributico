@@ -5,16 +5,17 @@
  **/
 
 /* import  'jquery.fancytree'; */
-import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
 import CollapseExpande from './Events/CollapseExpande';
 import { isCategory } from '../functions/Plugin/NodeMethod';
+import RefreshTree from './Events/RefreshTree';
 
 export class ContextmenuCommand {
-    constructor(ui, store) {        
+    constructor(ui, store) {
         this.ui = ui;
         this.node = $.ui.fancytree.getNode(ui.target);
-        this.tree = $.ui.fancytree.getTree(ui.target);        
+        this.tree = $.ui.fancytree.getTree(ui.target);
         this.selector = this.tree.$div[0].id;
         this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
         this.store = store;
@@ -25,6 +26,9 @@ export class ContextmenuCommand {
             case "expande":
             case "collapse":
                 CollapseExpande(this.tree);
+                break;
+            case "refresh":
+                RefreshTree(this.tree);
                 break;
             case "options":
                 $("#options_" + this.selector).dialog("open");
@@ -38,7 +42,7 @@ export class ContextmenuCommand {
                 }
                 this.remove();
                 break;
-            case "addChild":                
+            case "addChild":
                 if (this.node.isCategory() || this.node.getLevel() !== 1) {
                     this.addChild();
                 }
