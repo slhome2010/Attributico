@@ -2,7 +2,7 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+//import { isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
@@ -17,7 +17,7 @@ export default class AttributeGroupTree {
         this.sortOrder = $('input[id = "sortOrder_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.store = store;
-        
+                
         this.config = {
             autoCollapse: true,
             autoScroll: true,
@@ -188,6 +188,7 @@ export default class AttributeGroupTree {
             },
             keydown: (e, data)  => {
                 let command = new KeydownCommand(e, data, this.store);
+               console.log(data.node.title);
                 command.permissions = {
                     remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,

@@ -4,12 +4,14 @@
 import 'jquery-ui/ui/widgets/dialog';
 import 'jquery.fancytree';
 
+import './functions/Plugin/Dropmenu.js';
+import './functions/Plugin/NodeMethod.js';
+
 import buildFilter from './containers/BuildFilter'
 import initTrees from './containers/InitTrees'
 import tools from './functions/WindowContext/Tools'
 import apply from './functions/WindowContext/Apply'
 import { checkForUpdates, dutyUpgrade } from './functions/WindowContext/Upgrade'
-import './functions/Plugin/Dropmenu.js';
 import buildDialog from './containers/BuildDialog';
 import dialogOptionEvents from './components/DialogOption';
 import commonSettings from './components/CommonSettings';

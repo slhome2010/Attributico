@@ -1,4 +1,4 @@
-import { isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+//import { isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { updateNode } from '../../actions';
 
 export function saveAfterEdit(event, data, store) {

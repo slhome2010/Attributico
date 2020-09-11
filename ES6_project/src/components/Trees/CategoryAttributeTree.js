@@ -5,7 +5,7 @@ import { KeydownCommandCategory } from '../KeyDownCommand';
 import { ContextmenuCommandCategory } from '../ContextMenuCommand';
 import { loadError } from '../Events/LoadError';
 import { smartScroll } from '../../constants/global';
-import { isAttribute } from '../../functions/Plugin/NodeMethod';
+//import { isAttribute } from '../../functions/Plugin/NodeMethod';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {

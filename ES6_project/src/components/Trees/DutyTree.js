@@ -2,7 +2,7 @@ import { ContextmenuCommandDuty } from '../ContextMenuCommand';
 import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { loadError } from '../Events/LoadError';
-import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+//import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { saveAfterEdit } from '../Events/SaveAfterEdit';
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';

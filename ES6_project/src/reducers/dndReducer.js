@@ -1,5 +1,5 @@
 import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, DND_ADD_NODE, CHECK_OPTIONS } from '../constants/actions'
-import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
+//import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
 export default function dnd(state = {}, action) {
    /*  console.log('Reduced action', action.type) */

@@ -1,4 +1,4 @@
-import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
+//import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
 import { copyNode, deleteNode, dndAddNode } from '../actions';

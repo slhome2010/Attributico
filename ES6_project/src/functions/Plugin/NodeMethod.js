@@ -4,7 +4,7 @@
  * @returns {FancytreeNode}
  *
  **/
-export const getParentByKey = $.ui.fancytree._FancytreeNodeClass.prototype.getParentByKey = function (key) {
+$.ui.fancytree._FancytreeNodeClass.prototype.getParentByKey = function (key) {
     key = (key == null) ? null : "" + key;
 
     var node = this;
@@ -21,7 +21,7 @@ export const getParentByKey = $.ui.fancytree._FancytreeNodeClass.prototype.getPa
  * @returns {FancytreeNode}
  *
  **/
-export const findUnselectedSibling = $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function () {
     var siblingNode = this.getNextSibling() || this.getPrevSibling() || this.getParent();
     while (siblingNode.isSelected() && !siblingNode.isRootNode()) {
         siblingNode = siblingNode.getPrevSibling() || siblingNode.getParent();
@@ -33,7 +33,7 @@ export const findUnselectedSibling = $.ui.fancytree._FancytreeNodeClass.prototyp
  * @returns (int){id}
  *
  **/
-export const getLanguageId = $.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
     var selector = this.tree.$div[0].id;
     var lng_id = parseInt(selector.replace(/\D+/ig, ''));
     return lng_id;
@@ -43,7 +43,7 @@ export const getLanguageId = $.ui.fancytree._FancytreeNodeClass.prototype.getLan
  * @returns boolean
  *
  **/
-export const hasPermission = $.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {   
+$.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {   
     let permission = false;
     for (let i = 0; i < actions.length; i++) {
         permission = permission || (this.key.indexOf(actions[i]) > -1) && !this.unselectable;
@@ -51,42 +51,42 @@ export const hasPermission = $.ui.fancytree._FancytreeNodeClass.prototype.hasPer
     return permission;
 };
 
-export const isDuty = $.ui.fancytree._FancytreeNodeClass.prototype.isDuty = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isDuty = function () {
     if ( this.key.indexOf('duty') > -1 ) {
         return true;
     } else {
         return false;
     }    
 };
-export const isTemplate = $.ui.fancytree._FancytreeNodeClass.prototype.isTemplate = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isTemplate = function () {
     if ( this.key.indexOf('template') > -1 ) {
         return true;
     } else {
         return false;
     }    
 };
-export const isValue = $.ui.fancytree._FancytreeNodeClass.prototype.isValue = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isValue = function () {
     if ( this.key.indexOf('value') > -1 ) {
         return true;
     } else {
         return false;
     }    
 };
-export const isAttribute = $.ui.fancytree._FancytreeNodeClass.prototype.isAttribute = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isAttribute = function () {
     if ( this.key.indexOf('attribute') > -1 ) {
         return true;
     } else {
         return false;
     }    
 };
-export const isGroup = $.ui.fancytree._FancytreeNodeClass.prototype.isGroup = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isGroup = function () {
     if ( this.key.indexOf('group') > -1 ) {
         return true;
     } else {
         return false;
     }    
 };
-export const isCategory = $.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
+$.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
     if ( this.key.indexOf('category') > -1 ) {
         return true;
     } else {

@@ -8,7 +8,7 @@
 import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
 import CollapseExpande from './Events/CollapseExpande';
-import { isCategory } from '../functions/Plugin/NodeMethod';
+//import { isCategory } from '../functions/Plugin/NodeMethod';
 import RefreshTree from './Events/RefreshTree';
 
 export class ContextmenuCommand {
