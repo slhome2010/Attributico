@@ -42,18 +42,18 @@ export default class Observer {
 
                     if (activeNode !== null) {
                         /* console.log('activeNode', activeNode.key); */
-                        activeNode.setActive();
+                        activeNode.setActive(true);
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
                         /* console.log('altActiveNode', altActiveNode.key); */
-                        altActiveNode.setActive();
+                        altActiveNode.setActive(true);
                     }
                 });
             }
         }.bind(this));
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {
-            state.activeNode.setActive();
+            state.activeNode.setActive(true);
         }
     }
 

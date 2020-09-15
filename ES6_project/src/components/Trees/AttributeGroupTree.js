@@ -187,8 +187,7 @@ export default class AttributeGroupTree {
                 }
             },
             keydown: (e, data)  => {
-                let command = new KeydownCommand(e, data, this.store);
-               console.log(data.node.title);
+                let command = new KeydownCommand(e, data, this.store);               
                 command.permissions = {
                     remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,
