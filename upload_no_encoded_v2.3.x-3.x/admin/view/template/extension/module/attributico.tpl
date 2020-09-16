@@ -942,6 +942,9 @@
                 uiIcon: "ui-icon-refresh"
             },
             {
+                title: "----"
+            },
+            {
                 title: <?php echo json_encode($text_Options) ?>[lng_id],
                 cmd: "options",
                 uiIcon: "ui-icon-gear"
