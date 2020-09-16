@@ -1,5 +1,6 @@
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { smartScroll } from '../../constants/global';
+import { KeydownCommand } from '../KeyDownCommand';
 export default class CategoryCheckTree {
     constructor(element,store) {
         this.tree = $(element);
@@ -20,6 +21,17 @@ export default class CategoryCheckTree {
                     'sortOrder': this.sortOrder
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+            },
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');

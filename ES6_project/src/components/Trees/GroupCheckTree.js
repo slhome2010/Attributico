@@ -1,6 +1,6 @@
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { smartScroll } from '../../constants/global';
-//import { KeydownCommand } from '../KeyDownCommand';
+import { KeydownCommand } from '../KeyDownCommand';
 export default class GroupCheckTree {
     constructor(element,store) {
         this.tree = $(element);
@@ -21,6 +21,17 @@ export default class GroupCheckTree {
                     'isPending': false
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
+            },
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
