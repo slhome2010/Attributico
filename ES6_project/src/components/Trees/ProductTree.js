@@ -50,7 +50,8 @@ export default class ProductTree {
                     addChild: false,
                     addSibling: false,
                     copy: false,
-                    paste: false
+                    paste: false,
+                    refresh: false
                 };
                 command.execute();
             },
@@ -67,7 +68,7 @@ export default class ProductTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        ["remove", "rename", "addSibling", "addChild", "copy", "paste"].forEach(function (item, index, array) {
+                        ["remove", "rename", "addSibling", "addChild", "copy", "paste", "refresh"].forEach(function (item, index, array) {
                             data.tree.$div.contextmenu("enableEntry", item, false);
                         });                        
                         node.setActive();

@@ -153,7 +153,8 @@ export default class CategoryAttributeTree {
                     addChild: true,
                     addSibling: false,
                     copy: data.node.isAttribute(),
-                    paste: true
+                    paste: true,
+                    refresh: false
                 };
                 command.execute();
             },
@@ -174,6 +175,7 @@ export default class CategoryAttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
+                        data.tree.$div.contextmenu("enableEntry", "refresh", false);
                         node.setActive();
                     },
                     select: (event, ui) => {

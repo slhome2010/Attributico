@@ -21,13 +21,14 @@ export class KeydownCommand {
             addChild: true,
             addSibling: true,
             copy: true,
-            paste: true
+            paste: true,
+            refresh: true
         };
         this.store = store;
     }
 
     set permissions(newPermissions) {
-        this.access = newPermissions;
+        this.access = Object.assign(this.access, newPermissions);
     }
 
     execute() {
@@ -56,7 +57,7 @@ export class KeydownCommand {
                 break;
                 case 82:
                 //     shift+R  cmd = "refresh";
-                if (this.e.shiftKey) {
+                if (this.access.refresh && this.e.shiftKey) {
                     RefreshTree(this.tree);
                 }
                 break;
