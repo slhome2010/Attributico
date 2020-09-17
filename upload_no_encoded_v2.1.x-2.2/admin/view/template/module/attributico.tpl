@@ -951,12 +951,12 @@
             {
                 title: <?php echo json_encode($text_New_group) ?>[lng_id] + "<kbd>[Ctrl+M]</kbd>",
                 cmd: "addSibling",
-                uiIcon: "ui-icon-plus"
+                uiIcon: "ui-icon-plusthick"
             },
             {
                 title: <?php echo json_encode($text_New_attribute) ?>[lng_id] + "<kbd>[Ctrl+Q]</kbd>",
                 cmd: "addChild",
-                uiIcon: "ui-icon-arrowreturn-1-e"
+                uiIcon: "ui-icon-plus"
             }
         ];
 
