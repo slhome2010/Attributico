@@ -38,8 +38,9 @@ $_['f_default']   = 'Восстановить';
 // Menu
 $_['text_New_attribute'] = 'Новый атрибут';
 $_['text_New_group'] = 'Новая группа';
-$_['text_Expande'] = 'Развернуть';
+$_['text_Expande'] = 'Раскрыть/Свернуть';
 $_['text_Collapse'] = 'Свернуть';
+$_['text_Refresh'] = 'Обновить';
 $_['text_Edit'] = 'Редактировать';
 $_['text_Delete'] = 'Удалить';
 $_['text_Copy'] = 'Копировать';

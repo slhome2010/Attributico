@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.1.0');
+define('MODULE_VERSION', 'v3.1.1');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -281,6 +281,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_New_group'][$language['language_id']] = $lng->get('text_New_group');
             $this->data['text_Expande'][$language['language_id']] = $lng->get('text_Expande');
             $this->data['text_Collapse'][$language['language_id']] = $lng->get('text_Collapse');
+            $this->data['text_Refresh'][$language['language_id']] = $lng->get('text_Refresh');
             $this->data['text_sortOrder'][$language['language_id']] = $lng->get('text_sortOrder');
             $this->data['text_Diver'][$language['language_id']] = $lng->get('text_Diver');
             $this->data['text_Edit'][$language['language_id']] = $lng->get('text_Edit');

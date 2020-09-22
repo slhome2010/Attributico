@@ -38,8 +38,9 @@ $_['f_default']   = 'Restore';
 // Menu
 $_['text_New_attribute'] = 'New attribute';
 $_['text_New_group'] = 'New group';
-$_['text_Expande'] = 'Expande';
+$_['text_Expande'] = 'Expande/Collapse';
 $_['text_Collapse'] = 'Collapse';
+$_['text_Refresh'] = 'Refresh';
 $_['text_Edit'] = 'Edit';
 $_['text_Delete'] = 'Delete';
 $_['text_Copy'] = 'Copy';

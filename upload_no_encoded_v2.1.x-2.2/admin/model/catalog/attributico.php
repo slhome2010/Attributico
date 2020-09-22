@@ -104,10 +104,10 @@ class ModelCatalogAttributico extends Model
     {
         $attribute_values_data = array();
 
-        $sql = "SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id='" . (int)$attribute_id . "'";
+        $sql = "SELECT DISTINCT (BINARY text), text, language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id='" . (int)$attribute_id . "'";
         $sql_categories = $categories ? " AND product_id IN (SELECT ptc.product_id FROM " . DB_PREFIX . "product_to_category ptc WHERE ptc.category_id IN (" . implode(",", $categories) . "))" : "";
 
-        $query = $this->db->query($sql . $sql_categories . " ORDER BY text");
+        $query = $this->db->query($sql . $sql_categories . " ORDER BY language_id");
         //	$query = $this->db->query("SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id=" . (int) $attribute_id . " ORDER BY CAST(text AS DECIMAL)");
 
         foreach ($query->rows as $result) {

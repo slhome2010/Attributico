@@ -898,8 +898,9 @@
     const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
-    let filterItems = [];
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>; 
+
+    let filterLabels = [];
     let contextmenuConfig = [];
     let dialogItems = [];
 
@@ -916,13 +917,13 @@
                 uiIcon: "ui-icon-trash"
             },
             {
-                title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>Ctrl+C</kbd>",
+                title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>[Ctrl+C]</kbd>",
                 cmd: "copy",
                 uiIcon: "ui-icon-copy",
                 disabled: true
             },
             {
-                title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>Ctrl+V</kbd>",
+                title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>[Ctrl+V]</kbd>",
                 cmd: "paste",
                 uiIcon: "ui-icon-clipboard",
                 disabled: true
@@ -931,14 +932,17 @@
                 title: "----"
             },
             {
-                title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
+                title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>[Ctrl+B]</kbd>",
                 cmd: "expande",
                 uiIcon: "ui-icon-folder-open"
             },
             {
-                title: <?php echo json_encode($text_Collapse) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
-                cmd: "collapse",
-                uiIcon: "ui-icon-folder-collapsed"
+                title: <?php echo json_encode($text_Refresh) ?>[lng_id] + "<kbd>[Shift+R]</kbd>",
+                cmd: "refresh",
+                uiIcon: "ui-icon-refresh"
+            },
+            {
+                title: "----"
             },
             {
                 title: <?php echo json_encode($text_Options) ?>[lng_id],
@@ -951,16 +955,16 @@
             {
                 title: <?php echo json_encode($text_New_group) ?>[lng_id] + "<kbd>[Ctrl+M]</kbd>",
                 cmd: "addSibling",
-                uiIcon: "ui-icon-plus"
+                uiIcon: "ui-icon-plusthick"
             },
             {
                 title: <?php echo json_encode($text_New_attribute) ?>[lng_id] + "<kbd>[Ctrl+Q]</kbd>",
                 cmd: "addChild",
-                uiIcon: "ui-icon-arrowreturn-1-e"
+                uiIcon: "ui-icon-plus"
             }
         ];
 
-        filterItems[lng_id] = {
+        filterLabels[lng_id] = {
             title: <?php echo json_encode($text_filter) ?>[lng_id],
             button: <?php echo json_encode($button_filter_action) ?>[lng_id],
             checkbox: {
