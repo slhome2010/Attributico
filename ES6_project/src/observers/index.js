@@ -41,8 +41,9 @@ export default class Observer {
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 
                     if (activeNode !== null) {
-                        /* console.log('activeNode', activeNode.key); */
-                        activeNode.setActive(true);
+                        console.log('activeNode', activeNode.key, activeNode.title);
+                        activeNode.getParent().setExpanded(true).done(function () {activeNode.setActive(true)});
+                        
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
                         /* console.log('altActiveNode', altActiveNode.key); */
