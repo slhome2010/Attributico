@@ -27,7 +27,7 @@ export default class Observer {
         /* console.log('state', state); */
         /* console.log('state.tree ', state.tree.$div[0].id); */
         $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
-            let tree = $("#" + element.id).fancytree("getTree");
+            let tree = $.ui.fancytree.getTree("#" + element.id);
             let currentActiveNode = tree.getActiveNode();
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             if ((tree !== state.tree) || state.selfReload) { // not reload active tree

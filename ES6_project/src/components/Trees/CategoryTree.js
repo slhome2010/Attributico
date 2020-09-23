@@ -30,7 +30,7 @@ export default class CategoryTree {
             },
             activate: (event, data) => {
                 // var node = data.node;
-                let tree = $("#category_attribute_tree" + this.lng_id).fancytree("getTree");
+                let tree = $.ui.fancytree.getTree("#category_attribute_tree" + this.lng_id);
                 currentCategory = data.node.key;
                 tree.reload({
                     data: {

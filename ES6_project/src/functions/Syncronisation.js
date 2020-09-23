@@ -5,7 +5,7 @@ export function reactivateCategory() {
     let node = arguments.length !== 0 ? arguments[0] : null;
 
     $(CATEGORY_TREE).each(function (indx, element) {
-        const tree = $("#" + element.id).fancytree("getTree");
+        const tree = $.ui.fancytree.getTree("#" + element.id);
         let activeNode = node !== null ? node : tree.getActiveNode();
 
         if (activeNode !== null && activeNode !== undefined) {
@@ -17,7 +17,7 @@ export function reactivateCategory() {
 
 export function reloadAttribute() {
     $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
-        const tree = $("#" + element.id).fancytree("getTree");
+        const tree = $.ui.fancytree.getTree("#" + element.id);
         let activeNode = tree.getActiveNode();
 
         tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");

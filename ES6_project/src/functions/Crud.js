@@ -133,7 +133,7 @@ export function copyPaste(action, actionNode, store) {
                     clipboardNodes[i] = [];
                     clipboardTitles[i] = [];
                     $(TREE_SELECTOR).each(function (indx, element) {
-                        let tree = $("#" + element.id).fancytree("getTree");
+                        let tree = $.ui.fancytree.getTree("#" + element.id);
                         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                         let selNode = tree.getNodeByKey(node.key);
                         if (selNode !== null) {
@@ -146,7 +146,7 @@ export function copyPaste(action, actionNode, store) {
                 clipboardNodes[0] = [];
                 clipboardTitles[0] = [];
                 $(TREE_SELECTOR).each(function (indx, element) {
-                    let tree = $("#" + element.id).fancytree("getTree");
+                    let tree = $.ui.fancytree.getTree("#" + element.id);
                     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                     let selNode = tree.getNodeByKey(actionNode.key);
                     if (selNode !== null) {

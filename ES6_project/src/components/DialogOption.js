@@ -17,7 +17,7 @@ export default function dialogOptionEvents() {
         let lng_id = parseInt(id.replace(/\D+/ig, ''));
         let selector = $(this).attr("class");
         let flag = $(this).is(":checked");
-        let tree = $("#" + id.replace(selector + "_", "")).fancytree("getTree"); 
+        let tree = $.ui.fancytree.getTree("#" + id.replace(selector + "_", "")); 
         tree.options.source.data.category_id = currentCategory;
         tree.options.source.data.attribute_id = currentAttribute; 
         let diver =  $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
@@ -39,7 +39,7 @@ export default function dialogOptionEvents() {
                 tree.options.selectMode = flag ? 3 : 2;
                 break;
             case 'diver':                
-                let activetree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
+                let activetree = $.ui.fancytree.getTree("#attribute_product_tree" + lng_id);
                 activetree.reactivate();
                 break;
             default:

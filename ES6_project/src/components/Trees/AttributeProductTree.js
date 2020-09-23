@@ -40,7 +40,7 @@ export default class AttributeProductTree {
                 }
             },
             activate: (event, data) => {
-                var tree = $("#product_tree" + this.lng_id).fancytree("getTree");
+                var tree = $.ui.fancytree.getTree("#product_tree" + this.lng_id);
                 currentAttribute = data.node.key;
                 tree.reload({
                     data: {

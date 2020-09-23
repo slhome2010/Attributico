@@ -32,7 +32,7 @@ export default class ProductTree {
                     return false;
                 }
                 var about_blank = $('input[id = "input-attributico_about_blank"]:checkbox').is(":checked");
-                var attribute_product_tree = $("#attribute_product_tree" + this.lng_id).fancytree("getTree");
+                var attribute_product_tree = $.ui.fancytree.getTree("#attribute_product_tree" + this.lng_id);
                 var attribute_node = attribute_product_tree.getActiveNode();
                 if (about_blank) {
                     $("#reload.alert-danger").show();
