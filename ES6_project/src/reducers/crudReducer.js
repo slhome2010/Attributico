@@ -1,4 +1,4 @@
-import { COPY_NODE, RENAME_NODE, ADD_NODE, DELETE_NODE, UPDATE_NODE } from '../constants/actions'
+import { COPY_NODE, RENAME_NODE, ADD_NODE, DELETE_NODE, UPDATE_NODE, PASTE_NODE, CUT_NODE } from '../constants/actions'
 
 export default function crud(state = {}, action) {
     switch (action.type) {
@@ -36,7 +36,17 @@ export default function crud(state = {}, action) {
                 altActiveNode: action.node.getParent(),
                 selfReload: action.node.isDuty() || action.node.isTemplate() || action.node.isValue() ? true : false
             }
-        
+        case PASTE_NODE:
+            return {
+                ...state,
+                tree: action.targetNode.tree,
+                sourceNode: action.sourceNode,
+                targetNode: action.targetNode,
+                activeNode: action.targetNode.getFirstChild(),
+                altActiveNode: action.targetNode,
+                selfReload: true
+            }
+
         default:
             return state;
     }

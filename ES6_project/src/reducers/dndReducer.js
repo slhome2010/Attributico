@@ -33,7 +33,7 @@ export default function dnd(state = {}, action) {
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode,
-                selfReload: action.selNodes ? true : false
+                selfReload: action.selNodes ? true : false // for correctly sorting if multiselect
             }        
         case DND_ADD_NODE:
             return {

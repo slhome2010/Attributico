@@ -95,12 +95,14 @@ export class KeydownCommand {
                     return false;
                 }
                 break;
-            //  case 88:
-            //   if( event.ctrlKey ) { // Ctrl-X
-            //      copyPaste("cut", node);
-            //      return false;
-            //    }
-            //    break;
+             case 88:
+                 // Ctrl-X cut
+                 if (this.access.cut && this.e.ctrlKey) {
+                    copyPaste("cut", this.node, this.store);
+                    deSelectNodes(this.node);
+                    return false;
+                }
+                break;
         }
     }
 

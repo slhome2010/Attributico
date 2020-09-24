@@ -2,6 +2,7 @@
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
 import { copyNode, deleteNode, dndAddNode } from '../actions';
+import { moveNode } from './Move';
 
 export function addAttribute(activeNode, activeKey, lng_id) {
     let node = activeNode,
@@ -161,11 +162,15 @@ export function copyPaste(action, actionNode, store) {
                 alert("Clipoard is empty.");
                 break;
             }
+            console.log('actionNode', actionNode);
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source
                 // TODO
                 // pasteNodes(actionNode);
-                // clipboardNodes[indx].remove();                
+                // clipboardNodes[indx].remove();  delete node in all trees 
+                
+                moveNode(actionNode, clipboardNodes[0][1], false, 'over', store)
+                          
             } else {
                 pasteNodes(actionNode, store);
             }

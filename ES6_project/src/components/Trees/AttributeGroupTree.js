@@ -112,7 +112,7 @@ export default class AttributeGroupTree {
                     let subjectNode = data.otherNode;
                     let targetLevel = targetNode.getLevel();
                     let subjectLevel = subjectNode.getLevel();
-                    let selfreload = false;
+                   // let selfreload = false;
                     let replace = targetNode.getParent() !== subjectNode.getParent();
                     let merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
                     let url = '';
@@ -139,15 +139,15 @@ export default class AttributeGroupTree {
                     }
                     if (merge) {
                         url = 'index.php?route=' + extension + 'module/attributico/mergeAttributeGroup';
-                        selfreload = true;
+                       // selfreload = true;
                         dispatchAction = dndMergeNode;
                     } else if (replace) {
                         url = 'index.php?route=' + extension + 'module/attributico/replaceAttributeGroup';
-                        selfreload = false;
+                       // selfreload = false;
                         dispatchAction = dndReplaceParent;
                     } else {
                         url = 'index.php?route=' + extension + 'module/attributico/sortAttributeGroup';
-                        selfreload = selNodes ? true : false; // for correctly sorting if multiselect
+                       // selfreload = selNodes ? true : false; // for correctly sorting if multiselect
                         dispatchAction = dndSortNode;
                     }
                     $.ajax({
@@ -193,6 +193,7 @@ export default class AttributeGroupTree {
                     addChild: true,
                     addSibling: true,
                     copy: data.node.hasPermission(['attribute']),
+                    cut: data.node.hasPermission(['attribute']),
                     paste: true
                 };
                 command.execute();

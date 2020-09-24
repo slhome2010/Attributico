@@ -50,7 +50,7 @@ export class ContextmenuCommand {
             case "addSibling":
                 this.addSibling();
                 break;
-            // case "cut":
+            case "cut":
             case "copy":
                 copyPaste(this.ui.cmd, this.node, this.store);
                 break;

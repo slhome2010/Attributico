@@ -34,7 +34,7 @@ export default class Observer {
                 this.clearFilter(tree);
                 tree.reload().done(function () {
                     /* Зачем нужен флаг, что дерево в процессе перезагрузки?  */
-                    tree.options.source.data.isPending = false;
+                    /* tree.options.source.data.isPending = false; */
                     /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
                     /* console.log(tree.$div[0].id, ' has reloaded'); */
                     let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
@@ -42,12 +42,11 @@ export default class Observer {
 
                     if (activeNode !== null) {
                         console.log('activeNode', activeNode.key, activeNode.title);
-                        activeNode.getParent().setExpanded(true).done(function () {activeNode.setActive(true)});
-                        
+                        activeNode.getParent().setExpanded(true).done(function () {activeNode.setActive(true)} );                        
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
-                        /* console.log('altActiveNode', altActiveNode.key); */
-                        altActiveNode.setActive(true);
+                        console.log('!altActiveNode', altActiveNode.key, altActiveNode.title);
+                        altActiveNode.getParent().setExpanded(true).done(function () {altActiveNode.setActive(true)} );
                     }
                 });
             }
