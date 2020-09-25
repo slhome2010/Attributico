@@ -78,7 +78,7 @@ export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
             store.dispatch(dndAddNode(sourceNode, targetNode, selNodes));
             deSelectNodes();
-        } else {            
+        } else {
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
             deleteAttributesFromCategory(sourceNode, targetNode, store);
         }
@@ -99,7 +99,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, store) {
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(deleteNode(sourceNode));            
+            store.dispatch(deleteNode(sourceNode));
         }
     });
     deSelectNodes();
@@ -123,16 +123,20 @@ export function deleteDuty(node, store) {
 }
 
 export function copyPaste(action, actionNode, store) {
+    let activeTree = actionNode.tree;
+    // actionNode в операциях cut & copy играет роль sourceNode, а в операции paste targetNode
     switch (action) {
         case "cut":
         case "copy":
+            /* console.log('sourcenNode', actionNode.key, actionNode.title); */
             // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
-            let TREE_SELECTOR = '[name ^=' + actionNode.tree.$div[0].id.replace(/[0-9]/g, '') + ']';
+            let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
             pasteMode = action;
             if (selNodes) {
                 selNodes.forEach(function (node, i) {
                     clipboardNodes[i] = [];
                     clipboardTitles[i] = [];
+                    // заполняем буфер обмена clipboard выделенными узлами для каждого языка 
                     $(TREE_SELECTOR).each(function (indx, element) {
                         let tree = $.ui.fancytree.getTree("#" + element.id);
                         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
@@ -146,33 +150,45 @@ export function copyPaste(action, actionNode, store) {
             } else {
                 clipboardNodes[0] = [];
                 clipboardTitles[0] = [];
+                // в буфере обмена будет одно значение для каждого языка
                 $(TREE_SELECTOR).each(function (indx, element) {
                     let tree = $.ui.fancytree.getTree("#" + element.id);
                     let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
                     let selNode = tree.getNodeByKey(actionNode.key);
                     if (selNode !== null) {
-                        clipboardNodes[0][lng_id] =selNode;
+                        clipboardNodes[0][lng_id] = selNode;
                         clipboardTitles[0][lng_id] = selNode.title;
                     }
                 });
             }
             break;
         case "paste":
+            let direct = 'over';
+            let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
+
             if (clipboardNodes.length == 0) {
                 alert("Clipoard is empty.");
                 break;
             }
-            console.log('actionNode', actionNode);
+
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source
                 // TODO
                 // pasteNodes(actionNode);
-                // clipboardNodes[indx].remove();  delete node in all trees 
-                
-                moveNode(actionNode, clipboardNodes[0][1], false, 'over', store)
-                          
+                // clipboardNodes[indx].remove();  delete node in all trees                 
+                let targetLevel = actionNode.getLevel();
+                let sourceLevel = clipboardNodes[0][lng_id].getLevel();
+
+                if (targetLevel < sourceLevel) {
+                    direct = 'over';
+                } else {
+                    direct = 'after';
+                }
+
+                moveNode(actionNode, clipboardNodes[0][lng_id], false, direct, store)
+
             } else {
-                pasteNodes(actionNode, store);
+                pasteNodes(actionNode, lng_id, store);
             }
             clipboardNodes = [];
             clipboardTitles = [];
@@ -183,9 +199,10 @@ export function copyPaste(action, actionNode, store) {
     }
 }
 
-export function pasteNodes(targetNode, store) {
+export function pasteNodes(targetNode, lng_id, store) {
+    
     let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
-    let sourceNode = clipboardNodes[0][1];
+    let sourceNode = clipboardNodes[0][lng_id];
     if (parentNode.isGroup()) {
         $.ajax({
             data: {

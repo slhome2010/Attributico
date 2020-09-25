@@ -41,11 +41,11 @@ export default class Observer {
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 
                     if (activeNode !== null) {
-                        console.log('activeNode', activeNode.key, activeNode.title);
+                        /* console.log('activeNode', activeNode.key, activeNode.title); */
                         activeNode.getParent().setExpanded(true).done(function () {activeNode.setActive(true)} );                        
                         /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
                     } else if (altActiveNode !== null) {
-                        console.log('!altActiveNode', altActiveNode.key, altActiveNode.title);
+                        /* console.log('!altActiveNode', altActiveNode.key, altActiveNode.title); */
                         altActiveNode.getParent().setExpanded(true).done(function () {altActiveNode.setActive(true)} );
                     }
                 });
@@ -53,7 +53,7 @@ export default class Observer {
         }.bind(this));
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {
-            state.activeNode.setActive(true);
+            state.activeNode.getParent().setExpanded(true).done(function () {state.activeNode.setActive(true)} );
         }
     }
 

@@ -5,7 +5,8 @@ export function moveNode(targetNode, sourceNode, ctrlKey, direct, store) {
     
     let targetLevel = targetNode.getLevel();
     let sourceLevel = sourceNode.getLevel();
-    
+    /* console.log('sourcenNode', sourceNode.key, sourceNode.title, 'tree', sourceNode.tree.$div[0].id);
+    console.log('targetNode', targetNode.key, targetNode.title, 'tree', targetNode.tree.$div[0].id); */
     let replace = targetNode.getParent() !== sourceNode.getParent();
     let merge = ctrlKey && (targetLevel === sourceLevel);
     let url = '';
