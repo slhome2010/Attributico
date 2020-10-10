@@ -44,6 +44,7 @@ $_['text_Refresh'] = 'Refresh';
 $_['text_Edit'] = 'Edit';
 $_['text_Delete'] = 'Delete';
 $_['text_Copy'] = 'Copy';
+$_['text_Cut'] = 'Cut';
 $_['text_Paste'] = 'Paste';
 $_['text_Options'] = 'Options';
 $_['text_Sort'] = 'Sort (ASC)';

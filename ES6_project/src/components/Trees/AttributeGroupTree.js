@@ -8,6 +8,7 @@ import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../../actions'
+import { moveNode } from '../../functions/Move';
 
 export default class AttributeGroupTree {
     constructor(element,store) {
@@ -109,8 +110,10 @@ export default class AttributeGroupTree {
                     return ["over"];
                 },
                 dragDrop: (targetNode, data)  => {
-                    let subjectNode = data.otherNode;
-                    let targetLevel = targetNode.getLevel();
+                    
+                    moveNode(targetNode, data.otherNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
+
+                    /* let targetLevel = targetNode.getLevel();
                     let subjectLevel = subjectNode.getLevel();
                    // let selfreload = false;
                     let replace = targetNode.getParent() !== subjectNode.getParent();
@@ -164,7 +167,7 @@ export default class AttributeGroupTree {
                             this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));                            
                             deSelectNodes();                            
                         }
-                    });
+                    }); */
                 },
                 draggable: { // modify default jQuery draggable options
                     scroll: true // disable auto-scrolling
@@ -221,6 +224,7 @@ export default class AttributeGroupTree {
                         data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
                         data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },

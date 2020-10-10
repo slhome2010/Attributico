@@ -1,7 +1,7 @@
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';
 
-export function moveNode(targetNode, sourceNode, ctrlKey, direct, store) {
+export function moveNode(targetNode, sourceNode, clipboard, ctrlKey, direct, store) {
     
     let targetLevel = targetNode.getLevel();
     let sourceLevel = sourceNode.getLevel();
@@ -15,9 +15,9 @@ export function moveNode(targetNode, sourceNode, ctrlKey, direct, store) {
     if (merge && !confirm(textConfirm)) {
         return;
     }
-
-    if (selNodes) {
-        $.each(selNodes, function (i, selNode) {
+console.log("ctrlKey", ctrlKey, "direct", direct)
+    if (clipboard) {
+        $.each(clipboard, function (i, selNode) {
             if (merge) {
                 selNode.remove();
             } else {
@@ -45,14 +45,14 @@ export function moveNode(targetNode, sourceNode, ctrlKey, direct, store) {
         data: {
             'user_token': user_token,
             'token': token,
-            'subjects': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
+            'subjects': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
             'group': targetNode.getParent().key,
             'target': targetNode.key,
             'direct': direct
         },
         url: url,
         success: () => {
-            store.dispatch(dispatchAction(targetNode.tree, sourceNode, targetNode, selNodes));
+            store.dispatch(dispatchAction(targetNode.tree, sourceNode, targetNode, clipboard));
             deSelectNodes();
         }
     });

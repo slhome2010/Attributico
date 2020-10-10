@@ -860,6 +860,7 @@
         contextmenuConfig[lng_id] = [
             { title: {{ text_Edit| json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
             { title: {{ text_Delete| json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
+            { title: {{ text_Cut| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "cut", uiIcon: "ui-icon-scissors", disabled: true},
             { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
             { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>[Ctrl+V]</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
             { title: "----" },

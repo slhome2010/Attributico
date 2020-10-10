@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.1.1');
+define('MODULE_VERSION', 'v3.1.2');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -287,6 +287,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_Edit'][$language['language_id']] = $lng->get('text_Edit');
             $this->data['text_Delete'][$language['language_id']] = $lng->get('text_Delete');
             $this->data['text_Copy'][$language['language_id']] = $lng->get('text_Copy');
+            $this->data['text_Cut'][$language['language_id']] = $lng->get('text_Cut');
             $this->data['text_Paste'][$language['language_id']] = $lng->get('text_Paste');
             $this->data['text_lazyLoad'][$language['language_id']] = $lng->get('text_lazyLoad');
             // options

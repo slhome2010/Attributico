@@ -98,8 +98,7 @@ export class KeydownCommand {
              case 88:
                  // Ctrl-X cut
                  if (this.access.cut && this.e.ctrlKey) {
-                    copyPaste("cut", this.node, this.store);
-                    deSelectNodes(this.node);
+                    copyPaste("cut", this.node, this.store);                    
                     return false;
                 }
                 break;

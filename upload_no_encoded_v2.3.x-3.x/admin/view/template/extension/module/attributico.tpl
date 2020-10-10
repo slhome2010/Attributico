@@ -917,6 +917,12 @@
                 uiIcon: "ui-icon-trash"
             },
             {
+                title: <?php echo json_encode($text_Cut) ?>[lng_id] + "<kbd>[Ctrl+X]</kbd>",
+                cmd: "cut",
+                uiIcon: "ui-icon-scissors",
+                disabled: true
+            },
+            {
                 title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>[Ctrl+C]</kbd>",
                 cmd: "copy",
                 uiIcon: "ui-icon-copy",

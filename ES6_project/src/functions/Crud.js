@@ -132,38 +132,37 @@ export function copyPaste(action, actionNode, store) {
             // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
             let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
             pasteMode = action;
-            if (selNodes) {
-                selNodes.forEach(function (node, i) {
-                    clipboardNodes[i] = [];
-                    clipboardTitles[i] = [];
-                    // заполняем буфер обмена clipboard выделенными узлами для каждого языка 
-                    $(TREE_SELECTOR).each(function (indx, element) {
-                        let tree = $.ui.fancytree.getTree("#" + element.id);
-                        let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+            /* clipboardNodes = [];
+            clipboardTitles = []; */
+            // selNodes надо переписать в буфер обмена, т.к. при нажатии без ctrl сработет deselectNodes()
+            // заполняем буфер обмена clipboard выделенными узлами для каждого языка
+            $(TREE_SELECTOR).each(function (indx, element) {
+                let tree = $.ui.fancytree.getTree("#" + element.id);
+                let lng_id = parseInt(element.id.replace(/\D+/ig, '')); 
+
+                clipboardNodes[lng_id] = [];
+                clipboardTitles[lng_id] = [];
+
+                if (selNodes) {
+                    selNodes.forEach(function (node, i) {
                         let selNode = tree.getNodeByKey(node.key);
                         if (selNode !== null) {
-                            clipboardNodes[i][lng_id] = selNode;
-                            clipboardTitles[i][lng_id] = selNode.title;
+                            clipboardNodes[lng_id][i] = selNode;
+                            clipboardTitles[lng_id][i] = selNode.title;
                         }
+
                     });
-                });
-            } else {
-                clipboardNodes[0] = [];
-                clipboardTitles[0] = [];
-                // в буфере обмена будет одно значение для каждого языка
-                $(TREE_SELECTOR).each(function (indx, element) {
-                    let tree = $.ui.fancytree.getTree("#" + element.id);
-                    let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+                } else {
                     let selNode = tree.getNodeByKey(actionNode.key);
                     if (selNode !== null) {
-                        clipboardNodes[0][lng_id] = selNode;
-                        clipboardTitles[0][lng_id] = selNode.title;
+                        clipboardNodes[lng_id][0] = selNode;
+                        clipboardTitles[lng_id][0] = selNode.title;
                     }
-                });
-            }
+                }
+            });
             break;
         case "paste":
-            let direct = 'over';
+            let direct = 'after';
             let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
 
             if (clipboardNodes.length == 0) {
@@ -172,27 +171,24 @@ export function copyPaste(action, actionNode, store) {
             }
 
             if (pasteMode == "cut") {
-                // Cut mode: check for recursion and remove source
-                // TODO
-                // pasteNodes(actionNode);
-                // clipboardNodes[indx].remove();  delete node in all trees                 
+                // Cut mode: check for recursion and remove source                             
                 let targetLevel = actionNode.getLevel();
-                let sourceLevel = clipboardNodes[0][lng_id].getLevel();
+                let sourceLevel = clipboardNodes[lng_id][0].getLevel();
 
                 if (targetLevel < sourceLevel) {
                     direct = 'over';
-                } else {
-                    direct = 'after';
-                }
+                } 
 
-                moveNode(actionNode, clipboardNodes[0][lng_id], false, direct, store)
+                moveNode(actionNode, clipboardNodes[lng_id][0], clipboardNodes[lng_id], false, direct, store)
 
             } else {
                 pasteNodes(actionNode, lng_id, store);
             }
+
             clipboardNodes = [];
             clipboardTitles = [];
             pasteMode = null;
+
             break;
         default:
             alert("Unhandled clipboard action '" + action + "'");
@@ -200,9 +196,9 @@ export function copyPaste(action, actionNode, store) {
 }
 
 export function pasteNodes(targetNode, lng_id, store) {
-    
+
     let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
-    let sourceNode = clipboardNodes[0][lng_id];
+    let sourceNode = clipboardNodes[lng_id][0];
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
