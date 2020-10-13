@@ -2,7 +2,8 @@ import { CATEGORY_TREE, CATEGORY_CHECK_TREE, ATTRIBUTE_SYNCRO_TREES } from "../.
 
 export default function apply() {
     $('[id ^= "tree"].settings').each(function (indx, element) {
-        $.ui.fancytree.getTree(element).generateFormElements();
+        let tree = $.ui.fancytree.getTree("#" + element.id);
+        tree.generateFormElements();
     });
     //alert("POST data:\n" + jQuery.param($("#form-attributico").serializeArray()));
     $(".alert-success, #error_warning.alert-danger").hide();
