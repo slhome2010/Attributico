@@ -138,7 +138,7 @@ export function copyPaste(action, actionNode, store) {
             // заполняем буфер обмена clipboard выделенными узлами для каждого языка
             $(TREE_SELECTOR).each(function (indx, element) {
                 let tree = $.ui.fancytree.getTree("#" + element.id);
-                let lng_id = parseInt(element.id.replace(/\D+/ig, '')); 
+                let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
 
                 clipboardNodes[lng_id] = [];
                 clipboardTitles[lng_id] = [];
@@ -147,16 +147,16 @@ export function copyPaste(action, actionNode, store) {
                     selNodes.forEach(function (node, i) {
                         let selNode = tree.getNodeByKey(node.key);
                         if (selNode !== null) {
-                            clipboardNodes[lng_id][i] = selNode;
-                            clipboardTitles[lng_id][i] = selNode.title;
+                            clipboardNodes[lng_id].push(selNode);
+                            clipboardTitles[lng_id].push(selNode.title);
                         }
 
                     });
                 } else {
                     let selNode = tree.getNodeByKey(actionNode.key);
                     if (selNode !== null) {
-                        clipboardNodes[lng_id][0] = selNode;
-                        clipboardTitles[lng_id][0] = selNode.title;
+                        clipboardNodes[lng_id].push(selNode);
+                        clipboardTitles[lng_id].push(selNode.title);
                     }
                 }
             });
@@ -177,11 +177,12 @@ export function copyPaste(action, actionNode, store) {
 
                 if (targetLevel < sourceLevel) {
                     direct = 'over';
-                } 
+                }
 
                 moveNode(actionNode, clipboardNodes[lng_id][0], clipboardNodes[lng_id], false, direct, store)
 
             } else {
+                console.log('clipboardTitles', clipboardTitles)
                 pasteNodes(actionNode, lng_id, store);
             }
 
@@ -196,9 +197,10 @@ export function copyPaste(action, actionNode, store) {
 }
 
 export function pasteNodes(targetNode, lng_id, store) {
-
+// TODO array structure for clipboards is not correct
     let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
     let sourceNode = clipboardNodes[lng_id][0];
+    console.log('clipboardTitles2', clipboardTitles)
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
