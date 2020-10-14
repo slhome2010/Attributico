@@ -2,7 +2,8 @@ import { reloadAttribute, reactivateCategory } from "../Syncronisation";
 
 export default function tools(task) {
     $('[id *= "tree"].options').each(function (indx, element) {
-        $.ui.fancytree.getTree(element).generateFormElements(true, true, {
+        let tree = $.ui.fancytree.getTree("#" + element.id);        
+        tree.generateFormElements(true, true, {
             filter: null,
             stopOnParents: false
         });

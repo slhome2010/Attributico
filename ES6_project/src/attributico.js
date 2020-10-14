@@ -63,7 +63,8 @@ $(function () {
     $("#form-attributico").submit(function () {
         // Render hidden <input> elements for active and selected nodes
         $('[id ^= "tree"].settings').each(function (indx, element) {
-            $.ui.fancytree.getTree(element).generateFormElements();
+            let tree = $.ui.fancytree.getTree("#" + element.id);
+            tree.generateFormElements();
         });
         // alert("POST data:\n" + jQuery.param($(this).serializeArray()));
         // return false to prevent submission of this sample
