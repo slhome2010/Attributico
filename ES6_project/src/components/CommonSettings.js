@@ -17,7 +17,7 @@ export default function commonSettings(store) {
         }
     });
     // autoadd attribute values to product
-    $('input[name = "attributico_autoadd"]:checkbox').change(function (e) {
+    $('input[name = "attributico_autoadd"]:checkbox').on('change', function (e) {
        let flag = $(this).is(":checked");
         $('[name = "attributico_product_text"]').each(function (indx, element) {
             $(element).prop({
@@ -26,7 +26,7 @@ export default function commonSettings(store) {
         });
     });
     // event handler for smartscroll
-    $('input[name = "attributico_smart_scroll"]:checkbox').change(function (e) {
+    $('input[name = "attributico_smart_scroll"]:checkbox').on('change', function (e) {
         if ($(this).is(":checked")) {
             $('[id *= "tree"]:not(.settings) > ul.fancytree-container').addClass("smart-scroll");
         } else {
@@ -34,7 +34,7 @@ export default function commonSettings(store) {
         }
     });
     // event handler for cache on/off
-    $('input[name = "attributico_cache"]:checkbox').change(function (e) {
+    $('input[name = "attributico_cache"]:checkbox').on('change', function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -54,7 +54,7 @@ export default function commonSettings(store) {
         });
     });
     // event handler for multistore categories output
-    $('input[name = "attributico_multistore"]:checkbox').change(function (e) {
+    $('input[name = "attributico_multistore"]:checkbox').on('change', function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,

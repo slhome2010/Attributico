@@ -5,11 +5,12 @@
  **/
 export default function dialogOptionEvents() {
     // attach dialog event hundlers 
-    $('input[id ^= "lazyLoad"]:checkbox').change(changeSettings);
-    $('input[id ^= "sortOrder"]:checkbox').change(changeSettings);
-    $('input[id ^= "autoCollapse"]:checkbox').change(changeSettings);
-    $('input[id ^= "multiSelect"]:checkbox').change(changeSettings);
-    $('input[id ^= "diver"]:checkbox').change(changeSettings);
+    $('input[id ^= "lazyLoad"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "sortOrder"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "autoCollapse"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "multiSelect"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "diver"]:checkbox').on('change', changeSettings);
+    //FIXME change is deprecated handler
 
 
     function changeSettings(e) {

@@ -60,7 +60,7 @@ $(function () {
 
 
     /* Button Save onclick event */
-    $("#form-attributico").submit(function () {
+    $("#form-attributico").on('submit', function () {
         // Render hidden <input> elements for active and selected nodes
         $('[id ^= "tree"].settings').each(function (indx, element) {
             let tree = $.ui.fancytree.getTree("#" + element.id);
@@ -69,6 +69,7 @@ $(function () {
         // alert("POST data:\n" + jQuery.param($(this).serializeArray()));
         // return false to prevent submission of this sample
         //  return false;
+        //TODO submit deprecated
     });
 
     /**
