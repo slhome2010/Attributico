@@ -1,10 +1,10 @@
-//import { getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
 import { copyNode, deleteNode, dndAddNode } from '../actions';
 import { moveNode } from './Move';
 
-export function addAttribute(activeNode, activeKey, lng_id) {
+export function addNewAttribute(activeNode, activeKey, lng_id) {
+    /* This function for previously insert New record in DataBase and  editing this in tree after */
     let node = activeNode,
         parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
@@ -128,14 +128,17 @@ export function copyPaste(action, actionNode, store) {
     switch (action) {
         case "cut":
         case "copy":
-            /* console.log('sourcenNode', actionNode.key, actionNode.title); */
             // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
             let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
             pasteMode = action;
-            /* clipboardNodes = [];
-            clipboardTitles = []; */
             // selNodes надо переписать в буфер обмена, т.к. при нажатии без ctrl сработет deselectNodes()
             // заполняем буфер обмена clipboard выделенными узлами для каждого языка
+            // для операций move нужен список узлов не важно для какого языка
+            // для операций delete нужен список узлов не важно для какого языка
+            // для операций addToCategory нужен список узлов не важно для какого языка
+            // если нужен список узлов, то используется selNodes или [sourceNode.key]
+            // однако для функций addAttribute... нужна структура типа :
+            // [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
             $(TREE_SELECTOR).each(function (indx, element) {
                 let tree = $.ui.fancytree.getTree("#" + element.id);
                 let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
@@ -178,11 +181,10 @@ export function copyPaste(action, actionNode, store) {
                 if (targetLevel < sourceLevel) {
                     direct = 'over';
                 }
-
+                // clipboardNodes[lng_id] - список узлов не важно для какого языка
                 moveNode(actionNode, clipboardNodes[lng_id][0], clipboardNodes[lng_id], false, direct, store)
 
-            } else {
-                console.log('clipboardTitles', clipboardTitles)
+            } else {                
                 pasteNodes(actionNode, lng_id, store);
             }
 
@@ -196,18 +198,28 @@ export function copyPaste(action, actionNode, store) {
     }
 }
 
-export function pasteNodes(targetNode, lng_id, store) {
-// TODO array structure for clipboards is not correct
+export function pasteNodes(targetNode, lng_id, store) {    
     let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
     let sourceNode = clipboardNodes[lng_id][0];
-    console.log('clipboardTitles2', clipboardTitles)
+    let oldClipboardStructure = [];
+    // Make array for addAttribute... (see below)
+    clipboardTitles.forEach((listNodes, lngId) => {
+        let lng = lngId
+        listNodes.forEach((node, index) => {            
+                oldClipboardStructure.push([])
+                oldClipboardStructure[index][lng] = node            
+        })
+    })
+    oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
+    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
+    /* console.log('clipboardTitles2', oldClipboardStructure) */
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
                 'user_token': user_token,
                 'token': token,
                 'target': parentNode.key,
-                'attributes': clipboardTitles
+                'attributes': oldClipboardStructure
             },
             url: 'index.php?route=' + extension + 'module/attributico/addAttributes',
             success: function () {

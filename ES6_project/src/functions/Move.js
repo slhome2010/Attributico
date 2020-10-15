@@ -1,3 +1,6 @@
+/** Backend functions for moveNode works with list of nodes for one of language
+ * no matter from language_id.
+ * There are using only node_id (attribute_id or gruop_id) in Sql query   **/
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';
 

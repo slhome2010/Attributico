@@ -4,7 +4,7 @@
  *
  **/
 import { deSelectNodes } from '../functions/Select'
-import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
 //import { isCategory } from '../functions/Plugin/NodeMethod';
 import RefreshTree from './Events/RefreshTree';
@@ -110,11 +110,11 @@ export class KeydownCommand {
     }
 
     addChild() {
-        addAttribute(this.node, 'attribute', this.lng_id);
+        addNewAttribute(this.node, 'attribute', this.lng_id);
     }
 
     addSibling() {
-        addAttribute(this.node, 'group', this.lng_id);
+        addNewAttribute(this.node, 'group', this.lng_id);
     }
 }
 /* Override methods for CategoryattributeTree and DutyTree*/

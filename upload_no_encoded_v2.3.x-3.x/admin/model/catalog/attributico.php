@@ -340,7 +340,11 @@ class ModelCatalogAttributico extends Model
 
     public function addAttribute($data)
     {
-        // in foreach, cache delete in controller
+    /** $data['attribute_description'] structure example [empty,'name'=>A1ru,empty,'name'=>A1en]
+     *  empty if language not present by any id   [1] name = A1ru
+     *                                            [3] name = A1en
+     *
+     *  in foreach, cache delete in controller **/
         $maxorder = $this->db->query("SELECT MAX(`sort_order`) AS maxorder FROM " . DB_PREFIX . "attribute");
         $this->db->query("INSERT INTO " . DB_PREFIX . "attribute SET attribute_group_id = '" . (int)$data['attribute_group_id'] . "', sort_order = '" . ((int)$maxorder->row['maxorder'] + 1) . "'");
         // этот id будет добавлен к имени при добавлении: Новый атрибут_234, при копировании не добавляется - флаг data['new']
