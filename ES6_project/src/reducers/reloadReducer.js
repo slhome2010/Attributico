@@ -1,7 +1,7 @@
-import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, DND_ADD_NODE, CHECK_OPTIONS } from '../constants/actions'
+import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, DND_ADD_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, RENAME_NODE, ADD_NODE, PASTE_NODE, CUT_NODE, CHECK_OPTIONS } from '../constants/actions'
 //import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
-export default function dnd(state = {}, action) {
+export default function reload(state = {}, action) {
     /*  console.log('Reduced action', action.type) */
 
     switch (action.type) {
@@ -44,6 +44,47 @@ export default function dnd(state = {}, action) {
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode.getParent(),
                 selfReload: false
+            }
+            case RENAME_NODE:
+        case UPDATE_NODE:
+            return {
+                ...state,
+                tree: action.node.tree,
+                sourceNode: null,
+                targetNode: action.node,
+                activeNode: action.node,
+                altActiveNode: action.node.getParent(),
+                selfReload: false                
+            }
+        case COPY_NODE:
+            return {
+                ...state,
+                tree: action.targetNode.tree,
+                sourceNode: action.sourceNode,
+                targetNode: action.targetNode,
+                activeNode: action.targetNode.getFirstChild(),
+                altActiveNode: action.targetNode,
+                selfReload: true
+            }
+        case DELETE_NODE:
+            return {
+                ...state,
+                tree: action.node.tree,
+                sourceNode: action.node,
+                targetNode: null,
+                activeNode: action.node.findUnselectedSibling(),
+                altActiveNode: action.node.getParent(),
+                selfReload: action.node.isDuty() || action.node.isTemplate() || action.node.isValue() ? true : false
+            }
+        case PASTE_NODE:
+            return {
+                ...state,
+                tree: action.targetNode.tree,
+                sourceNode: action.sourceNode,
+                targetNode: action.targetNode,
+                activeNode: action.targetNode.getFirstChild(),
+                altActiveNode: action.targetNode,
+                selfReload: true
             }
         case CHECK_OPTIONS:
             return {
