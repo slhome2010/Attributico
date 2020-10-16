@@ -1,10 +1,11 @@
 /** Backend functions for moveNode works with list of nodes for one of language
  * no matter from language_id.
  * There are using only node_id (attribute_id or gruop_id) in Sql query   **/
+/* sourceNode, targetNode, clipboard (or selNodes), ctrlKey, direct (hitMode : before?after?over), store */
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';
 
-export function moveNode(targetNode, sourceNode, clipboard, ctrlKey, direct, store) {
+export function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direct, store) {
     
     let targetLevel = targetNode.getLevel();
     let sourceLevel = sourceNode.getLevel();

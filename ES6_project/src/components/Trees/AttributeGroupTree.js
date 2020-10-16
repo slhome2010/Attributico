@@ -111,7 +111,7 @@ export default class AttributeGroupTree {
                 },
                 dragDrop: (targetNode, data)  => {
                     
-                    moveNode(targetNode, data.otherNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
+                    moveNode(data.otherNode, targetNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
 
                     /* let targetLevel = targetNode.getLevel();
                     let subjectLevel = subjectNode.getLevel();

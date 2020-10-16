@@ -60,10 +60,10 @@ export function deleteAttribute(node, store) {
 
 // sourceNode = data.otherNode это узел источника
 // Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
-export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
+export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove, store) {
     $.ajax({
         data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
+            'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
             'category_id': targetNode.key,
             'categories': selCategories ? getSelectedKeys(selCategories) : []
         },
@@ -72,25 +72,25 @@ export function addAttributeToCategory(sourceNode, targetNode, remove, store) {
     }).done(function () {
         // Это либо смена сатегории либо копипаст из CategoryAttributeTree
         if (!remove) {
-            smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
+            smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             deSelectCategories();
             reactivateCategory(targetNode);
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
-            store.dispatch(dndAddNode(sourceNode, targetNode, selNodes));
+            store.dispatch(dndAddNode(sourceNode, targetNode, clipboard));
             deSelectNodes();
         } else {
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
-            deleteAttributesFromCategory(sourceNode, targetNode, store);
+            deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store);
         }
     });
 }
 
-export function deleteAttributesFromCategory(sourceNode, targetNode, store) {
+export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store) {
     let category_id = sourceNode.getParent().key;
 
     $.ajax({
         data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
+            'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
             'category_id': category_id,
             'categories': selCategories ? getSelectedKeys(selCategories) : []
         },
@@ -174,17 +174,24 @@ export function copyPaste(action, actionNode, store) {
             }
 
             if (pasteMode == "cut") {
-                // Cut mode: check for recursion and remove source                             
+                // Cut mode: check for recursion and remove source 
+                let parentNode = actionNode.getParentByKey('group') || actionNode.getParentByKey('category');
+                let sourceNode = clipboardNodes[lng_id][0];
                 let targetLevel = actionNode.getLevel();
-                let sourceLevel = clipboardNodes[lng_id][0].getLevel();
+                let sourceLevel = sourceNode.getLevel();
 
                 if (targetLevel < sourceLevel) {
                     direct = 'over';
                 }
-                // clipboardNodes[lng_id] - список узлов не важно для какого языка
-                moveNode(actionNode, clipboardNodes[lng_id][0], clipboardNodes[lng_id], false, direct, store)
 
-            } else {                
+                if (parentNode.isCategory()) {
+                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], true, store);
+                } else {
+                    // clipboardNodes[lng_id] - список узлов не важно для какого языка
+                    moveNode(sourceNode, actionNode, clipboardNodes[lng_id], false, direct, store)
+                }
+
+            } else {
                 pasteNodes(actionNode, lng_id, store);
             }
 
@@ -198,16 +205,16 @@ export function copyPaste(action, actionNode, store) {
     }
 }
 
-export function pasteNodes(targetNode, lng_id, store) {    
+export function pasteNodes(targetNode, lng_id, store) {
     let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
     let sourceNode = clipboardNodes[lng_id][0];
     let oldClipboardStructure = [];
     // Make array for addAttribute... (see below)
     clipboardTitles.forEach((listNodes, lngId) => {
         let lng = lngId
-        listNodes.forEach((node, index) => {            
-                oldClipboardStructure.push([])
-                oldClipboardStructure[index][lng] = node            
+        listNodes.forEach((node, index) => {
+            oldClipboardStructure.push([])
+            oldClipboardStructure[index][lng] = node
         })
     })
     oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
@@ -228,6 +235,6 @@ export function pasteNodes(targetNode, lng_id, store) {
         });
     }
     if (parentNode.isCategory()) {
-        addAttributeToCategory(sourceNode, parentNode, false, store);
+        addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], false, store);
     }
 }

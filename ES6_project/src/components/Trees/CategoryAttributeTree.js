@@ -127,8 +127,8 @@ export default class CategoryAttributeTree {
                     return true;
                 },
                 dragDrop: (node, data) => {
-                    let targetnode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
-                    addAttributeToCategory(data.otherNode, targetnode, false, this.store);
+                    let targetNode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
+                    addAttributeToCategory(data.otherNode, targetNode, selNodes, false, this.store);
                 }
             },
             beforeSelect: function (event, data) {
@@ -153,6 +153,7 @@ export default class CategoryAttributeTree {
                     addChild: true,
                     addSibling: false,
                     copy: data.node.isAttribute(),
+                    cut: data.node.hasPermission(['attribute']),
                     paste: true,
                     refresh: false
                 };
@@ -174,6 +175,7 @@ export default class CategoryAttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "rename", false);
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
                         data.tree.$div.contextmenu("enableEntry", "refresh", false);
                         node.setActive();
