@@ -8,9 +8,7 @@ import { deSelectNodes, getSelectedKeys } from './Select';
 export function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direct, store) {
     
     let targetLevel = targetNode.getLevel();
-    let sourceLevel = sourceNode.getLevel();
-    /* console.log('sourcenNode', sourceNode.key, sourceNode.title, 'tree', sourceNode.tree.$div[0].id);
-    console.log('targetNode', targetNode.key, targetNode.title, 'tree', targetNode.tree.$div[0].id); */
+    let sourceLevel = sourceNode.getLevel();    
     let replace = targetNode.getParent() !== sourceNode.getParent();
     let merge = ctrlKey && (targetLevel === sourceLevel);
     let url = '';
@@ -19,7 +17,7 @@ export function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direct, sto
     if (merge && !confirm(textConfirm)) {
         return;
     }
-console.log("ctrlKey", ctrlKey, "direct", direct)
+
     if (clipboard) {
         $.each(clipboard, function (i, selNode) {
             if (merge) {

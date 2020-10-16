@@ -2,12 +2,10 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-//import { isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';
-import { dndMergeNode, dndSortNode, dndReplaceParent } from '../../actions'
 import { moveNode } from '../../functions/Move';
 
 export default class AttributeGroupTree {
@@ -109,65 +107,10 @@ export default class AttributeGroupTree {
                     }
                     return ["over"];
                 },
-                dragDrop: (targetNode, data)  => {
-                    
+                dragDrop: (targetNode, data)  => { 
+
                     moveNode(data.otherNode, targetNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
 
-                    /* let targetLevel = targetNode.getLevel();
-                    let subjectLevel = subjectNode.getLevel();
-                   // let selfreload = false;
-                    let replace = targetNode.getParent() !== subjectNode.getParent();
-                    let merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
-                    let url = '';
-                    let dispatchAction = null;
-
-                    if (merge && !confirm(textConfirm)) {
-                        return;
-                    }
-
-                    if (selNodes) {
-                        $.each(selNodes, function (i, selNode) {
-                            if (merge) {
-                                selNode.remove();
-                            } else {
-                                selNode.moveTo(targetNode, data.hitMode);                                
-                            }
-                        });
-                    } else {
-                        if (merge) {
-                            subjectNode.remove();
-                        } else {
-                            subjectNode.moveTo(targetNode, data.hitMode);
-                        }
-                    }
-                    if (merge) {
-                        url = 'index.php?route=' + extension + 'module/attributico/mergeAttributeGroup';
-                       // selfreload = true;
-                        dispatchAction = dndMergeNode;
-                    } else if (replace) {
-                        url = 'index.php?route=' + extension + 'module/attributico/replaceAttributeGroup';
-                       // selfreload = false;
-                        dispatchAction = dndReplaceParent;
-                    } else {
-                        url = 'index.php?route=' + extension + 'module/attributico/sortAttributeGroup';
-                       // selfreload = selNodes ? true : false; // for correctly sorting if multiselect
-                        dispatchAction = dndSortNode;
-                    }
-                    $.ajax({
-                        data: {
-                            'user_token': user_token,
-                            'token': token,
-                            'subjects': selNodes ? getSelectedKeys(selNodes) : [subjectNode.key],
-                            'group': targetNode.getParent().key,
-                            'target': targetNode.key,
-                            'direct': data.hitMode
-                        },
-                        url: url,
-                        success: () => {
-                            this.store.dispatch(dispatchAction(data.tree, subjectNode, targetNode, selNodes));                            
-                            deSelectNodes();                            
-                        }
-                    }); */
                 },
                 draggable: { // modify default jQuery draggable options
                     scroll: true // disable auto-scrolling

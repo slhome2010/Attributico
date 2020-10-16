@@ -2,7 +2,7 @@ import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, DND_ADD_NODE, UPDATE
 //import { findUnselectedSibling } from '../functions/Plugin/NodeMethod';
 
 export default function reload(state = {}, action) {
-    /*  console.log('Reduced action', action.type) */
+     console.log('Reduced action', action.type)
 
     switch (action.type) {
         case DND_MERGE_NODE:

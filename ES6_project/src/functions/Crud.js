@@ -1,6 +1,6 @@
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory, smartReload } from './Syncronisation'
-import { copyNode, deleteNode, dndAddNode } from '../actions';
+import { copyNode, deleteNode, dndAddNode, dndReplaceParent } from '../actions';
 import { moveNode } from './Move';
 
 export function addNewAttribute(activeNode, activeKey, lng_id) {
@@ -44,7 +44,7 @@ export function deleteAttribute(node, store) {
                 store.dispatch(deleteNode(node)); // Надо до remove
 
                 if (selNodes) {
-                    // TODO selNodes всегда есть?, можно убрать if else???. Проверить корректность удаления кэша в модели
+                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
                     $.each(selNodes, function (i, o) {
                         o.remove();
                     });
@@ -70,7 +70,7 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
         url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST'
     }).done(function () {
-        // Это либо смена сатегории либо копипаст из CategoryAttributeTree
+        // Это либо смена категории либо копипаст из CategoryAttributeTree
         if (!remove) {
             smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             deSelectCategories();
@@ -99,7 +99,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(deleteNode(sourceNode));
+            store.dispatch(dndReplaceParent(targetNode.tree, sourceNode, targetNode, clipboard));
         }
     });
     deSelectNodes();
@@ -218,8 +218,7 @@ export function pasteNodes(targetNode, lng_id, store) {
         })
     })
     oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
-    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
-    /* console.log('clipboardTitles2', oldClipboardStructure) */
+    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */    
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
