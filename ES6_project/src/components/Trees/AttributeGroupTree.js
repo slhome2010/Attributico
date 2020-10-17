@@ -33,7 +33,7 @@ export default class AttributeGroupTree {
                     'sortOrder': this.sortOrder,
                     'lazyLoad': this.lazyLoad,
                     'tree': "1",
-                    'isPending': false
+                   // 'isPending': false
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
@@ -44,7 +44,10 @@ export default class AttributeGroupTree {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'lazyLoad': this.lazyLoad,
+                        'tree': "1",
                     }, // cache:true,
                     url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };

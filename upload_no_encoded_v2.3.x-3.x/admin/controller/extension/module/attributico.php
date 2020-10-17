@@ -773,6 +773,59 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+    public function getLazyGroup()
+    {
+        $json = array();
+        $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
+        $sortOrder = isset($this->request->get['sortOrder']) ? filter_var($this->request->get['sortOrder'], FILTER_VALIDATE_BOOLEAN) : true;
+        $lazyLoad = isset($this->request->get['lazyLoad']) ? filter_var($this->request->get['lazyLoad'], FILTER_VALIDATE_BOOLEAN) : false;
+        $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
+
+        if (isset($this->session->data['a_debug_mode'])) {
+            $this->debug_mode = $this->session->data['a_debug_mode'];
+        }
+
+        $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
+        if ($this->config->get('attributico_children')) {
+            $settings = unserialize($this->config->get('attributico_children'));
+        } else {
+            $settings = $this->settings;
+        }
+        $children = array(
+            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
+            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
+            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
+        );
+
+        $this->load->model('catalog/attributico');
+        if ($key[0] == 'group') {
+            $attribute_group_id = $key[1];
+
+            $filter_data = array(
+                'attribute_group_id' => $attribute_group_id,
+                'language_id' => $language_id
+            );
+
+            $attribute_group = $this->model_catalog_attributico->getAttributeGroups($filter_data);
+
+            $groupNode = new Node();
+
+            $debug_group = $this->debug_mode ? " (id=" . $attribute_group_id . ")" : '';
+            $groupNode->addSibling(new Node(array(
+                "title" => $attribute_group['name'] . $debug_group,
+                "key" => "group_" . (string) $attribute_group['attribute_group_id'],
+                "folder" => true,
+                "extraClasses" => $attribute_group['attribute_group_id'] == '1' ? "custom3" : '',
+                "children" => $this->getAttributeNodes($attribute_group['attribute_group_id'], $language_id, $sortOrder, $children, $lazyLoad)
+            )));
+
+            $json = $groupNode->render();
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
+
     //----------------------------------------CategoryTree------------------------------------------------------------------
     public function getCategoryTree()
     {

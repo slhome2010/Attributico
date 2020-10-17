@@ -72,11 +72,11 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
     }).done(function () {
         // Это либо смена категории либо копипаст из CategoryAttributeTree
         if (!remove) {
-            smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
+            //smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             deSelectCategories();
             reactivateCategory(targetNode);
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
-            store.dispatch(dndAddNode(sourceNode, targetNode, clipboard));
+            store.dispatch(dndAddNode(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
             deSelectNodes();
         } else {
             deSelectCategories(); // чтобы не удалялось в отмеченных категориях
@@ -99,7 +99,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(dndReplaceParent(targetNode.tree, sourceNode, targetNode, clipboard));
+            store.dispatch(dndReplaceParent(targetNode.tree, sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
         }
     });
     deSelectNodes();

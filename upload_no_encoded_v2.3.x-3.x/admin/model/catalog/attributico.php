@@ -75,6 +75,10 @@ class ModelCatalogAttributico extends Model
             'ag.sort_order'
         );
 
+        if (isset($data['attribute_group_id'])) {
+            $sql .= " AND ag.attribute_group_id = '" . (int)$data['attribute_group_id'] . "'";
+        }
+
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             $sql .= " ORDER BY " . $data['sort'];
         } else {
