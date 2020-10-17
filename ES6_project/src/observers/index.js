@@ -1,5 +1,3 @@
-import { ATTRIBUTE_SYNCRO_TREES } from "../constants/global";
-
 /**
  * @class Observer
  */
@@ -37,7 +35,7 @@ export default class Observer {
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
         this.printState(state)
-        $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
+        $(state.boundTrees).each(function (indx, element) {
             let tree = $.ui.fancytree.getTree("#" + element.id);
             let currentActiveNode = tree.getActiveNode();
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
@@ -45,7 +43,7 @@ export default class Observer {
                 this.clearFilter(tree);
                 tree.reload().done(function () {
                     /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
-                    /* console.log(tree.$div[0].id, ' has reloaded'); */
+                    console.log(tree.$div[0].id, ' has reloaded');
                     let activeNode = state.activeNode !== null ? tree.getNodeByKey(state.activeNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
                     let altActiveNode = state.altActiveNode != null ? tree.getNodeByKey(state.altActiveNode.key) : null;
 
