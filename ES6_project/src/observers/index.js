@@ -36,7 +36,7 @@ export default class Observer {
         let currentActiveNode = tree.getActiveNode();
         let activeNode = estimatedAactiveNode !== null ? tree.getNodeByKey(estimatedAactiveNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
         let altActiveNode = possibleActiveNode != null ? tree.getNodeByKey(possibleActiveNode.key) : null;
-
+        console.log('6 set active for:', tree.$div[0].id);
         if (activeNode !== null) {
             /* console.log('activeNode', activeNode.key, activeNode.title); */
             activeNode.getParent().setExpanded(true).done(function () { activeNode.setActive(true) });
@@ -46,44 +46,58 @@ export default class Observer {
             altActiveNode.getParent().setExpanded(true).done(function () { altActiveNode.setActive(true) });
         }
     }
-// TODO make it promise
-    smartReload(tree, nodeList) {
-        nodeList.forEach(function (node) {
-            let findedNode = tree.getNodeByKey(node.key);
 
-            if (findedNode !== null) {
-                findedNode.getChildren().forEach(child => {
-                    if (child.isTemplate() || child.isValue()) {
-                        child.resetLazy();
-                        child.load(true).done(function (result) {
-                              console.log(child.title, ' lazy reloaded');
-                        });
-                    }
+
+    // TODO make it promise
+    async smartReload(tree, nodeList) {
+        console.log('5 Nodes received for:', tree.$div[0].id,);
+        async function loadChild(child) {
+            if (child.isTemplate() || child.isValue()) {
+                child.resetLazy();
+                await child.load(true).done(() => {
+                    console.log('0 Lazy loaded for:', child.title, child.tree.$div[0].id);
                 });
             }
-        });
-        console.log(tree.$div[0].id, ' smart reloaded');
+        }
+
+        async function allChildLoaded(findedNode) {
+            let childrens = findedNode.getChildren()
+            for (let child of childrens) {
+                await loadChild(child);
+                console.log('1 Child loaded for:', child.title, child.tree.$div[0].id);
+            }
+            return 'The end of allChildren'
+        }
+
+        async function allNodesLoaded(nodeList) {
+            for (let node of nodeList) {
+                let findedNode = tree.getNodeByKey(node.key);
+                await allChildLoaded(findedNode)
+                console.log('2 Childrens loaded for:', findedNode.title, findedNode.tree.$div[0].id)
+            }
+        }
+
+        await allNodesLoaded(nodeList)
+        console.log('3 Nodes loaded for:', tree.$div[0].id,);
         /* this.setActiveNode(tree, state.activeNode, state.altActiveNode) */
     }
 
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
         this.printState(state)
-
-
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {
             /* console.log('selfActiveNode', state.activeNode.key, state.activeNode.title); */
             state.activeNode.getParent().setExpanded(true).done(function () { state.activeNode.setActive(true) });
         }
 
-        $(state.boundTrees).each(function (indx, element) {
+        $(state.boundTrees).each(async function (indx, element) {
             let tree = $.ui.fancytree.getTree("#" + element.id);
 
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-           
+
             if (state.affectedNodes !== null) {
-                this.smartReload(tree, state.affectedNodes)
+                await this.smartReload(tree, state.affectedNodes)
                 this.setActiveNode(tree, state.activeNode, state.altActiveNode)
             } else
                 if ((tree !== state.tree) || state.selfReload) { // not reload active tree

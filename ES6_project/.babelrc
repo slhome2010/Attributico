@@ -5,7 +5,14 @@
                 "@babel/preset-env",
                 "@babel/preset-react"
             ],
-            /* "plugins": [ "react-hot-loader/babel" ] */
+            "plugins": [
+                [  "@babel/plugin-transform-runtime",
+                    { 
+                        /* "polyfill": false, */
+                        "regenerator": true       
+                    }
+                ]
+            ]
         },
         "production": {
             "presets": [
@@ -13,10 +20,16 @@
                 "@babel/preset-react"
             ],
             "plugins": [
-                [
+                /* [
                     "transform-react-remove-prop-types",
                     {
                         "mode": "wrap"
+                    }
+                ], */
+                [  "@babel/plugin-transform-runtime",
+                    { 
+                        /* "polyfill": false, */
+                        "regenerator": true       
                     }
                 ]
             ]

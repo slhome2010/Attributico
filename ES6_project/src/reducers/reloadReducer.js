@@ -9,7 +9,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.sourceNode.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
@@ -21,7 +21,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
@@ -33,7 +33,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.sourceNode.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
@@ -58,7 +58,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.node.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.node.tree,
                 sourceNode: null,
                 targetNode: action.node,
@@ -70,7 +70,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.targetNode.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
@@ -82,7 +82,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.node.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.node.tree,
                 sourceNode: action.node,
                 targetNode: null,
@@ -94,7 +94,7 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: action.affectedNodes,
+                affectedNodes: null,
                 tree: action.targetNode.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
