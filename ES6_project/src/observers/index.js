@@ -36,66 +36,57 @@ export default class Observer {
         let currentActiveNode = tree.getActiveNode();
         let activeNode = estimatedAactiveNode !== null ? tree.getNodeByKey(estimatedAactiveNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
         let altActiveNode = possibleActiveNode != null ? tree.getNodeByKey(possibleActiveNode.key) : null;
-        console.log('6 set active for:', tree.$div[0].id);
+        /* console.log('6 Set active for:', tree.$div[0].id); */
         if (activeNode !== null) {
             /* console.log('activeNode', activeNode.key, activeNode.title); */
-            activeNode.getParent().setExpanded(true).done(function () { activeNode.setActive(true) });
+            activeNode.getParent().setExpanded(true).done( () => { activeNode.setActive(true) });
             /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
         } else if (altActiveNode !== null) {
             /* console.log('!altActiveNode', altActiveNode.key, altActiveNode.title); */
-            altActiveNode.getParent().setExpanded(true).done(function () { altActiveNode.setActive(true) });
+            altActiveNode.getParent().setExpanded(true).done( () => { altActiveNode.setActive(true) });
         }
     }
 
-
-    // TODO make it promise
-    async smartReload(tree, nodeList) {
-        console.log('5 Nodes received for:', tree.$div[0].id,);
-        async function loadChild(child) {
+    async allChildLoaded(node) {
+        let childrens = node.getChildren()
+        /* let isLoaded = false */
+        
+        for (let child of childrens) {
             if (child.isTemplate() || child.isValue()) {
                 child.resetLazy();
-                await child.load(true).done(() => {
-                    console.log('0 Lazy loaded for:', child.title, child.tree.$div[0].id);
-                });
-            }
+                await child.load(true)
+                /* isLoaded = true */
+                /* console.log('1 Child loaded for:', child.key, child.tree.$div[0].id); */
+            }                
         }
-
-        async function allChildLoaded(findedNode) {
-            let childrens = findedNode.getChildren()
-            for (let child of childrens) {
-                await loadChild(child);
-                console.log('1 Child loaded for:', child.title, child.tree.$div[0].id);
-            }
-            return 'The end of allChildren'
-        }
-
-        async function allNodesLoaded(nodeList) {
-            for (let node of nodeList) {
-                let findedNode = tree.getNodeByKey(node.key);
-                await allChildLoaded(findedNode)
-                console.log('2 Childrens loaded for:', findedNode.title, findedNode.tree.$div[0].id)
-            }
-        }
-
-        await allNodesLoaded(nodeList)
-        console.log('3 Nodes loaded for:', tree.$div[0].id,);
-        /* this.setActiveNode(tree, state.activeNode, state.altActiveNode) */
+        /* return isLoaded */
     }
 
+    async allNodesLoaded(tree, nodeList) {
+        for (let node of nodeList) {
+            let findedNode = tree.getNodeByKey(node.key);
+            await this.allChildLoaded(findedNode)
+            /* console.log('2 Childrens loaded for:', findedNode.title, findedNode.tree.$div[0].id) */
+        }
+    }
+   
+    async smartReload(tree, nodeList) {       
+        await this.allNodesLoaded(tree, nodeList)
+        /* console.log('3 Nodes loaded for:', tree.$div[0].id,);  */       
+    }
+
+    /* Асинхронная функция. Деревья и узлы грузятся параллельно, но установка активного узла только после загрузки. */
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
-        this.printState(state)
+        //this.printState(state)
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
-        if (!state.selfReload && state.activeNode !== null) {
-            /* console.log('selfActiveNode', state.activeNode.key, state.activeNode.title); */
-            state.activeNode.getParent().setExpanded(true).done(function () { state.activeNode.setActive(true) });
+        if (!state.selfReload && state.activeNode !== null) {            
+            state.activeNode.getParent().setExpanded(true).done( () => { state.activeNode.setActive(true) });
         }
 
-        $(state.boundTrees).each(async function (indx, element) {
-            let tree = $.ui.fancytree.getTree("#" + element.id);
-
+        $(state.boundTrees).each(async function (indx, treeSelector) {
+            let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-
             if (state.affectedNodes !== null) {
                 await this.smartReload(tree, state.affectedNodes)
                 this.setActiveNode(tree, state.activeNode, state.altActiveNode)
@@ -103,13 +94,40 @@ export default class Observer {
                 if ((tree !== state.tree) || state.selfReload) { // not reload active tree
                     this.clearFilter(tree);
                     tree.reload().done(() => {
-                        /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
-                        console.log(tree.$div[0].id, ' has reloaded');
+                        /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */                        
                         this.setActiveNode(tree, state.activeNode, state.altActiveNode)
                     });
                 }
-
         }.bind(this));
+    }
+    /* Функция приведенная к синхронному виду. Деревья и узлы грузятся последовательно */
+    async asyncTreeReload() {
+        let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
+        let trees = [];
+        // Сформируем массив для последующего синхронного цикла for...of
+        $(state.boundTrees).each((indx, treeSelector) => {
+            let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
+            trees.push(tree)
+        })        
+        /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
+        if (!state.selfReload && state.activeNode !== null) {
+            state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });
+        }
+
+        for (let tree of trees) {
+            tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
+            if (state.affectedNodes !== null) {
+                await this.smartReload(tree, state.affectedNodes)
+                this.setActiveNode(tree, state.activeNode, state.altActiveNode)
+            } else
+                if ((tree !== state.tree) || state.selfReload) { // not reload active tree
+                    this.clearFilter(tree);
+                    tree.reload().done(() => {
+                        /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */                        
+                        this.setActiveNode(tree, state.activeNode, state.altActiveNode)
+                    });
+                }
+        }
     }
 
     init() {
