@@ -1,6 +1,6 @@
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
-import { reactivateCategory, smartReload } from './Syncronisation'
-import { copyNode, deleteNode, dndAddNode, dndReplaceParent } from '../actions';
+import { reactivateCategory } from './Syncronisation'
+import { copyNode, deleteNode, dndAddNode, dndReplaceCategory } from '../actions';
 import { moveNode } from './Move';
 
 export function addNewAttribute(activeNode, activeKey, lng_id) {
@@ -87,7 +87,8 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
 
 export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store) {
     let category_id = sourceNode.getParent().key;
-
+    // Если targetNode == null, то это просто операция удаления
+    let targetTree = targetNode !== null ? targetNode.tree : sourceNode.tree
     $.ajax({
         data: {
             'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
@@ -99,7 +100,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(dndReplaceParent(targetNode.tree, sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
+            store.dispatch(dndReplaceCategory(targetTree, sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
         }
     });
     deSelectNodes();

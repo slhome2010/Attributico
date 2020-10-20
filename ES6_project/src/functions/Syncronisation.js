@@ -29,7 +29,7 @@ export function reloadAttribute() {
     });
 }
 
-export function smartReload(tree, nodeList) {
+/* export function smartReload(tree, nodeList) {
     nodeList.forEach(function (node) {
         let findedNode = tree.getNodeByKey(node.key);
         if (findedNode !== null) {
@@ -43,4 +43,4 @@ export function smartReload(tree, nodeList) {
             });
         }
     });
-}
+} */
