@@ -43,7 +43,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
  * @returns boolean
  *
  **/
-$.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {   
+$.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {
     let permission = false;
     for (let i = 0; i < actions.length; i++) {
         permission = permission || (this.key.indexOf(actions[i]) > -1) && !this.unselectable;
@@ -52,44 +52,52 @@ $.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) 
 };
 
 $.ui.fancytree._FancytreeNodeClass.prototype.isDuty = function () {
-    if ( this.key.indexOf('duty') > -1 ) {
+    if (this.key.indexOf('duty') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
 };
 $.ui.fancytree._FancytreeNodeClass.prototype.isTemplate = function () {
-    if ( this.key.indexOf('template') > -1 ) {
+    if (this.key.indexOf('template') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
 };
 $.ui.fancytree._FancytreeNodeClass.prototype.isValue = function () {
-    if ( this.key.indexOf('value') > -1 ) {
+    if (this.key.indexOf('value') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
 };
 $.ui.fancytree._FancytreeNodeClass.prototype.isAttribute = function () {
-    if ( this.key.indexOf('attribute') > -1 ) {
+    if (this.key.indexOf('attribute') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
 };
 $.ui.fancytree._FancytreeNodeClass.prototype.isGroup = function () {
-    if ( this.key.indexOf('group') > -1 ) {
+    if (this.key.indexOf('group') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
 };
 $.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
-    if ( this.key.indexOf('category') > -1 ) {
+    if (this.key.indexOf('category') > -1) {
         return true;
     } else {
         return false;
-    }    
+    }
+};
+// Get nodes by condition
+$.ui.fancytree._FancytreeNodeClass.prototype.getParentAttribute = function () {
+    let node = this;
+    while (node.key.indexOf('attribute') < 0) {
+        node = node.getParent()
+    }
+    return node;
 };

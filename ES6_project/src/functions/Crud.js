@@ -41,15 +41,24 @@ export function deleteAttribute(node, store) {
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
-                store.dispatch(deleteNode(node)); // Надо до remove
-
-                if (selNodes) {
-                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
-                    $.each(selNodes, function (i, o) {
-                        o.remove();
-                    });
+                if (node.isTemplate() || node.isValue()) {
+                    let affectedAttributes = []
+                    if (selNodes) {
+                        for (let selnode of selNodes) {
+                            affectedAttributes.push(selnode.getParentAttribute())
+                        }
+                    }                    
+                    store.dispatch(deleteNode(node, selNodes ? affectedAttributes : [node.getParentAttribute()]));
                 } else {
-                    node.remove();
+                    store.dispatch(deleteNode(node, null)); // Надо до remove
+                    if (selNodes) {
+                        // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
+                        $.each(selNodes, function (i, selnode) {
+                            selnode.remove();
+                        });
+                    } else {
+                        node.remove();
+                    }
                 }
 
                 selNodes = null;
@@ -118,7 +127,7 @@ export function deleteDuty(node, store) {
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
         success: function () {
             // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
-            store.dispatch(deleteNode(node));
+            store.dispatch(deleteNode(node, null));
         }
     });
 }
@@ -219,14 +228,14 @@ export function pasteNodes(targetNode, lng_id, store) {
         })
     })
     oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
-    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */    
+    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
     if (parentNode.isGroup()) {
         $.ajax({
-            data: {                
+            data: {
                 'target': parentNode.key,
                 'attributes': oldClipboardStructure
             },
-            url: 'index.php?route=' + extension + 'module/attributico/addAttributes'+ '&user_token=' + user_token + '&token=' + token,
+            url: 'index.php?route=' + extension + 'module/attributico/addAttributes' + '&user_token=' + user_token + '&token=' + token,
             type: 'POST',
             success: function () {
                 store.dispatch(copyNode(sourceNode, parentNode));

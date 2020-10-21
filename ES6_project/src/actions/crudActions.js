@@ -21,17 +21,19 @@ export function renameNode (node) {
 	}
 }
 
-export function updateNode (node) {
+export function updateNode (node, affectedNodes) {
 	return {
 		type: UPDATE_NODE,
-		node
+		node,
+		affectedNodes
 	}
 }
 
-export function deleteNode (node) {
+export function deleteNode (node, affectedNodes) {
 	return {
 		type: DELETE_NODE,
-		node
+		node,
+		affectedNodes
 	}
 }
 

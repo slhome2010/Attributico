@@ -1,9 +1,7 @@
-//import { isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { updateNode } from '../../actions';
 
-export function saveAfterEdit(event, data, store) {
-    let parent = data.node.getParent();
-    let lng_id = parseInt(data.tree.$div[0].id.replace(/\D+/ig, ''));
+export function saveAfterEdit(event, data, store) {   
+    let lng_id = data.node.getLanguageId() //parseInt(data.tree.$div[0].id.replace(/\D+/ig, ''));
     $.ajax({
         data: {
             'user_token': user_token,
@@ -15,29 +13,17 @@ export function saveAfterEdit(event, data, store) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
     }).done(function (result) {
-        let affilateValue = parent.getNextSibling();
-        let affilateTemplate = parent.getPrevSibling();
-        /* Edit template */
-        if (data.node.isTemplate() && affilateValue != null) {
-            // Делаем аффилированный узел lazy, чтоб не перезагружать все активное дерево
-            affilateValue.resetLazy();
-            affilateValue.load(true).done(function (result) {
-                /* Остальные деревья перезагружаем */
-                store.dispatch(updateNode(data.node));
-            });
-        /* Edit value */
-        } else if (data.node.isValue() && affilateTemplate != null) {
-            affilateTemplate.resetLazy();
-            affilateTemplate.load(true).done(function (result) {
-                store.dispatch(updateNode(data.node));
-            });
-        /* Edit Attribute or Group */
-        } else {
-            store.dispatch(updateNode(data.node));
-        }
         // Server might return an error or a modified title
-        data.node.setTitle(result.acceptedTitle); // in case server modified it                    
         // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
+        // in case server modified it 
+        data.node.setTitle(result.acceptedTitle); 
+          
+        if (data.node.isTemplate() || data.node.isValue()) {
+            store.dispatch(updateNode(data.node, [data.node.getParentAttribute()]));
+        } else {
+            store.dispatch(updateNode(data.node, null));
+        }
+
     }).fail(function (result) {
         // Ajax error: reset title (and maybe issue a warning)
         data.node.setTitle(data.orgTitle);
