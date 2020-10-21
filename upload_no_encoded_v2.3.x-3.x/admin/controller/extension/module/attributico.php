@@ -1217,8 +1217,8 @@ class ControllerModuleAttributico extends Controller
      * **/    
         $data = array();
         $data['new'] = false;
-        $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
-        $attributes = isset($this->request->get['attributes']) ? $this->request->get['attributes'] : array('0', '0');
+        $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $attributes = isset($this->request->post['attributes']) ? $this->request->post['attributes'] : array('0', '0');
         $attribute_group_id = '';
 
         if ($target[0] == 'group') {

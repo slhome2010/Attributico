@@ -222,13 +222,12 @@ export function pasteNodes(targetNode, lng_id, store) {
     /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */    
     if (parentNode.isGroup()) {
         $.ajax({
-            data: {
-                'user_token': user_token,
-                'token': token,
+            data: {                
                 'target': parentNode.key,
                 'attributes': oldClipboardStructure
             },
-            url: 'index.php?route=' + extension + 'module/attributico/addAttributes',
+            url: 'index.php?route=' + extension + 'module/attributico/addAttributes'+ '&user_token=' + user_token + '&token=' + token,
+            type: 'POST',
             success: function () {
                 store.dispatch(copyNode(sourceNode, parentNode));
             }
