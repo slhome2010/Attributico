@@ -1,6 +1,7 @@
 /**
  * @class Observer
  */
+import { getSelectedTitles } from '../functions/Select'
 export default class Observer {
     constructor(store) {
         this.store = store;
@@ -27,7 +28,8 @@ export default class Observer {
             targetNode: state.targetNode !== null ? state.targetNode.title : null,
             activeNode: state.activeNode !== null ? state.activeNode.title : null,
             altActiveNode: state.altActiveNode !== null ? state.altActiveNode.title : null,
-            selfReload: state.selfReload
+            selfReload: state.selfReload,
+            affectedNodes: getSelectedTitles(state.affectedNodes)
         }
         console.log('stateInfo', stateInfo)
     }
@@ -62,10 +64,22 @@ export default class Observer {
         /* return isLoaded */
     }
 
+    async parentLoaded(node) {
+        
+                node.resetLazy();
+                await node.load(true)
+                
+    }
+
     async allNodesLoaded(tree, nodeList) {
         for (let node of nodeList) {
             let findedNode = tree.getNodeByKey(node.key);
-            await this.allChildLoaded(findedNode)
+            if (findedNode.isGroup()) {
+                await this.parentLoaded(findedNode)
+            } else {
+                await this.allChildLoaded(findedNode)
+            }
+            
             /* console.log('2 Childrens loaded for:', findedNode.title, findedNode.tree.$div[0].id) */
         }
     }
@@ -78,7 +92,7 @@ export default class Observer {
     /* Асинхронная функция. Деревья и узлы грузятся параллельно, но установка активного узла только после загрузки. */
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
-        //this.printState(state)
+        this.printState(state)
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {            
             state.activeNode.getParent().setExpanded(true).done( () => { state.activeNode.setActive(true) });

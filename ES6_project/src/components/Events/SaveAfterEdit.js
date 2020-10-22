@@ -21,7 +21,7 @@ export function saveAfterEdit(event, data, store) {
         if (data.node.isTemplate() || data.node.isValue()) {
             store.dispatch(updateNode(data.node, [data.node.getParentAttribute()]));
         } else {
-            store.dispatch(updateNode(data.node, null));
+            store.dispatch(updateNode(data.node, [data.node.getParentByKey('group')]));
         }
 
     }).fail(function (result) {

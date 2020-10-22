@@ -39,6 +39,7 @@ export default class AttributeGroupTree {
             },
             loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
+                console.log('key=>', data.node.key, 'title=>', data.node.title )
                 data.result = {
                     data: {
                         'user_token': user_token,
@@ -49,7 +50,7 @@ export default class AttributeGroupTree {
                         'lazyLoad': this.lazyLoad,
                         'tree': "1",
                     }, // cache:true,
-                    url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
+                    url: data.node.isGroup() ? 'index.php?route=' + extension + 'module/attributico/getLazyGroup' : 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
             },
             edit: {
