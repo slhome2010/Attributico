@@ -17,12 +17,17 @@ export function saveAfterEdit(event, data, store) {
         // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
         // in case server modified it 
         data.node.setTitle(result.acceptedTitle); 
-          
+
+        let affectedNodes          
         if (data.node.isTemplate() || data.node.isValue()) {
-            store.dispatch(updateNode(data.node, [data.node.getParentAttribute()]));
+            affectedNodes = [data.node.getParentAttribute()]
+        } else if (data.node.isAttribute()) {
+            affectedNodes = [data.node.getParentGroup()]
         } else {
-            store.dispatch(updateNode(data.node, [data.node.getParentByKey('group')]));
+            affectedNodes = null
         }
+
+        store.dispatch(updateNode(data.node, affectedNodes));
 
     }).fail(function (result) {
         // Ajax error: reset title (and maybe issue a warning)

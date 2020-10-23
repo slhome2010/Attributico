@@ -61,9 +61,12 @@ export default class AttributeProductTree {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'lazyLoad': this.lazyLoad,                        
+                        'tree': "5"
                     }, // cache:true,
-                    url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
+                    url: data.node.isGroup() ? 'index.php?route=' + extension + 'module/attributico/getLazyGroup' : 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
             },
             beforeSelect: function (event, data) {

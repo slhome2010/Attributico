@@ -101,3 +101,11 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getParentAttribute = function () {
     }
     return node;
 };
+
+$.ui.fancytree._FancytreeNodeClass.prototype.getParentGroup = function () {
+    let node = this;
+    while (node.key.indexOf('group') < 0) {
+        node = node.getParent()
+    }
+    return node;
+};

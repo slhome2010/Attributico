@@ -39,7 +39,7 @@ export default function reload(state = {}, action) {
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode,
-                selfReload: false
+                selfReload: true
             }
         case DND_SORT_NODE:
             return {
@@ -63,7 +63,7 @@ export default function reload(state = {}, action) {
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode.getParent(),
-                selfReload: false
+                selfReload: true
             }
         case RENAME_NODE:
         case UPDATE_NODE:
@@ -72,11 +72,11 @@ export default function reload(state = {}, action) {
                 boundTrees: action.node.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
                 affectedNodes: action.affectedNodes,
                 tree: action.node.tree,
-                sourceNode: null,
+                sourceNode: action.node,
                 targetNode: action.node,
                 activeNode: action.node,
                 altActiveNode: action.node.getParent(),
-                selfReload: false
+                selfReload: action.node.getParent().isLazy()
             }
         case COPY_NODE:
             return {
@@ -97,7 +97,7 @@ export default function reload(state = {}, action) {
                 affectedNodes: action.affectedNodes,
                 tree: action.node.tree,
                 sourceNode: action.node,
-                targetNode: null,
+                targetNode: action.node,
                 activeNode: action.node.findUnselectedSibling(),
                 altActiveNode: action.node.getParent(),
                 selfReload: action.node.isDuty() || action.node.isTemplate() || action.node.isValue() ? true : false

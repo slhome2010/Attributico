@@ -39,7 +39,9 @@ export default class CategoryAttributeTree {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'tree': "4"
                     }, // cache:true,
                     url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
