@@ -109,3 +109,11 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getParentGroup = function () {
     }
     return node;
 };
+
+$.ui.fancytree._FancytreeNodeClass.prototype.getParentCategory = function () {
+    let node = this;
+    while (node.key.indexOf('category') < 0) {
+        node = node.getParent()
+    }
+    return node;
+};

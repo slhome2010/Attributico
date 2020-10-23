@@ -82,11 +82,11 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: null,
+                affectedNodes: [action.targetNode],
                 tree: action.targetNode.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
-                activeNode: action.targetNode.getFirstChild(),
+                activeNode: action.targetNode.getLastChild(),
                 altActiveNode: action.targetNode,
                 selfReload: true
             }
@@ -98,7 +98,7 @@ export default function reload(state = {}, action) {
                 tree: action.node.tree,
                 sourceNode: action.node,
                 targetNode: action.node,
-                activeNode: action.node.findUnselectedSibling(),
+                activeNode: action.node.isDuty() ? action.node : action.node.findUnselectedSibling(),
                 altActiveNode: action.node.getParent(),
                 selfReload: action.node.isDuty() || action.node.isTemplate() || action.node.isValue() ? true : false
             }

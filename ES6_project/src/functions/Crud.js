@@ -19,6 +19,7 @@ export function addNewAttribute(activeNode, activeKey, lng_id) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/addAttribute',
         success: function (new_id) {
+            // Здесь dispatch не нужен, т.к. сработает SaveAfterEdit
             node.editCreateNode("child", {
                 title: activeKey === 'attribute' ? textNewAttribute[lng_id] + "_" + new_id : textNewGroup[lng_id] + "_" + new_id,
                 key: activeKey + "_" + new_id,
@@ -41,30 +42,60 @@ export function deleteAttribute(node, store) {
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
+                let affectedNodes = []
                 if (node.isTemplate() || node.isValue()) {
-                    let affectedAttributes = []
+                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
                     if (selNodes) {
                         for (let selnode of selNodes) {
-                            affectedAttributes.push(selnode.getParentAttribute())
+                            affectedNodes.push(selnode.getParentAttribute())
                         }
-                    }                    
-                    store.dispatch(deleteNode(node, selNodes ? affectedAttributes : [node.getParentAttribute()]));
-                } else {
-                    store.dispatch(deleteNode(node, null)); // Надо до remove
+                    } else {
+                        affectedNodes.push(node.getParentAttribute())
+                    }
+                } else if (node.isAttribute()) {
                     if (selNodes) {
-                        // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
-                        $.each(selNodes, function (i, selnode) {
+                        for (let selnode of selNodes) {
+                            affectedNodes.push(selnode.getParentGroup())
+                        }
+                    } else {
+                        affectedNodes.push(node.getParentGroup())
+                    }
+                } else {
+                    // Delete Group  
+                    affectedNodes = null
+                }
+                // Надо до remove иначе node может уже не быть
+                store.dispatch(deleteNode(node, affectedNodes));
+
+                if (affectedNodes === null) {
+                    if (selNodes) {
+                        $.each(selNodes, (i, selnode) => {
                             selnode.remove();
                         });
                     } else {
                         node.remove();
                     }
-                }
-
-                selNodes = null;
+                }             
             }
         });
     }
+}
+
+export function deleteDuty(node, store) {
+    $.ajax({
+        data: {
+            'user_token': user_token,
+            'token': token,
+            'key': node.key,
+            'language_id': node.getLanguageId(),
+            'name': '',
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
+        success: function () {
+            // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            store.dispatch(deleteNode(node, [node.getParentGroup()]));
+        }
+    });
 }
 
 // sourceNode = data.otherNode это узел источника
@@ -113,23 +144,6 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         }
     });
     deSelectNodes();
-}
-
-export function deleteDuty(node, store) {
-    $.ajax({
-        data: {
-            'user_token': user_token,
-            'token': token,
-            'key': node.key,
-            'language_id': node.getLanguageId(),
-            'name': '',
-        },
-        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
-        success: function () {
-            // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
-            store.dispatch(deleteNode(node, null));
-        }
-    });
 }
 
 export function copyPaste(action, actionNode, store) {
@@ -216,7 +230,7 @@ export function copyPaste(action, actionNode, store) {
 }
 
 export function pasteNodes(targetNode, lng_id, store) {
-    let parentNode = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
+    let parentNode = targetNode.getParentGroup() || targetNode.getParentCategory();
     let sourceNode = clipboardNodes[lng_id][0];
     let oldClipboardStructure = [];
     // Make array for addAttribute... (see below)

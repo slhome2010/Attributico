@@ -39,7 +39,7 @@ export default class AttributeGroupTree {
             },
             loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
-                console.log('key=>', data.node.key, 'title=>', data.node.title )
+                /* console.log('key=>', data.node.key, 'title=>', data.node.title ) */
                 data.result = {
                     data: {
                         'user_token': user_token,
