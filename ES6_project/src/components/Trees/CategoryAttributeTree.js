@@ -5,14 +5,15 @@ import { KeydownCommandCategory } from '../KeyDownCommand';
 import { ContextmenuCommandCategory } from '../ContextMenuCommand';
 import { loadError } from '../Events/LoadError';
 import { smartScroll } from '../../constants/global';
-import { isAttribute } from '../../functions/Plugin/NodeMethod';
+//import { isAttribute } from '../../functions/Plugin/NodeMethod';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
         this.tree = $("#category_attribute_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_category_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");        
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -38,7 +39,9 @@ export default class CategoryAttributeTree {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'tree': "4"
                     }, // cache:true,
                     url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
@@ -125,9 +128,9 @@ export default class CategoryAttributeTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {
-                    let targetnode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
-                    addAttributeToCategory(targetnode, data, false);
+                dragDrop: (node, data) => {
+                    let targetNode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
+                    addAttributeToCategory(data.otherNode, targetNode, selNodes, false, this.store);
                 }
             },
             beforeSelect: function (event, data) {
@@ -145,14 +148,16 @@ export default class CategoryAttributeTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommandCategory(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommandCategory(e, data, this.store);
                 command.permissions = {
                     remove: data.node.isAttribute(),
                     addChild: true,
                     addSibling: false,
                     copy: data.node.isAttribute(),
-                    paste: true
+                    cut: data.node.hasPermission(['attribute']),
+                    paste: true,
+                    refresh: false
                 };
                 command.execute();
             },
@@ -172,11 +177,13 @@ export default class CategoryAttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "rename", false);
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0));
+                        data.tree.$div.contextmenu("enableEntry", "refresh", false);
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommandCategory(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommandCategory(ui, this.store);
                         command.execute();
                     }
                 });

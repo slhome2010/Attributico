@@ -2,7 +2,7 @@
 <modification>
     <name>Attributico</name>
     <code>attributico</code>
-    <version>3.0.6(oc v2.x)</version>
+    <version>3.1.1(oc v2.x)</version>
     <author>comtronics@mail.ru</author>
 	<link>http://www.servenus.com</link>
 	
@@ -147,6 +147,7 @@
             <add position="before"><![CDATA[           
                 var product_attribute_id = new Array();
                 var extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
+                var add_category_attribute = '<?php echo $attributico_autoadd; ?>';
                 var method;
                 var getMethod = $.ajax({
                     url: 'index.php?route=' + extension + 'module/attributico/getMethod&token=<?php echo $token; ?>',
@@ -171,17 +172,19 @@
                         url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes&token=<?php echo $token; ?>&category_id='+category_id,
                         dataType: 'json',
                         success: function (json) {
-                            $.each(json, function (key, attribute) {
-                                if (!in_array(attribute['attribute_id'], product_attribute_id)) {
-                                    var row = attribute_row;
-                                    addAttribute(); 
-                                    $('input[name="product_attribute[' + row + '][name]"]').val(attribute['name']); 
-                                    $('input[name="product_attribute[' + row + '][attribute_id]"]').val(attribute['attribute_id']);
-                                    makeValuesList(attribute['attribute_id'], row);
-                                    addAttributeDuty(attribute['attribute_id'], row);
-                                    product_attribute_id.push(attribute['attribute_id']);
-                                }
-                            });
+                            if (add_category_attribute) {
+                                $.each(json, function (key, attribute) {
+                                    if (!in_array(attribute['attribute_id'], product_attribute_id)) {
+                                        var row = attribute_row;
+                                        addAttribute(); 
+                                        $('input[name="product_attribute[' + row + '][name]"]').val(attribute['name']); 
+                                        $('input[name="product_attribute[' + row + '][attribute_id]"]').val(attribute['attribute_id']);
+                                        makeValuesList(attribute['attribute_id'], row);
+                                        addAttributeDuty(attribute['attribute_id'], row);
+                                        product_attribute_id.push(attribute['attribute_id']);
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -236,7 +239,8 @@
                                   if(textarea.val()=='')                                   
                                     textarea.val(duty);
                                 } else 
-                                  textarea.val(duty); 
+                                    if (method=='3' && duty != '')
+                                     textarea.val(duty); 
                             });
                         }
                     });
@@ -423,6 +427,7 @@
             <search><![CDATA[$data['footer'] = $this->load->controller('common/footer');]]></search>
             <add position="after"><![CDATA[
 		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
+                $data['attributico_autoadd'] = $this->config->get('attributico_autoadd');
             ]]></add>
         </operation>
         <operation error="skip">

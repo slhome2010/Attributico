@@ -1,10 +1,12 @@
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { smartScroll } from '../../constants/global';
+import { KeydownCommand } from '../KeyDownCommand';
 export default class CategoryCheckTree {
-    constructor(element) {
+    constructor(element,store) {
         this.tree = $(element);
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.sortOrder = $('input[name = "attributico_sortorder"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -19,6 +21,17 @@ export default class CategoryCheckTree {
                     'sortOrder': this.sortOrder
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
+            },
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
+                command.permissions = {
+                    remove: false,
+                    addChild: false,
+                    addSibling: false,
+                    copy: false,
+                    paste: false
+                };
+                command.execute();
             },
             init: (event, data) => {
                 //console.log(data.tree.$div.context.id, ' has loaded');
@@ -35,8 +48,8 @@ export default class CategoryCheckTree {
                         });
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

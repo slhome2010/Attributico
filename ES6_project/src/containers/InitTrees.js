@@ -21,7 +21,7 @@ import {
     PRODUCT_TREE, ATTRIBUTE_PRODUCT_TREE, GROUP_CHECK_TREE, CATEGORY_CHECK_TREE
 } from '../constants/global'
 
-export default function initTrees() {
+export default function initTrees(store) {
 
     /**
     * Building trees and configuring child nodes. (selectMode must be 2, see generateFormElements() description)
@@ -37,7 +37,7 @@ export default function initTrees() {
         * This tree must have fixed position for correctly form serializing
         */
     $(GROUP_CHECK_TREE).each(function (indx, element) {
-        let tree = new GroupCheckTree(element);
+        let tree = new GroupCheckTree(element,store);
         tree.render();
     });
 
@@ -46,46 +46,46 @@ export default function initTrees() {
      * This tree must have fixed position for correctly form serializing
      **/
     $(CATEGORY_CHECK_TREE).each(function (indx, element) {
-        let tree = new CategoryCheckTree(element);
+        let tree = new CategoryCheckTree(element,store);
         tree.render();
     });
 
     // ------------------------ main attribute table --------------------
     $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
-        let tree = new AttributeGroupTree(element);
+        let tree = new AttributeGroupTree(element,store);
         tree.render();
     });
 
     // ----------------------- category table --------------------------
     $(CATEGORY_TREE).each(function (indx, element) {
-        let tree = new CategoryTree(element);
+        let tree = new CategoryTree(element,store);
         tree.render();
     });
 
     $(CATEGORY_ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new CategoryAttributeTree(element);
+        let tree = new CategoryAttributeTree(element,store);
         tree.render();
     });
 
     $(ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new AttributeTree(element);
+        let tree = new AttributeTree(element,store);
         tree.render();
     });
 
     // ---------------------- duty attribute table ------------------
     $(DUTY_ATTRIBUTE_TREE).each(function (indx, element) {
-        let tree = new DutyTree(element);
+        let tree = new DutyTree(element,store);
         tree.render();
     });
 
     // ------------------- product  attribute table -----------------
     $(ATTRIBUTE_PRODUCT_TREE).each(function (indx, element) {
-        let tree = new AttributeProductTree(element);
+        let tree = new AttributeProductTree(element,store);
         tree.render();
     });
 
     $(PRODUCT_TREE).each(function (indx, element) {
-        let tree = new ProductTree(element);
+        let tree = new ProductTree(element,store);
         tree.render();
     });
 

@@ -2,7 +2,8 @@ import { reloadAttribute, reactivateCategory } from "../Syncronisation";
 
 export default function tools(task) {
     $('[id *= "tree"].options').each(function (indx, element) {
-        $(element).fancytree("getTree").generateFormElements(true, true, {
+        let tree = $.ui.fancytree.getTree("#" + element.id);        
+        tree.generateFormElements(true, true, {
             filter: null,
             stopOnParents: false
         });
@@ -16,21 +17,17 @@ export default function tools(task) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/tools' + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
-        beforeSend: function () {
-            //  $("#column-2 .complete-img").hide();
+        beforeSend: function () {            
             $("#column-2 .loader-img").show();
-            $("#column-2 .alert-success").hide();
-            // $("#column-2 .task-complete").hide();
+            $("#column-2 .alert-success").hide();            
             $("#column-2 .alert-warning").show();
         },
         success: function (json) {
             reloadAttribute();
             reactivateCategory();
-            $("#column-2 .loader-img").hide();
-            // $("#column-2 .complete-img").show();
+            $("#column-2 .loader-img").hide();           
             $("#column-2 .alert-warning").hide();
-            $("#column-2 .alert-success").show();
-            // $("#column-2 .task-complete").show();
+            $("#column-2 .alert-success").show();            
             $("#column-2 .alert-success").html(json);
         }
     });

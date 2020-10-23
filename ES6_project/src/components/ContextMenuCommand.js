@@ -5,18 +5,20 @@
  **/
 
 /* import  'jquery.fancytree'; */
-import {copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute} from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
 import CollapseExpande from './Events/CollapseExpande';
-import { isCategory } from '../functions/Plugin/NodeMethod';
+//import { isCategory } from '../functions/Plugin/NodeMethod';
+import RefreshTree from './Events/RefreshTree';
 
 export class ContextmenuCommand {
-    constructor(ui) {        
+    constructor(ui, store) {
         this.ui = ui;
         this.node = $.ui.fancytree.getNode(ui.target);
-        this.tree = $.ui.fancytree.getTree(ui.target);        
+        this.tree = $.ui.fancytree.getTree(ui.target);
         this.selector = this.tree.$div[0].id;
         this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
+        this.store = store;
     }
 
     execute() {
@@ -24,6 +26,9 @@ export class ContextmenuCommand {
             case "expande":
             case "collapse":
                 CollapseExpande(this.tree);
+                break;
+            case "refresh":
+                RefreshTree(this.tree);
                 break;
             case "options":
                 $("#options_" + this.selector).dialog("open");
@@ -37,7 +42,7 @@ export class ContextmenuCommand {
                 }
                 this.remove();
                 break;
-            case "addChild":                
+            case "addChild":
                 if (this.node.isCategory() || this.node.getLevel() !== 1) {
                     this.addChild();
                 }
@@ -45,12 +50,12 @@ export class ContextmenuCommand {
             case "addSibling":
                 this.addSibling();
                 break;
-            // case "cut":
+            case "cut":
             case "copy":
-                copyPaste(this.ui.cmd, this.node);
+                copyPaste(this.ui.cmd, this.node, this.store);
                 break;
             case "paste":
-                copyPaste(this.ui.cmd, this.node);
+                copyPaste(this.ui.cmd, this.node, this.store);
                 deSelectNodes(this.node);
                 break;
             default:
@@ -59,15 +64,16 @@ export class ContextmenuCommand {
     }
 
     remove() {
-        deleteAttribute(this.node)
+        deleteAttribute(this.node, this.store);
     }
 
     addChild() {
-        addAttribute(this.node, 'attribute', this.lng_id);
+        // Store не надо, т.к. будет saveAfterEdit
+        addNewAttribute(this.node, 'attribute', this.lng_id);
     }
 
     addSibling() {
-        addAttribute(this.node, 'group', this.lng_id);
+        addNewAttribute(this.node, 'group', this.lng_id);
     }
 }
 
@@ -75,7 +81,7 @@ export class ContextmenuCommand {
 export class ContextmenuCommandCategory extends ContextmenuCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node);
+        deleteAttributesFromCategory(this.node, null, selNodes, this.store);
     }
 
     addChild() {
@@ -87,6 +93,6 @@ export class ContextmenuCommandCategory extends ContextmenuCommand {
 export class ContextmenuCommandDuty extends ContextmenuCommand {
 
     remove() {
-        deleteDuty(this.node);
+        deleteDuty(this.node, this.store);
     }
 }

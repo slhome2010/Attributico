@@ -7,12 +7,13 @@ import { smartScroll } from '../../constants/global';
 
 // ------------------- attribute tree (Attribute group in tab-category) ----------------------------------------
 export default class AttributeTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-category';
         this.tree = $("#attribute_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -41,9 +42,12 @@ export default class AttributeTree {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'lazyLoad': this.lazyLoad,                        
+                        'tree': "3"
                     }, // cache:true,
-                    url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
+                    url: data.node.isGroup() ? 'index.php?route=' + extension + 'module/attributico/getLazyGroup' : 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
             },
             dnd: {
@@ -83,8 +87,8 @@ export default class AttributeTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
@@ -95,12 +99,12 @@ export default class AttributeTree {
                 command.execute();
             },
             filter: {
-                autoApply: true, // Re-apply last filter if lazy data is loaded
-                counter: true, // Show a badge with number of matching child nodes near parent icons
-                fuzzy: false, // Match single characters in order, e.g. 'fb' will match 'FooBar'
-                hideExpandedCounter: true, // Hide counter badge, when parent is expanded
-                highlight: true, // Highlight matches by wrapping inside <mark> tags
-                mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+                autoApply: $("#fs_" + this.currentTab + "_autoApply" + this.lng_id).is(":checked"),
+                counter: $("#fs_" + this.currentTab + "_counter" + this.lng_id).is(":checked"), 
+                fuzzy: $("#fs_" + this.currentTab + "_fuzzy" + this.lng_id).is(":checked"), 
+                hideExpandedCounter: $("#fs_" + this.currentTab + "_hideExpandedCounter" + this.lng_id).is(":checked"), 
+                highlight: $("#fs_" + this.currentTab + "_highlight" + this.lng_id).is(":checked"), 
+                mode: $("#fs_" + this.currentTab + "_hideMode" + this.lng_id).is(":checked") ? "hide" : "dimm" 
             },
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
@@ -120,8 +124,8 @@ export default class AttributeTree {
                         data.tree.$div.contextmenu("enableEntry", "copy", !node.key.indexOf('attribute'));
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

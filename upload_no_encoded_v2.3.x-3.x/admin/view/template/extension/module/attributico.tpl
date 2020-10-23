@@ -34,7 +34,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <button class="close" data-dismiss="modal">×</button>
                                 <h4 class="modal-title" id="infoModalLabel"><?php echo $entry_info_title; ?></h4>
                             </div>
                             <div class="modal-body">
@@ -371,23 +371,31 @@
                                 </div>
                             </div>
                             <div class="tab-pane active" id="tab-attribute">
-                                <ul class="nav nav-tabs" id="tab-attribute_language">
-                                    <?php foreach ($languages as $language) { ?>
-                                        <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
-                                                <?php echo $language['name']; ?></a></li>
-                                    <?php } ?>
-                                </ul>
-                                <div class="tab-content">
-                                    <?php foreach ($languages as $language) { ?>
-                                        <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
-                                            <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
-                                            <div class="form-group">
-                                                <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
+                                <?php if ($duty_check) { ?>
+                                    <ul class="nav nav-tabs" id="tab-attribute_language">
+                                        <?php foreach ($languages as $language) { ?>
+                                            <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
+                                                    <?php echo $language['name']; ?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <?php foreach ($languages as $language) { ?>
+                                            <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
+                                                <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
+                                                <div class="form-group">
+                                                    <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
+                                                </div>
+                                                <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
                                             </div>
-                                            <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
-                                        </div>
-                                    <?php } ?>
-                                </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } else { ?>
+                                    <div class="jumbotron">
+                                        <h1><?php echo $text_attention; ?></h1>
+                                        <p><?php echo $help_upgrade; ?></p>
+                                        <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();"><?php echo $entry_upgrade; ?></a></p>
+                                    </div>
+                                <?php } ?>
                             </div>
                             <div class="tab-pane" id="tab-duty">
                                 <?php if ($duty_check) { ?>
@@ -881,7 +889,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const config_language = '<?php echo $config_language; ?>';
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';
@@ -890,11 +898,12 @@
     const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;         
-    let filterItems = [];
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>; 
+
+    let filterLabels = [];
     let contextmenuConfig = [];
-    let dialogItems = [];   
-    
+    let dialogItems = [];
+
     ATTRIBUTE_GROUP_TREE.each(function(indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [{
@@ -908,13 +917,19 @@
                 uiIcon: "ui-icon-trash"
             },
             {
-                title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>Ctrl+C</kbd>",
+                title: <?php echo json_encode($text_Cut) ?>[lng_id] + "<kbd>[Ctrl+X]</kbd>",
+                cmd: "cut",
+                uiIcon: "ui-icon-scissors",
+                disabled: true
+            },
+            {
+                title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>[Ctrl+C]</kbd>",
                 cmd: "copy",
                 uiIcon: "ui-icon-copy",
                 disabled: true
             },
             {
-                title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>Ctrl+V</kbd>",
+                title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>[Ctrl+V]</kbd>",
                 cmd: "paste",
                 uiIcon: "ui-icon-clipboard",
                 disabled: true
@@ -923,14 +938,17 @@
                 title: "----"
             },
             {
-                title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
+                title: <?php echo json_encode($text_Expande) ?>[lng_id] + "<kbd>[Ctrl+B]</kbd>",
                 cmd: "expande",
                 uiIcon: "ui-icon-folder-open"
             },
             {
-                title: <?php echo json_encode($text_Collapse) ?>[lng_id] + "<kbd>Ctrl+B</kbd>",
-                cmd: "collapse",
-                uiIcon: "ui-icon-folder-collapsed"
+                title: <?php echo json_encode($text_Refresh) ?>[lng_id] + "<kbd>[Shift+R]</kbd>",
+                cmd: "refresh",
+                uiIcon: "ui-icon-refresh"
+            },
+            {
+                title: "----"
             },
             {
                 title: <?php echo json_encode($text_Options) ?>[lng_id],
@@ -943,16 +961,16 @@
             {
                 title: <?php echo json_encode($text_New_group) ?>[lng_id] + "<kbd>[Ctrl+M]</kbd>",
                 cmd: "addSibling",
-                uiIcon: "ui-icon-plus"
+                uiIcon: "ui-icon-plusthick"
             },
             {
                 title: <?php echo json_encode($text_New_attribute) ?>[lng_id] + "<kbd>[Ctrl+Q]</kbd>",
                 cmd: "addChild",
-                uiIcon: "ui-icon-arrowreturn-1-e"
+                uiIcon: "ui-icon-plus"
             }
         ];
 
-        filterItems[lng_id] = {
+        filterLabels[lng_id] = {
             title: <?php echo json_encode($text_filter) ?>[lng_id],
             button: <?php echo json_encode($button_filter_action) ?>[lng_id],
             checkbox: {

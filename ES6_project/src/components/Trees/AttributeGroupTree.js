@@ -2,21 +2,21 @@ import Filter from '../FancyFilter';
 import { ContextmenuCommand } from '../ContextMenuCommand';
 import { KeydownCommand } from '../KeyDownCommand';
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-import { reloadAttribute } from '../../functions/Syncronisation';
-import { hasPermission, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { loadError } from '../Events/LoadError';
 import { saveAfterEdit } from '../Events/SaveAfterEdit'
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';
+import { moveNode } from '../../functions/Move';
 
 export default class AttributeGroupTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-attribute';
         this.tree = $("#attribute_group_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
-
+        this.store = store;
+                
         this.config = {
             autoCollapse: true,
             autoScroll: true,
@@ -33,20 +33,24 @@ export default class AttributeGroupTree {
                     'sortOrder': this.sortOrder,
                     'lazyLoad': this.lazyLoad,
                     'tree': "1",
-                    'isPending': false
+                   // 'isPending': false
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
             loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
+                /* console.log('key=>', data.node.key, 'title=>', data.node.title ) */
                 data.result = {
                     data: {
                         'user_token': user_token,
                         'token': token,
                         'key': data.node.key,
-                        'language_id': this.lng_id
+                        'language_id': this.lng_id,
+                        'sortOrder': this.sortOrder,
+                        'lazyLoad': this.lazyLoad,
+                        'tree': "1",
                     }, // cache:true,
-                    url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
+                    url: data.node.isGroup() ? 'index.php?route=' + extension + 'module/attributico/getLazyGroup' : 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
                 };
             },
             edit: {
@@ -58,13 +62,15 @@ export default class AttributeGroupTree {
                     if (!data.node.hasPermission(['group', 'attribute', 'template', 'value', 'duty'])) {
                         return false;
                     }
-                    // Return false to prevent edit mode                    
+                    // Reset filter setting _highlight to false for exclude tag <mark> from title
+                    this.tree.options.filter['highlight'] = false; 
+                    this.tree.clearFilter();                  
                 },
                 edit: (event, data) => editDuty(event, data), // Editor was opened (available as data.input)                
                 beforeClose: function (event, data) {
                     // Return false to prevent cancel/save (data.input is available)
                 },
-                save: (event, data) => saveAfterEdit(event, data),
+                save: (event, data) => saveAfterEdit(event, data, this.store),
                 close: function (event, data) {
                     if (data.save) {
                         $(data.node.span).addClass("pending");
@@ -76,14 +82,14 @@ export default class AttributeGroupTree {
                 focusOnClick: true,
                 preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
                 preventRecursiveMoves: false, // Prevent dropping nodes on own descendants
-                dragStart: function (node, data) {
+                dragStart: (node, data) => {
                     //  if (data.node.isRootNode() || data.node.getLevel() !== 3) {
                     if (data.node.isRootNode() || data.node.getLevel() > 3) {
                         return false;
                     }
                     return true;
                 },
-                dragEnter: function (targetNode, data) {
+                dragEnter: (targetNode, data)  => {
                     let targetLevel = targetNode.getLevel();
                     let subjectLevel = data.otherNode.getLevel();
                     let subjectNode = data.otherNode;
@@ -105,59 +111,10 @@ export default class AttributeGroupTree {
                     }
                     return ["over"];
                 },
-                dragDrop: function (targetNode, data) {
-                    let subjectNode = data.otherNode;
-                    let targetLevel = targetNode.getLevel();
-                    let subjectLevel = subjectNode.getLevel();
-                    let selfreload = false;
-                    let replace = targetNode.getParent() !== subjectNode.getParent();
-                    let merge = data.originalEvent.ctrlKey && (targetLevel === subjectLevel);
-                    let url = '';
+                dragDrop: (targetNode, data)  => { 
 
-                    if (merge && !confirm(textConfirm)) {
-                        return;
-                    }
+                    moveNode(data.otherNode, targetNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
 
-                    if (selNodes) {
-                        $.each(selNodes, function (i, subjectNode) {
-                            if (merge) {
-                                subjectNode.remove();
-                            } else {
-                                subjectNode.moveTo(targetNode, data.hitMode);
-                                selfreload = true; // for correctly sorting if multiselect
-                            }
-                        });
-                    } else {
-                        if (merge) {
-                            subjectNode.remove();
-                        } else {
-                            subjectNode.moveTo(targetNode, data.hitMode);
-                        }
-                    }
-                    if (merge) {
-                        url = 'index.php?route=' + extension + 'module/attributico/mergeAttributeGroup';
-                        selfreload = true;
-                    } else if (replace) {
-                        url = 'index.php?route=' + extension + 'module/attributico/replaceAttributeGroup';
-                        selfreload = false;
-                    } else {
-                        url = 'index.php?route=' + extension + 'module/attributico/sortAttributeGroup';
-                    }
-                    $.ajax({
-                        data: {
-                            'user_token': user_token,
-                            'token': token,
-                            'subjects': selNodes ? getSelectedKeys(selNodes) : [subjectNode.key],
-                            'group': targetNode.getParent().key,
-                            'target': targetNode.key,
-                            'direct': data.hitMode
-                        },
-                        url: url,
-                        success: function () {
-                            reloadAttribute(subjectNode, selfreload);
-                            deSelectNodes(subjectNode);
-                        }
-                    });
                 },
                 draggable: { // modify default jQuery draggable options
                     scroll: true // disable auto-scrolling
@@ -179,29 +136,30 @@ export default class AttributeGroupTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data)  => {
+                let command = new KeydownCommand(e, data, this.store);               
                 command.permissions = {
                     remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,
                     addSibling: true,
                     copy: data.node.hasPermission(['attribute']),
+                    cut: data.node.hasPermission(['attribute']),
                     paste: true
                 };
                 command.execute();
             },
             filter: {
-                autoApply: true, // Re-apply last filter if lazy data is loaded
-                counter: true, // Show a badge with number of matching child nodes near parent icons
-                fuzzy: false, // Match single characters in order, e.g. 'fb' will match 'FooBar'
-                hideExpandedCounter: true, // Hide counter badge, when parent is expanded
-                highlight: true, // Highlight matches by wrapping inside <mark> tags
-                mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+                autoApply: $("#fs_" + this.currentTab + "_autoApply" + this.lng_id).is(":checked"), // Re-apply last filter if lazy data is loaded
+                counter: $("#fs_" + this.currentTab + "_counter" + this.lng_id).is(":checked"), // Show a badge with number of matching child nodes near parent icons
+                fuzzy: $("#fs_" + this.currentTab + "_fuzzy" + this.lng_id).is(":checked"), // Match single characters in order, e.g. 'fb' will match 'FooBar'
+                hideExpandedCounter: $("#fs_" + this.currentTab + "_hideExpandedCounter" + this.lng_id).is(":checked"), // Hide counter badge, when parent is expanded
+                highlight: $("#fs_" + this.currentTab + "_highlight" + this.lng_id).is(":checked"), // Highlight matches by wrapping inside <mark> tags
+                mode: $("#fs_" + this.currentTab + "_hideMode" + this.lng_id).is(":checked") ? "hide" : "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
             },
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
-                //console.log(data.tree.$div.context.id, ' has loaded');
+               /*  console.log(data.tree.$div[0].id, ' has initialised'); */
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
@@ -213,11 +171,12 @@ export default class AttributeGroupTree {
                         data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
                         data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

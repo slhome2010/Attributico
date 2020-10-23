@@ -75,6 +75,10 @@ class ModelCatalogAttributico extends Model
             'ag.sort_order'
         );
 
+        if (isset($data['attribute_group_id'])) {
+            $sql .= " AND ag.attribute_group_id = '" . (int)$data['attribute_group_id'] . "'";
+        }
+
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             $sql .= " ORDER BY " . $data['sort'];
         } else {
@@ -104,10 +108,10 @@ class ModelCatalogAttributico extends Model
     {
         $attribute_values_data = array();
 
-        $sql = "SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id='" . (int)$attribute_id . "'";
+        $sql = "SELECT DISTINCT (BINARY text), text, language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id='" . (int)$attribute_id . "'";
         $sql_categories = $categories ? " AND product_id IN (SELECT ptc.product_id FROM " . DB_PREFIX . "product_to_category ptc WHERE ptc.category_id IN (" . implode(",", $categories) . "))" : "";
 
-        $query = $this->db->query($sql . $sql_categories . " ORDER BY text");
+        $query = $this->db->query($sql . $sql_categories . " ORDER BY language_id");
         //	$query = $this->db->query("SELECT DISTINCT(text), language_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id=" . (int) $attribute_id . " ORDER BY CAST(text AS DECIMAL)");
 
         foreach ($query->rows as $result) {
@@ -157,7 +161,10 @@ class ModelCatalogAttributico extends Model
             $multistore = " AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' ";
         }
 
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE cd.language_id = '" . (int)$this->config->get('config_language_id') . "'" . $multistore . "  ORDER BY c.parent_id, c.sort_order, cd.name");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) 
+        LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) 
+        WHERE cd.language_id = '" . (int)$this->config->get('config_language_id') . "'" . $multistore . "  
+        ORDER BY c.parent_id, c.sort_order, cd.name");
 
         if ($non_hierarchical) {
 
@@ -337,7 +344,11 @@ class ModelCatalogAttributico extends Model
 
     public function addAttribute($data)
     {
-        // in foreach, cache delete in controller
+    /** $data['attribute_description'] structure example [empty,'name'=>A1ru,empty,'name'=>A1en]
+     *  empty if language not present by any id   [1] name = A1ru
+     *                                            [3] name = A1en
+     *
+     *  in foreach, cache delete in controller **/
         $maxorder = $this->db->query("SELECT MAX(`sort_order`) AS maxorder FROM " . DB_PREFIX . "attribute");
         $this->db->query("INSERT INTO " . DB_PREFIX . "attribute SET attribute_group_id = '" . (int)$data['attribute_group_id'] . "', sort_order = '" . ((int)$maxorder->row['maxorder'] + 1) . "'");
         // этот id будет добавлен к имени при добавлении: Новый атрибут_234, при копировании не добавляется - флаг data['new']
@@ -397,19 +408,25 @@ class ModelCatalogAttributico extends Model
 
         if (isset($data['value'])) {
             foreach ($data['value'] as $instance) {
-                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
-                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
-                 ");
-                // AND language_id = '" . (int)$language_id . "'");
+                if ($instance['value'] != '') {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
+                 AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                 AND language_id = '" . (int) $language_id . "'");
+                    //");
+                } else {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE TRIM(text) LIKE ''
+                        AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                        AND language_id = '" . (int) $language_id . "'");
+                }
             }
         }
 
         if (isset($data['template'])) {
             foreach ($data['template'] as $instance) {
-                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE text LIKE '" . $instance['value'] . "'
-                 AND attribute_id = '" . (int)$instance['attribute_id'] . "'
-                 ");
-                // AND language_id = '" . (int)$language_id . "'");
+                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE TRIM(text) LIKE '" . $instance['value'] . "'
+                 AND attribute_id = '" . (int) $instance['attribute_id'] . "'
+                 AND language_id = '" . (int) $language_id . "'");
+                //");
             }
         }
     }

@@ -14,6 +14,6 @@ Tools for Opencart attributes maintenance
 Файлы модуля разделены так же по upload папкам соответствующим версии Opencart. Выбирайте папку, соответствующую
 версии вашего магазина. 
 
-Инструкция по установке http://servenus.com/ru/doc_attributico_ru.html#install 
-Инструкция по настройке http://servenus.com/ru/doc_attributico_ru.html#settings
-Подробная инструкция http://servenus.com/ru/doc_attributico_ru.html
+Инструкция по установке http://servenus.com/doc/ru/install.html
+Инструкция по настройке http://servenus.com/doc/ru/settings.html
+Подробная инструкция http://servenus.com/doc/ru/attributico.html

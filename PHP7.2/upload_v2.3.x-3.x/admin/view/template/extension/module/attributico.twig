@@ -3,7 +3,7 @@
     <div class="page-header">
         <div class="container-fluid">
             <div class="pull-right">
-                <a onclick="check_for_updates()" class="btn btn-warning" data-toggle="tooltip" title="{{button_check_for_updates}}" data-placement="top"><i class="fa fa-cloud-download"></i></a>
+                <a onclick="checkForUpdates(); $('#infoModal').modal('show');" class="btn btn-warning" data-toggle="tooltip" title="{{button_check_for_updates}}" data-placement="top"><i class="fa fa-cloud-download"></i></a>
                 <a onclick="apply()" class="btn btn-success" data-toggle="tooltip" title="{{button_apply}}" data-placement="top"><i class="fa fa-check"></i></a>
                 <button type="button" form="form-attributico" onclick="$('#form-attributico').submit();" data-toggle="tooltip" data-placement="top" title="{{button_save}}" class="btn btn-primary"><i class="fa fa-save"></i></button>
                 <a href="{{cancel}}" data-toggle="tooltip" data-placement="top" title="{{button_cancel}}" class="btn btn-default"><i class="fa fa-reply"></i></a>
@@ -32,7 +32,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">{{ '&times;' | escape }}</span></button>
+                                <button class="close" data-dismiss="modal">×</button>
                                 <h4 class="modal-title" id="infoModalLabel">{{entry_info_title}}</h4>
                             </div>
                             <div class="modal-body">
@@ -352,6 +352,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane active" id="tab-attribute">
+                                {% if duty_check %}
                                 <ul class="nav nav-tabs" id="tab-attribute_language">
                                     {% for language in languages %}
                                     <li><a href="#tab-attribute_language{{language.language_id}}" data-toggle="tab"><img src="{{language.src}}" title="{{language.name}}" /> {{language.name}}</a></li>
@@ -368,6 +369,13 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                                {% else %}
+                                <div class="jumbotron">
+                                    <h1>{{text_attention}}</h1>
+                                    <p>{{help_upgrade}}</p>
+                                    <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();">{{entry_upgrade}}</a></p>
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="tab-pane" id="tab-duty">
                                 {% if duty_check %}
@@ -841,28 +849,30 @@
     const textNewAttribute = {{ text_New_attribute| json_encode()}};
     const textNewGroup = {{ text_New_group| json_encode()}};
     const textConfirm = {{ text_confirm| json_encode()}};
-    const FILTERSETTINGS = {{ filter_settings| json_encode()}};    
-    let filterItems = [];
+    const FILTERSETTINGS = {{ filter_settings| json_encode()}};
+
+    let filterLabels = [];
     let contextmenuConfig = [];
-    let dialogItems = [];   
+    let dialogItems = [];
 
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [
             { title: {{ text_Edit| json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
             { title: {{ text_Delete| json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
-            { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>Ctrl+C</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
-            { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>Ctrl+V</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
+            { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
+            { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>[Ctrl+V]</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
             { title: "----" },
-            { title: {{ text_Expande| json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
-            { title: {{ text_Collapse| json_encode()}}[lng_id] + "<kbd>Ctrl+B</kbd>", cmd: "collapse", uiIcon: "ui-icon-folder-collapsed"},
+            { title: {{ text_Expande| json_encode()}}[lng_id] + "<kbd>[Ctrl+B]</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
+            { title: {{ text_Refresh| json_encode()}}[lng_id] + "<kbd>[Shift+R]</kbd>", cmd: "refresh", uiIcon: "ui-icon-refresh"},
+            { title: "----" },
             { title: {{ text_Options| json_encode()}}[lng_id], cmd: "options", uiIcon: "ui-icon-gear"},
             { title: "----" },
-            { title: {{ text_New_group| json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plus"},
-            { title: {{ text_New_attribute| json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-arrowreturn-1-e"}
+            { title: {{ text_New_group| json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plusthick"},
+            { title: {{ text_New_attribute| json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-plus"}
         ];
 
-        filterItems[lng_id] = {
+        filterLabels[lng_id] = {
             title: {{ text_filter | json_encode() }}[lng_id],
             button: {{ button_filter_action | json_encode() }} [lng_id],
             checkbox: {

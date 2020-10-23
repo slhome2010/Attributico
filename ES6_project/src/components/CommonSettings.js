@@ -1,11 +1,11 @@
-import { reloadAttribute } from "../functions/Syncronisation";
 import { CATEGORY_SYNCRO_TREES } from '../constants/global'
+import { checkOptions } from "../actions";
 
 /**
 * Common settings change event hundlers
 *
 **/
-export default function commonSettings() {
+export default function commonSettings(store) {
 
     // access to autoadd radio
     $('[name = "attributico_product_text"]').each(function (indx, element) {
@@ -17,7 +17,7 @@ export default function commonSettings() {
         }
     });
     // autoadd attribute values to product
-    $('input[name = "attributico_autoadd"]:checkbox').change(function (e) {
+    $('input[name = "attributico_autoadd"]:checkbox').on('change', function (e) {
        let flag = $(this).is(":checked");
         $('[name = "attributico_product_text"]').each(function (indx, element) {
             $(element).prop({
@@ -26,7 +26,7 @@ export default function commonSettings() {
         });
     });
     // event handler for smartscroll
-    $('input[name = "attributico_smart_scroll"]:checkbox').change(function (e) {
+    $('input[name = "attributico_smart_scroll"]:checkbox').on('change', function (e) {
         if ($(this).is(":checked")) {
             $('[id *= "tree"]:not(.settings) > ul.fancytree-container').addClass("smart-scroll");
         } else {
@@ -34,7 +34,7 @@ export default function commonSettings() {
         }
     });
     // event handler for cache on/off
-    $('input[name = "attributico_cache"]:checkbox').change(function (e) {
+    $('input[name = "attributico_cache"]:checkbox').on('change', function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -43,18 +43,18 @@ export default function commonSettings() {
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
             success: function (json) { 
                 $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
-                    let tree = $("#" + element.id).fancytree("getTree");
+                    let tree = $.ui.fancytree.getTree("#" + element.id);
                     tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;                        
                     });
                 });
-                reloadAttribute();
+                store.dispatch(checkOptions());
             }
         });
     });
     // event handler for multistore categories output
-    $('input[name = "attributico_multistore"]:checkbox').change(function (e) {
+    $('input[name = "attributico_multistore"]:checkbox').on('change', function (e) {
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -63,13 +63,13 @@ export default function commonSettings() {
             url: 'index.php?route=' + extension + 'module/attributico/cacheDelete',
             success: function (json) {                
                 $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
-                    let tree = $("#" + element.id).fancytree("getTree");
+                    let tree = $.ui.fancytree.getTree("#" + element.id);
                     tree.options.source.data.multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
                     tree.reload().done(function () {
                         tree.options.source.data.isPending = false;                       
                     });
                 });
-                reloadAttribute();
+                store.dispatch(checkOptions());
             }
         });
     });

@@ -5,11 +5,12 @@
  **/
 export default function dialogOptionEvents() {
     // attach dialog event hundlers 
-    $('input[id ^= "lazyLoad"]:checkbox').change(changeSettings);
-    $('input[id ^= "sortOrder"]:checkbox').change(changeSettings);
-    $('input[id ^= "autoCollapse"]:checkbox').change(changeSettings);
-    $('input[id ^= "multiSelect"]:checkbox').change(changeSettings);
-    $('input[id ^= "diver"]:checkbox').change(changeSettings);
+    $('input[id ^= "lazyLoad"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "sortOrder"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "autoCollapse"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "multiSelect"]:checkbox').on('change', changeSettings);
+    $('input[id ^= "diver"]:checkbox').on('change', changeSettings);
+    //FIXME change is deprecated handler
 
 
     function changeSettings(e) {
@@ -17,7 +18,7 @@ export default function dialogOptionEvents() {
         let lng_id = parseInt(id.replace(/\D+/ig, ''));
         let selector = $(this).attr("class");
         let flag = $(this).is(":checked");
-        let tree = $("#" + id.replace(selector + "_", "")).fancytree("getTree"); 
+        let tree = $.ui.fancytree.getTree("#" + id.replace(selector + "_", "")); 
         tree.options.source.data.category_id = currentCategory;
         tree.options.source.data.attribute_id = currentAttribute; 
         let diver =  $('input[id = "diver_product_tree' + lng_id + '"]:checkbox').is(":checked");
@@ -39,7 +40,7 @@ export default function dialogOptionEvents() {
                 tree.options.selectMode = flag ? 3 : 2;
                 break;
             case 'diver':                
-                let activetree = $("#attribute_product_tree" + lng_id).fancytree("getTree");
+                let activetree = $.ui.fancytree.getTree("#attribute_product_tree" + lng_id);
                 activetree.reactivate();
                 break;
             default:

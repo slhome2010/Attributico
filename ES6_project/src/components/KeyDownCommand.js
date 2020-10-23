@@ -4,12 +4,13 @@
  *
  **/
 import { deSelectNodes } from '../functions/Select'
-import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addAttribute } from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
-import { isCategory } from '../functions/Plugin/NodeMethod';
+//import { isCategory } from '../functions/Plugin/NodeMethod';
+import RefreshTree from './Events/RefreshTree';
 
 export class KeydownCommand {
-    constructor(event, data) {
+    constructor(event, data, store) { 
         this.e = event;
         this.node = data.node;
         this.tree = data.tree;
@@ -20,12 +21,14 @@ export class KeydownCommand {
             addChild: true,
             addSibling: true,
             copy: true,
-            paste: true
+            paste: true,
+            refresh: true
         };
+        this.store = store;
     }
 
     set permissions(newPermissions) {
-        this.access = newPermissions;
+        this.access = Object.assign(this.access, newPermissions);
     }
 
     execute() {
@@ -52,6 +55,12 @@ export class KeydownCommand {
                     CollapseExpande(this.tree);
                 }
                 break;
+                case 82:
+                //     shift+R  cmd = "refresh";
+                if (this.access.refresh && this.e.shiftKey) {
+                    RefreshTree(this.tree);
+                }
+                break;
             case 46:
                 //   del   cmd = "remove";
                 if (this.access.remove && confirm(textConfirm))
@@ -74,44 +83,45 @@ export class KeydownCommand {
             case 67:
                 // Ctrl-C copy
                 if (this.access.copy && this.e.ctrlKey) {
-                    copyPaste("copy", this.node);
+                    copyPaste("copy", this.node, this.store);
                     return false;
                 }
                 break;
             case 86:
                 // Ctrl-V paste
                 if (this.access.paste && this.e.ctrlKey) {
-                    copyPaste("paste", this.node);
+                    copyPaste("paste", this.node, this.store);
                     deSelectNodes(this.node);
                     return false;
                 }
                 break;
-            //  case 88:
-            //   if( event.ctrlKey ) { // Ctrl-X
-            //      copyPaste("cut", node);
-            //      return false;
-            //    }
-            //    break;
+             case 88:
+                 // Ctrl-X cut
+                 if (this.access.cut && this.e.ctrlKey) {
+                    copyPaste("cut", this.node, this.store);                    
+                    return false;
+                }
+                break;
         }
     }
 
     remove() {
-        deleteAttribute(this.node)
+        deleteAttribute(this.node, this.store);
     }
 
     addChild() {
-        addAttribute(this.node, 'attribute', this.lng_id);
+        addNewAttribute(this.node, 'attribute', this.lng_id);
     }
 
     addSibling() {
-        addAttribute(this.node, 'group', this.lng_id);
+        addNewAttribute(this.node, 'group', this.lng_id);
     }
 }
 /* Override methods for CategoryattributeTree and DutyTree*/
 export class KeydownCommandCategory extends KeydownCommand {
 
     remove() {
-        deleteAttributesFromCategory(this.node);
+        deleteAttributesFromCategory(this.node, null, selNodes, this.store);
     }
 
     addChild() {
@@ -122,6 +132,6 @@ export class KeydownCommandCategory extends KeydownCommand {
 export class KeydownCommandDuty extends KeydownCommand {
 
     remove() {
-        deleteDuty(this.node);
+        deleteDuty(this.node, this.store);
     }
 }

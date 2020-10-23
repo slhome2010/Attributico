@@ -1,9 +1,10 @@
-import { findUnselectedSibling, getLanguageId, getParentByKey } from './Plugin/NodeMethod';
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
-import { reactivateCategory, reloadAttribute, smartReload } from './Syncronisation'
-import { ATTRIBUTE_GROUP_TREE } from '../constants/global';
+import { reactivateCategory } from './Syncronisation'
+import { copyNode, deleteNode, dndAddNode, dndReplaceCategory } from '../actions';
+import { moveNode } from './Move';
 
-export function addAttribute(activeNode, activeKey, lng_id) {
+export function addNewAttribute(activeNode, activeKey, lng_id) {
+    /* This function for previously insert New record in DataBase and  editing this in tree after */
     let node = activeNode,
         parentLevel = (activeKey === 'attribute') ? 2 : 1;
     while (node.getLevel() > parentLevel) {
@@ -18,6 +19,7 @@ export function addAttribute(activeNode, activeKey, lng_id) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/addAttribute',
         success: function (new_id) {
+            // Здесь dispatch не нужен, т.к. сработает SaveAfterEdit
             node.editCreateNode("child", {
                 title: activeKey === 'attribute' ? textNewAttribute[lng_id] + "_" + new_id : textNewGroup[lng_id] + "_" + new_id,
                 key: activeKey + "_" + new_id,
@@ -27,10 +29,9 @@ export function addAttribute(activeNode, activeKey, lng_id) {
     });
 }
 
-export function deleteAttribute(node) {
+export function deleteAttribute(node, store) {
     let level = node.getLevel();
     if (level === 2 || level === 3 || level === 5) {
-        let siblingNode = node.findUnselectedSibling();
         $.ajax({
             data: {
                 'user_token': user_token,
@@ -41,99 +42,46 @@ export function deleteAttribute(node) {
             },
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
-                if (selNodes) {
-                    // TODO selNodes всегда есть, можно убрать if else???. Проверить корректность удаления кэша в модели
-                    $.each(selNodes, function (i, o) {
-                        o.remove();
-                    });
+                let affectedNodes = []
+                if (node.isTemplate() || node.isValue()) {
+                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
+                    if (selNodes) {
+                        for (let selnode of selNodes) {
+                            affectedNodes.push(selnode.getParentAttribute())
+                        }
+                    } else {
+                        affectedNodes.push(node.getParentAttribute())
+                    }
+                } else if (node.isAttribute()) {
+                    if (selNodes) {
+                        for (let selnode of selNodes) {
+                            affectedNodes.push(selnode.getParentGroup())
+                        }
+                    } else {
+                        affectedNodes.push(node.getParentGroup())
+                    }
                 } else {
-                    node.remove();
+                    // Delete Group  
+                    affectedNodes = null
                 }
-                reloadAttribute(siblingNode, level === 5 ? true : false);
-                //   siblingNode.setActive(true);
-                selNodes = null;
+                // Надо до remove иначе node может уже не быть
+                store.dispatch(deleteNode(node, affectedNodes));
+
+                if (affectedNodes === null) {
+                    if (selNodes) {
+                        $.each(selNodes, (i, selnode) => {
+                            selnode.remove();
+                        });
+                    } else {
+                        node.remove();
+                    }
+                }             
             }
         });
     }
 }
 
-export function pasteNodes(targetNode) {
-    let node = targetNode.getParentByKey('group') || targetNode.getParentByKey('category');
-
-    if (node.key.indexOf('group') + 1) {
-        $.ajax({
-            data: {
-                'user_token': user_token,
-                'token': token,
-                'target': node.key,
-                'attributes': clipboardTitles
-            },
-            url: 'index.php?route=' + extension + 'module/attributico/addAttributes',
-            success: function () {
-                reloadAttribute(targetNode, true);
-            }
-        });
-    }
-    if (node.key.indexOf('category') + 1) {
-        $.ajax({
-            data: {
-                'attributes': selNodes ? getSelectedKeys(selNodes) : [clipboardNodes[0][1].key],
-                'category_id': node.key,
-                'categories': selCategories ? getSelectedKeys(selCategories) : [node.key]
-            },
-            url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
-            type: 'POST',
-            success: function () {
-                reactivateCategory(node);
-            }
-        });
-    }
-}
-// sourceNode = data.otherNode это узел источника
-// Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
-export function deleteAttributesFromCategory(sourceNode) {
-    let category_id = sourceNode.getParent().key;
-
-    $.ajax({
-        data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
-            'category_id': category_id,
-            'categories': selCategories ? getSelectedKeys(selCategories) : []
-        },
-        url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
-        type: 'POST',
-        success: function () {
-            reactivateCategory();
-            reloadAttribute(sourceNode, true); // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-        }
-    });
-    deSelectNodes();
-}
-
-export function addAttributeToCategory(targetNode, data, remove) {
-    let sourceNode = data.otherNode;    
-    $.ajax({
-        data: {
-            'attributes': selNodes ? getSelectedKeys(selNodes) : [sourceNode.key],
-            'category_id': targetNode.key,
-            'categories': selCategories ? getSelectedKeys(selCategories) : []
-        },
-        url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
-        type: 'POST'
-    }).done(function () {
-        if (!remove) {            
-            smartReload(sourceNode.tree, selNodes ? selNodes : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
-            reactivateCategory(targetNode);
-            reloadAttribute(sourceNode, false);
-            deSelectNodes();
-        } else {
-            deSelectCategories(); // чтобы не удалялось в отмеченных категориях
-            deleteAttributesFromCategory(sourceNode);
-        }
-    });
-}
-
-export function deleteDuty(node) {
+export function deleteDuty(node, store) {
     $.ajax({
         data: {
             'user_token': user_token,
@@ -144,58 +92,171 @@ export function deleteDuty(node) {
         },
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
         success: function () {
-            reloadAttribute(node, true); // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            store.dispatch(deleteNode(node, [node.getParentGroup()]));
         }
     });
 }
 
-export function copyPaste(action, targetNode) {
+// sourceNode = data.otherNode это узел источника
+// Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
+export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove, store) {
+    $.ajax({
+        data: {
+            'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
+            'category_id': targetNode.key,
+            'categories': selCategories ? getSelectedKeys(selCategories) : []
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
+        type: 'POST'
+    }).done(function () {
+        // Это либо смена категории либо копипаст из CategoryAttributeTree
+        if (!remove) {
+            //smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
+            deSelectCategories();
+            reactivateCategory(targetNode);
+            // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
+            store.dispatch(dndAddNode(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
+            deSelectNodes();
+        } else {
+            deSelectCategories(); // чтобы не удалялось в отмеченных категориях
+            deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store);
+        }
+    });
+}
+
+export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store) {
+    let category_id = sourceNode.getParent().key;
+    // Если targetNode == null, то это просто операция удаления
+    let targetTree = targetNode !== null ? targetNode.tree : sourceNode.tree
+    $.ajax({
+        data: {
+            'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
+            'category_id': category_id,
+            'categories': selCategories ? getSelectedKeys(selCategories) : []
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
+        type: 'POST',
+        success: function () {
+            reactivateCategory(targetNode);
+            // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
+            store.dispatch(dndReplaceCategory(targetTree, sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
+        }
+    });
+    deSelectNodes();
+}
+
+export function copyPaste(action, actionNode, store) {
+    let activeTree = actionNode.tree;
+    // actionNode в операциях cut & copy играет роль sourceNode, а в операции paste targetNode
     switch (action) {
         case "cut":
         case "copy":
-            // clipboardNode = node;
+            // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
+            let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
             pasteMode = action;
-            if (selNodes) {
-                selNodes.forEach(function (node, i) {
-                    clipboardNodes[i] = [];
-                    clipboardTitles[i] = [];
-                    $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
-                        let tree = $("#" + element.id).fancytree("getTree");
-                        let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-                        clipboardNodes[i][lng_id] = tree.getNodeByKey(node.key);
-                        clipboardTitles[i][lng_id] = tree.getNodeByKey(node.key).title;
+            // selNodes надо переписать в буфер обмена, т.к. при нажатии без ctrl сработет deselectNodes()
+            // заполняем буфер обмена clipboard выделенными узлами для каждого языка
+            // для операций move нужен список узлов не важно для какого языка
+            // для операций delete нужен список узлов не важно для какого языка
+            // для операций addToCategory нужен список узлов не важно для какого языка
+            // если нужен список узлов, то используется selNodes или [sourceNode.key]
+            // однако для функций addAttribute... нужна структура типа :
+            // [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
+            $(TREE_SELECTOR).each(function (indx, element) {
+                let tree = $.ui.fancytree.getTree("#" + element.id);
+                let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+
+                clipboardNodes[lng_id] = [];
+                clipboardTitles[lng_id] = [];
+
+                if (selNodes) {
+                    selNodes.forEach(function (node, i) {
+                        let selNode = tree.getNodeByKey(node.key);
+                        if (selNode !== null) {
+                            clipboardNodes[lng_id].push(selNode);
+                            clipboardTitles[lng_id].push(selNode.title);
+                        }
+
                     });
-                });
-            } else {
-                clipboardNodes[0] = [];
-                clipboardTitles[0] = [];
-                $(ATTRIBUTE_GROUP_TREE).each(function (indx, element) {
-                    let tree = $("#" + element.id).fancytree("getTree");
-                    let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-                    clipboardNodes[0][lng_id] = tree.getNodeByKey(targetNode.key);
-                    clipboardTitles[0][lng_id] = tree.getNodeByKey(targetNode.key).title;
-                });
-            }
+                } else {
+                    let selNode = tree.getNodeByKey(actionNode.key);
+                    if (selNode !== null) {
+                        clipboardNodes[lng_id].push(selNode);
+                        clipboardTitles[lng_id].push(selNode.title);
+                    }
+                }
+            });
             break;
         case "paste":
+            let direct = 'after';
+            let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
+
             if (clipboardNodes.length == 0) {
                 alert("Clipoard is empty.");
                 break;
             }
+
             if (pasteMode == "cut") {
-                // Cut mode: check for recursion and remove source
-                // TODO
-                // pasteNodes(targetNode);
-                // clipboardNodes[indx].remove();
+                // Cut mode: check for recursion and remove source 
+                let parentNode = actionNode.getParentByKey('group') || actionNode.getParentByKey('category');
+                let sourceNode = clipboardNodes[lng_id][0];
+                let targetLevel = actionNode.getLevel();
+                let sourceLevel = sourceNode.getLevel();
+
+                if (targetLevel < sourceLevel) {
+                    direct = 'over';
+                }
+
+                if (parentNode.isCategory()) {
+                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], true, store);
+                } else {
+                    // clipboardNodes[lng_id] - список узлов не важно для какого языка
+                    moveNode(sourceNode, actionNode, clipboardNodes[lng_id], false, direct, store)
+                }
+
             } else {
-                pasteNodes(targetNode);
+                pasteNodes(actionNode, lng_id, store);
             }
+
             clipboardNodes = [];
             clipboardTitles = [];
-            //   selNodes = null;
             pasteMode = null;
+
             break;
         default:
             alert("Unhandled clipboard action '" + action + "'");
+    }
+}
+
+export function pasteNodes(targetNode, lng_id, store) {
+    let parentNode = targetNode.getParentGroup() || targetNode.getParentCategory();
+    let sourceNode = clipboardNodes[lng_id][0];
+    let oldClipboardStructure = [];
+    // Make array for addAttribute... (see below)
+    clipboardTitles.forEach((listNodes, lngId) => {
+        let lng = lngId
+        listNodes.forEach((node, index) => {
+            oldClipboardStructure.push([])
+            oldClipboardStructure[index][lng] = node
+        })
+    })
+    oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
+    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
+    if (parentNode.isGroup()) {
+        $.ajax({
+            data: {
+                'target': parentNode.key,
+                'attributes': oldClipboardStructure
+            },
+            url: 'index.php?route=' + extension + 'module/attributico/addAttributes' + '&user_token=' + user_token + '&token=' + token,
+            type: 'POST',
+            success: function () {
+                store.dispatch(copyNode(sourceNode, parentNode));
+            }
+        });
+    }
+    if (parentNode.isCategory()) {
+        addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], false, store);
     }
 }

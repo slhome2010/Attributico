@@ -3,9 +3,9 @@ export default function buildFilter() {
     let id = $(this).attr('id');
     let lng_id = parseInt(id.replace(/\D+/ig, ''));
     let tab = id.split('_')[0];
-    let checkbox = filterItems[lng_id].checkbox;
-    let spancheckbox = filterItems[lng_id].spancheckbox;
-    let dropdown = filterItems[lng_id].dropdown;
+    let checkbox = filterLabels[lng_id].checkbox;
+    let spancheckbox = filterLabels[lng_id].spancheckbox;
+    let dropdown = filterLabels[lng_id].dropdown;
     let widget = tab + "_filterwidget" + lng_id;
 
     // create open/close triangle
@@ -41,7 +41,7 @@ export default function buildFilter() {
     let btnResetSearch = tab + "_btnResetSearch" + lng_id;
     $('<label>', {
         for: search,
-        text: filterItems[lng_id].title,
+        text: filterLabels[lng_id].title,
         style: "margin-left:1px;"
     }).appendTo(form);
     $('<input>', {
@@ -86,7 +86,7 @@ export default function buildFilter() {
         'data-toggle': "dropdown",
         'aria-haspopup': "true",
         'aria-expanded': "false",
-        text: filterItems[lng_id].button,
+        text: filterLabels[lng_id].button,
         append: $('<span>', {
             class: "caret"
         }),

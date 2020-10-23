@@ -1,18 +1,23 @@
 /** http://servenus.com © 2015-2019 All Rights Reserved **/
-/** For Attribut&co v.3.0.6  **/
+/** For Attribut&co v.3.0.9  **/
 
 import 'jquery-ui/ui/widgets/dialog';
 import 'jquery.fancytree';
+
+import './functions/Plugin/Dropmenu.js';
+import './functions/Plugin/NodeMethod.js';
 
 import buildFilter from './containers/BuildFilter'
 import initTrees from './containers/InitTrees'
 import tools from './functions/WindowContext/Tools'
 import apply from './functions/WindowContext/Apply'
 import { checkForUpdates, dutyUpgrade } from './functions/WindowContext/Upgrade'
-import './functions/Plugin/Dropmenu.js';
 import buildDialog from './containers/BuildDialog';
 import dialogOptionEvents from './components/DialogOption';
 import commonSettings from './components/CommonSettings';
+import configureStore from './store';
+import reducer from './reducers';
+import Observer from './observers';
 
 window.tools = tools;
 window.apply = apply;
@@ -28,13 +33,19 @@ window.clipboardTitles = [];
 window.pasteMode = null;
 
 // document ready actions
-$(function () {    
+$(function () {
     let t0 = performance.now();
 
     $('.fancyfilter').each(buildFilter);
     $('.dialog-options').each(buildDialog);
 
-    initTrees();
+    const initialState = {};
+    const store = configureStore( reducer, initialState );
+
+    const observer = new Observer(store);
+    observer.init();
+
+    initTrees(store);
 
     let ajaxFinished = 0;
     let totalAjax = 19; //Total of ajax functions you have
@@ -49,21 +60,23 @@ $(function () {
 
 
     /* Button Save onclick event */
-    $("#form-attributico").submit(function () {
+    $("#form-attributico").on('submit', function () {
         // Render hidden <input> elements for active and selected nodes
         $('[id ^= "tree"].settings').each(function (indx, element) {
-            $(element).fancytree("getTree").generateFormElements();
+            let tree = $.ui.fancytree.getTree("#" + element.id);
+            tree.generateFormElements();
         });
         // alert("POST data:\n" + jQuery.param($(this).serializeArray()));
         // return false to prevent submission of this sample
         //  return false;
+        //TODO submit deprecated
     });
 
     /**
      * Alerts for tools when tasks is running
      * Placed in div = column-2, because column-1 is vtabs
      **/
-    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+    $('a[data-toggle="pill"]').on('click', function (e) {
         $("#column-2 .alert-success").hide();
         $("#column-2 .task-complete").hide();
         $("#column-2 .alert-info").show();
@@ -73,8 +86,8 @@ $(function () {
      * Common settings change event hundlers
      *
      **/
-    commonSettings();
-    
+    commonSettings(store);
+
     /**
      * Context menu dialog events
      *
@@ -89,9 +102,9 @@ $(function () {
             Ok: function () {
                 $(this).dialog("close");
             }
-        }       
+        }
     });
-    
+
     dialogOptionEvents();
-    
+
 }); // end of document ready

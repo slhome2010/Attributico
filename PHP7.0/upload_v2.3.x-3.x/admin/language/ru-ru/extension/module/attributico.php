@@ -38,8 +38,9 @@ $_['f_default']   = 'Восстановить';
 // Menu
 $_['text_New_attribute'] = 'Новый атрибут';
 $_['text_New_group'] = 'Новая группа';
-$_['text_Expande'] = 'Развернуть';
+$_['text_Expande'] = 'Раскрыть/Свернуть';
 $_['text_Collapse'] = 'Свернуть';
+$_['text_Refresh'] = 'Обновить';
 $_['text_Edit'] = 'Редактировать';
 $_['text_Delete'] = 'Удалить';
 $_['text_Copy'] = 'Копировать';
@@ -62,7 +63,7 @@ $_['text_support'] = '<fieldset>
                                 По всем вопросам, связаннымы с работой модуля обращайтесь:<br/>
 				<strong>E-mail:</strong> <a href="mailto:#">comtronics@mail.ru</a><br/>
 				<strong>Сайт-демо:</strong> <a href="http://demo.radiocity.kz">demo.radiocity.kz/admin (demo, demo) </a><br/>
-                                <strong>Документация:</strong> <a href="http://servenus.com/ru/doc_attributico_ru.html">servenus.com/ru/doc_attributico_ru.html</a><br/>
+                                <strong>Документация:</strong> <a href="http://servenus.com/ru/doc_attributico_ru.html">http://servenus.com/index.php?lang=ru&page=/doc/ru/attributico</a><br/>
                                 <strong>Форум:</strong> <a href="https://opencartforum.com/topic/62060-attributco-opencart-atributy-eto-legko/">opencartforum.com</a>
                             </address>
                     </fieldset>	';
@@ -158,6 +159,7 @@ $_['error_not_category'] = 'Не выбрана категория!';
 $_['error_not_attribute'] = 'Не выбран атрибут!';
 $_['error_not_info'] = 'Информация недоступна.';
 $_['error_free'] = 'Операция не выполнена потму, что вы используете версию free.';
+$_['error_status'] = 'Модуль не активирован! Активируйте модуль в разделе Расширения->Модули.';
 
 // Tab
 $_['tab_general']      = 'Настройки';

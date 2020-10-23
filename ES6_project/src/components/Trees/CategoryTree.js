@@ -5,11 +5,12 @@ import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- category tree ------------------------------------------------
 export default class CategoryTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-category';
         this.tree = $("#category_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_category_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {
             autoCollapse: true,
@@ -29,7 +30,7 @@ export default class CategoryTree {
             },
             activate: (event, data) => {
                 // var node = data.node;
-                let tree = $("#category_attribute_tree" + this.lng_id).fancytree("getTree");
+                let tree = $.ui.fancytree.getTree("#category_attribute_tree" + this.lng_id);
                 currentCategory = data.node.key;
                 tree.reload({
                     data: {
@@ -57,10 +58,11 @@ export default class CategoryTree {
                     }
                     return true;
                 },
-                dragDrop: function (node, data) {    
-                    // Если источником является дерево атрибутов, то удалять не надо. Если дерево атрибутов категории, то удаляем.
+                dragDrop: (node, data) => {    
+                    // Если источником является дерево атрибутов, то удалять не надо т.к. это ADD. 
+                    // Если дерево атрибутов категории, то удаляем, т.к. это REPLACE.
                     let noRemove = data.otherNode.tree.$div[0].id.indexOf('attribute_tree');               
-                    addAttributeToCategory(node, data, noRemove);
+                    addAttributeToCategory(data.otherNode, node, selNodes, noRemove, this.store);
                 }
             },
             select: function (event, data) {
@@ -68,8 +70,8 @@ export default class CategoryTree {
                 data.tree.options.autoCollapse = false;
                 data.node.setExpanded(!(data.node.expanded && !selCategories.length));
             },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
@@ -98,8 +100,8 @@ export default class CategoryTree {
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

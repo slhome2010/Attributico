@@ -1,4 +1,4 @@
-import { isDuty } from '../../functions/Plugin/NodeMethod';
+//import { isDuty } from '../../functions/Plugin/NodeMethod';
 
 export function editDuty(event, data) {
     const handler = (e) => {                        

@@ -59,10 +59,16 @@ export default class Filter {
                 e.data.tree.options.filter.mode = flag ? "hide" : "dimm";
                 break;
             case "fs_" + e.data.tab + "_counter" + e.data.lng_id:
+                e.data.tree.options.filter['counter'] = flag;
+                break;
             case "fs_" + e.data.tab + "_fuzzy" + e.data.lng_id:
+                e.data.tree.options.filter['fuzzy'] = flag;
+                break;
             case "fs_" + e.data.tab + "_hideExpandedCounter" + e.data.lng_id:
+                e.data.tree.options.filter['hideExpandedCounter'] = flag;
+                break;
             case "fs_" + e.data.tab + "_highlight" + e.data.lng_id:
-                e.data.tree.options.filter[id.replace(/\d/g, '')] = flag;
+                e.data.tree.options.filter['highlight'] = flag;
                 break;
         }
         e.data.tree.clearFilter();

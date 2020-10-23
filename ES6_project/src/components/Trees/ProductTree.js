@@ -4,11 +4,12 @@ import { loadError } from "../Events/LoadError";
 import { smartScroll } from "../../constants/global";
 
 export default class ProductTree {
-    constructor(element) {
+    constructor(element,store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
         this.tree = $("#product_tree" + this.lng_id);
         this.diver = $('input[id = "diver_product_tree' + this.lng_id + '"]:checkbox').is(":checked");      
         this.sortOrder = $('input[id = "sortOrder_product_tree' + this.lng_id + '"]:checkbox').is(":checked");
+        this.store = store;
 
         this.config = {     
             autoCollapse: true,
@@ -31,7 +32,7 @@ export default class ProductTree {
                     return false;
                 }
                 var about_blank = $('input[id = "input-attributico_about_blank"]:checkbox').is(":checked");
-                var attribute_product_tree = $("#attribute_product_tree" + this.lng_id).fancytree("getTree");
+                var attribute_product_tree = $.ui.fancytree.getTree("#attribute_product_tree" + this.lng_id);
                 var attribute_node = attribute_product_tree.getActiveNode();
                 if (about_blank) {
                     $("#reload.alert-danger").show();
@@ -42,14 +43,15 @@ export default class ProductTree {
                 // index.php?route=catalog/product/update for 1.5.5
             },
             click: function (event, data) { },
-            keydown: function (e, data) {
-                let command = new KeydownCommand(e, data);
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
                     addChild: false,
                     addSibling: false,
                     copy: false,
-                    paste: false
+                    paste: false,
+                    refresh: false
                 };
                 command.execute();
             },
@@ -66,13 +68,13 @@ export default class ProductTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        ["remove", "rename", "addSibling", "addChild", "copy", "paste"].forEach(function (item, index, array) {
+                        ["remove", "rename", "addSibling", "addChild", "copy", "paste", "refresh"].forEach(function (item, index, array) {
                             data.tree.$div.contextmenu("enableEntry", item, false);
                         });                        
                         node.setActive();
                     },
-                    select: function (event, ui) {
-                        let command = new ContextmenuCommand(ui);
+                    select: (event, ui) => {
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

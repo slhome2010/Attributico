@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.0.8');
+define('MODULE_VERSION', 'v3.1.2');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -82,7 +82,14 @@ class ControllerModuleAttributico extends Controller
             }
             $this->request->post['attributico_filter'] = serialize($filter_settings);
 
+            if (($this->config->get('module_attributico_status'))) {
+                $this->request->post['module_attributico_status'] = $this->config->get('module_attributico_status');
+            } else {
+                $this->request->post['module_attributico_status'] = 0;
+            }
+
             $this->model_setting_setting->editSetting('attributico', $this->request->post);
+            $this->model_setting_setting->editSetting('module_attributico', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
 
             if (version_compare(VERSION, '2.0.1', '>=')) { // иначе вылетает из админки
@@ -99,10 +106,13 @@ class ControllerModuleAttributico extends Controller
         if ($this->session->data['free']) {
             $this->data['heading_title'] = $this->language->get('heading_title') . ' View ' . MODULE_VERSION . '(free)';
         }
-
-        $duty_check = $this->duty_check();
-        $this->data['duty_check'] = empty($duty_check) ? false : true;
-
+        
+        $this->data['duty_check'] = $this->duty_check();
+        $this->data['status'] = $this->config->get('module_attributico_status');
+        if (!$this->data['status'] && !$this->data['duty_check']) {
+            $this->error['warning'] = $this->language->get('error_status');
+        }
+        
         if (isset($this->session->data['a_debug_mode'])) {
             $this->debug_mode = $this->session->data['a_debug_mode'];
         }
@@ -271,11 +281,13 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_New_group'][$language['language_id']] = $lng->get('text_New_group');
             $this->data['text_Expande'][$language['language_id']] = $lng->get('text_Expande');
             $this->data['text_Collapse'][$language['language_id']] = $lng->get('text_Collapse');
+            $this->data['text_Refresh'][$language['language_id']] = $lng->get('text_Refresh');
             $this->data['text_sortOrder'][$language['language_id']] = $lng->get('text_sortOrder');
             $this->data['text_Diver'][$language['language_id']] = $lng->get('text_Diver');
             $this->data['text_Edit'][$language['language_id']] = $lng->get('text_Edit');
             $this->data['text_Delete'][$language['language_id']] = $lng->get('text_Delete');
             $this->data['text_Copy'][$language['language_id']] = $lng->get('text_Copy');
+            $this->data['text_Cut'][$language['language_id']] = $lng->get('text_Cut');
             $this->data['text_Paste'][$language['language_id']] = $lng->get('text_Paste');
             $this->data['text_lazyLoad'][$language['language_id']] = $lng->get('text_lazyLoad');
             // options
@@ -413,7 +425,7 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-
+        
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
             $this->data['column_left'] = $this->load->controller('common/column_left');
@@ -761,6 +773,37 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+    public function getLazyGroup()
+    {
+        $json = array();
+        $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
+        $sortOrder = isset($this->request->get['sortOrder']) ? filter_var($this->request->get['sortOrder'], FILTER_VALIDATE_BOOLEAN) : true;
+        $lazyLoad = isset($this->request->get['lazyLoad']) ? filter_var($this->request->get['lazyLoad'], FILTER_VALIDATE_BOOLEAN) : false;
+        $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
+
+        $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
+        if ($this->config->get('attributico_children')) {
+            $settings = unserialize($this->config->get('attributico_children'));
+        } else {
+            $settings = $this->settings;
+        }
+        $children = array(
+            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
+            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
+            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
+        );
+
+        $this->load->model('catalog/attributico');
+        if ($key[0] == 'group') {
+            $attribute_group_id = $key[1];
+
+            $json = $this->getAttributeNodes($attribute_group_id, $language_id, $sortOrder, $children, $lazyLoad);
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
+    
     //----------------------------------------CategoryTree------------------------------------------------------------------
     public function getCategoryTree()
     {
@@ -1146,10 +1189,14 @@ class ControllerModuleAttributico extends Controller
     /* Paste attributes */
     public function addAttributes()
     {
+    /** $attributes structure example
+     *  [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
+     *  empty if language not present by any id   
+     * **/    
         $data = array();
         $data['new'] = false;
-        $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
-        $attributes = isset($this->request->get['attributes']) ? $this->request->get['attributes'] : array('0', '0');
+        $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $attributes = isset($this->request->post['attributes']) ? $this->request->post['attributes'] : array('0', '0');
         $attribute_group_id = '';
 
         if ($target[0] == 'group') {
@@ -1497,24 +1544,35 @@ class ControllerModuleAttributico extends Controller
         $data['attributico_cache'] = '1';
         $data['attributico_lazyload'] = '1';
         $data['attributico_children'] = 'a:5:{i:1;a:2:{i:0;s:8:"template";i:1;s:5:"value";}i:2;a:1:{i:0;s:4:"duty";}i:3;a:1:{i:0;s:4:"duty";}i:4;a:2:{i:0;s:8:"template";i:1;s:5:"value";}i:5;a:2:{i:0;s:8:"template";i:1;s:5:"value";}}';
+        $data['module_attributico_status'] = '1';
 
         $this->load->model('setting/setting');
         $this->model_setting_setting->editSetting('attributico', $data);
+        $this->model_setting_setting->editSetting('module_attributico', $data);
     }
 
     public function uninstall()
     {
-        $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "category_attribute");
+        /* $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "category_attribute");
         if ($this->duty_check()) {
             $this->db->query("ALTER TABLE " . DB_PREFIX . "attribute_description DROP COLUMN `duty`");
-        }
+        } */
+        $data['module_attributico_status'] = 0;
+
+        $this->load->model('setting/setting');        
+        $this->model_setting_setting->editSetting('module_attributico', $data);
         $this->cache->delete('attributico');
     }
 
     public function duty_check()
     {
         $query = $this->db->query("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='" . DB_DATABASE . "' AND TABLE_NAME='" . DB_PREFIX . "attribute_description' AND COLUMN_NAME='duty'");
-        return $query->row;
+        
+        if (!empty($query->row)) {
+            return true;
+        } else {
+            return false;
+        }        
     }
 
     public function dutyUpgrade()
@@ -1669,9 +1727,7 @@ class ControllerModuleAttributico extends Controller
                 }
                 break;
             case 'cache':
-
                 $this->cache->delete('attributico');
-
                 break;
             case 'clone':
                 $source_lng = isset($options['clone-language-source']) ? $options['clone-language-source'] : $this->config->get('config_language_id');
