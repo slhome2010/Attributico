@@ -1,25 +1,23 @@
 import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_REPLACE_CATEGORY, DND_SORT_NODE, DND_ADD_NODE } from '../constants/actions'
 
-export function dndMergeNode (tree,sourceNode,targetNode,affectedNodes) {
+export function dndMergeNode (sourceNode,targetNode,affectedNodes) {
 	return {
-		type: DND_MERGE_NODE,
-		tree,
+		type: DND_MERGE_NODE,		
 		sourceNode,
 		targetNode,
 		affectedNodes
 	}
 }
 
-export function dndReplaceParent (tree,sourceNode,targetNode,affectedNodes) {
+export function dndReplaceParent (sourceNode,targetNode,affectedNodes) {
 	return {
-		type: DND_REPLACE_PARENT,
-		tree,
+		type: DND_REPLACE_PARENT,		
 		sourceNode,
 		targetNode,
 		affectedNodes
 	}
 }
-
+// TODO remove tree from arguments ?
 export function dndReplaceCategory (tree,sourceNode,targetNode,affectedNodes) {
 	return {
 		type: DND_REPLACE_CATEGORY,
@@ -30,10 +28,9 @@ export function dndReplaceCategory (tree,sourceNode,targetNode,affectedNodes) {
 	}
 }
 
-export function dndSortNode (tree,sourceNode,targetNode,affectedNodes) {
+export function dndSortNode (sourceNode,targetNode,affectedNodes) {
 	return {
-		type: DND_SORT_NODE,
-		tree,
+		type: DND_SORT_NODE,		
 		sourceNode,
 		targetNode,
 		affectedNodes

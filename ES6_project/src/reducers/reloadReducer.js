@@ -9,8 +9,8 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.sourceNode.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: null,
-                tree: action.tree,
+                affectedNodes: action.affectedNodes,
+                tree: action.targetNode.tree, 
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
                 activeNode: action.targetNode,
@@ -21,13 +21,13 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: null,
-                tree: action.tree,
+                affectedNodes: action.affectedNodes,
+                tree: action.targetNode.tree, 
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode,
-                selfReload: false
+                selfReload: true //TODO may be false?
             }
         case DND_REPLACE_CATEGORY:
             return {
@@ -45,13 +45,13 @@ export default function reload(state = {}, action) {
             return {
                 ...state,
                 boundTrees: action.sourceNode.isGroup() ? GROUP_SYNCRO_TREES : ATTRIBUTE_SYNCRO_TREES,
-                affectedNodes: null,
-                tree: action.tree,
+                affectedNodes: action.affectedNodes,
+                tree: action.targetNode.tree, 
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode,
-                selfReload: action.affectedNodes ? true : false // for correctly sorting if multiselect
+                selfReload: action.affectedNodes ? true : false // for correctly sorting if multiselect Group
             }
         case DND_ADD_NODE:
             return {
@@ -76,7 +76,7 @@ export default function reload(state = {}, action) {
                 targetNode: action.node,
                 activeNode: action.node,
                 altActiveNode: action.node.getParent(),
-                selfReload: action.node.getParent().isLazy()
+                selfReload: action.node.getParent().isLazy() // TODO почему то срабатывает на добавлении атрибута
             }
         case COPY_NODE:
             return {
