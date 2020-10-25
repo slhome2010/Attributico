@@ -28,8 +28,7 @@ export default class CategoryTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
             },
-            activate: (event, data) => {
-                // var node = data.node;
+            activate: (event, data) => {                
                 let tree = $.ui.fancytree.getTree("#category_attribute_tree" + this.lng_id);
                 currentCategory = data.node.key;
                 tree.reload({
@@ -84,8 +83,7 @@ export default class CategoryTree {
             focusTree: function (e, data) {
                 data.tree.$container.focus();
             },
-            init: (event, data) => {
-                //console.log(data.tree.$div.context.id, ' has loaded');
+            init: (event, data) => {                
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 

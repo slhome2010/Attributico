@@ -32,8 +32,7 @@ export default class AttributeGroupTree {
                     'language_id': this.lng_id,
                     'sortOrder': this.sortOrder,
                     'lazyLoad': this.lazyLoad,
-                    'tree': "1",
-                   // 'isPending': false
+                    'tree': "1"                   
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },

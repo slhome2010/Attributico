@@ -27,8 +27,7 @@ export default class AttributeProductTree {
                     'token': token,
                     'language_id': this.lng_id,
                     'sortOrder': this.sortOrder,
-                    'lazyLoad': this.lazyLoad,
-                    'isPending': false,
+                    'lazyLoad': this.lazyLoad,                    
                     'tree': "5"
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'

@@ -30,8 +30,7 @@ export default class DutyTree {
                     'token': token,
                     'language_id': this.lng_id,
                     'sortOrder': this.sortOrder,
-                    'lazyLoad': this.lazyLoad,
-                    'isPending': false,
+                    'lazyLoad': this.lazyLoad,                   
                     'tree': "2"
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'

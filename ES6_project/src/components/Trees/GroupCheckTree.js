@@ -17,8 +17,7 @@ export default class GroupCheckTree {
                     'user_token': user_token,
                     'token': token,
                     'sortOrder': this.sortOrder,
-                    'onlyGroup': true,
-                    'isPending': false
+                    'onlyGroup': true                    
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
@@ -33,8 +32,7 @@ export default class GroupCheckTree {
                 };
                 command.execute();
             },
-            init: (event, data) => {
-                //console.log(data.tree.$div.context.id, ' has loaded');
+            init: (event, data) => {                
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 

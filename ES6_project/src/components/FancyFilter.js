@@ -8,36 +8,32 @@ export default class Filter {
         this.data = {
             tab,
             tree,
-            lng_id
+            lng_id            
         };
         this.input = $("input[name=" + this.data.tab + "_search" + this.data.lng_id + "]");
         this.btnSearch = $("button#" + this.data.tab + "_btnSearch" + this.data.lng_id);
         this.btnResetSearch = $("button#" + this.data.tab + "_btnResetSearch" + this.data.lng_id);
         this.checkbox = $("div#" + this.data.tab + "_filter" + this.data.lng_id + " input:checkbox");
         this.autoComplete = $("input#fs" + this.data.tab + "_autoComplete" + this.data.lng_id);
+
+        this.search = this.search.bind(this);
+        this.keyupCounter = 0
     }
 
-    attachEvents() {
-        //let self = this;
+    attachEvents() {        
         this.input.keyup(this.data, this.search).focus();
         this.btnSearch.click(this.data, this.search);
         this.checkbox.change(this.data, this.changeSettings);
         this.btnResetSearch.click(this.data, this.clear).attr("disabled", true);
-        this.btnSearch.attr("disabled", this.autoComplete.is(":checked"));
-        //console.log($("a[id =f_" + this.data.tab + this.data.lng_id  + "_digital" + "]"));
+        this.btnSearch.attr("disabled", this.autoComplete.is(":checked"));        
         $("a[id ^=f_" + this.data.tab + this.data.lng_id + "]").click(this.data, this.action);
     }
 
     clear(e) {
         if (e.data.tree.isFilterActive()) {
-            e.data.tree.clearFilter();
-            // if (e.data.length === 3) {
+            e.data.tree.clearFilter();            
             $('input[name *= ' + e.data.tab + '_search' + e.data.lng_id + ']').val("");
-            $('span[id *= ' + e.data.tab + '_matches' + e.data.lng_id + ']').text("");
-            //  } else {
-            //      $('input[name *= "search"]').val("");
-            //      $('span[id *= "matches"]').text("");
-            //  }
+            $('span[id *= ' + e.data.tab + '_matches' + e.data.lng_id + ']').text("");            
             $("[id ^=loadImg]").hide();
         }
     }
@@ -75,7 +71,7 @@ export default class Filter {
         $("input[name=" + e.data.tab + "_search" + e.data.lng_id + "]").trigger("keyup");
     }
 
-    search(e) {
+    async search(e) {
         let tab = e.data.tab;
         let lng_id = e.data.lng_id;
         let tree = e.data.tree;
@@ -85,26 +81,22 @@ export default class Filter {
             leavesOnly: $("#fs_" + tab + "_leavesOnly" + lng_id).is(":checked")
         };
         let attributesOnly = $("#fs_" + tab + "_attributesOnly" + lng_id).is(":checked");
-        let match = $("input[name=" + tab + "_search" + lng_id + "]").val();
-        // match = $(this).val();
+        let match = $("input[name=" + tab + "_search" + lng_id + "]").val();        
 
         if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
             $("button#" + tab + "_btnResetSearch" + lng_id).click();
             return;
         }
         if (!$("#fs_" + tab + "_autoComplete" + lng_id).is(":checked") && e.type === "keyup") {
-
             return;
         }
-        if (!attributesOnly && !tree.options.source.data.isPending) {
-            tree.visit(function (node) {
-                if (node.isLazy()) {
-                    node.load(true);
-                }
-            });
-            //  $("#loadImg" + lng_id).show();
-            tree.options.source.data.isPending = true;
+
+        if (!attributesOnly && this.keyupCounter === 0) {
+            // keyuoCounter защита от срабатывания на каждую букву при автозаполнении
+            await this.loadAllNodes(tree)            
+            this.keyupCounter++          
         }
+
         setTimeout(() => {
             if ($("#fs_" + tab + "_regex" + lng_id).is(":checked")) {
                 // Pass function to perform match
@@ -120,6 +112,14 @@ export default class Filter {
 
         $("button#" + tab + "_btnResetSearch" + lng_id).attr("disabled", false);
         $("span#" + tab + "_matches" + lng_id).text("(" + n + ")");
+    }
+
+    async loadAllNodes(tree) {
+        tree.visit(node => {
+            if (node.isLazy()) {
+                node.load(true);
+            }
+        })        
     }
 
     action(e) {

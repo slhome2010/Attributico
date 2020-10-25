@@ -33,8 +33,7 @@ export default class CategoryCheckTree {
                 };
                 command.execute();
             },
-            init: (event, data) => {
-                //console.log(data.tree.$div.context.id, ' has loaded');
+            init: (event, data) => {                
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 

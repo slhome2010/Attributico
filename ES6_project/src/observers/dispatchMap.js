@@ -2,8 +2,8 @@
 
 const { moveNode } = require("../functions/Move");
 
-CommonSettings.js, /*  event handler for cache on/off */,  store.dispatch(checkOptions());
-CommonSettings.js, /*  // event handler for multistore categories output */,  store.dispatch(checkOptions());
+*, CommonSettings.js, /*  event handler for cache on/off */,  store.dispatch(checkOptions());
+*, CommonSettings.js, /*  // event handler for multistore categories output */,  store.dispatch(checkOptions());
 *, UPDATE_NODE, SaveAfterEdit.js,  saveAfterEdit(event, data, store)/* Edit template */, store.dispatch(updateNode(data.node));
 *, UPDATE_NODE, SaveAfterEdit.js,  saveAfterEdit(event, data, store)/* Edit value */, store.dispatch(updateNode(data.node));
 *, UPDATE_NODE, SaveAfterEdit.js,  saveAfterEdit(event, data, store)/* Edit Attribute or Group */, store.dispatch(updateNode(data.node));

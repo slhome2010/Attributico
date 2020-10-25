@@ -45,9 +45,7 @@ export default function commonSettings(store) {
                 $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
                     let tree = $.ui.fancytree.getTree("#" + element.id);
                     tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-                    tree.reload().done(function () {
-                        tree.options.source.data.isPending = false; //TODO isPending ???                        
-                    });
+                    tree.reload()
                 });
                 store.dispatch(checkOptions());
             }
@@ -65,9 +63,7 @@ export default function commonSettings(store) {
                 $(CATEGORY_SYNCRO_TREES).each(function (indx, element) {
                     let tree = $.ui.fancytree.getTree("#" + element.id);
                     tree.options.source.data.multistore = $('input[name = "attributico_multistore"]:checkbox').is(":checked");
-                    tree.reload().done(function () {
-                        tree.options.source.data.isPending = false; //TODO isPending ???                       
-                    });
+                    tree.reload()
                 });
                 store.dispatch(checkOptions());
             }
