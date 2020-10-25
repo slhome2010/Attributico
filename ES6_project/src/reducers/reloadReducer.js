@@ -117,7 +117,8 @@ export default function reload(state = {}, action) {
         case CHECK_OPTIONS:
             return {
                 ...state,
-                boundTrees: ATTRIBUTE_SYNCRO_TREES,
+                boundTrees: GROUP_SYNCRO_TREES,
+                affectedNodes: null,
                 tree: null,
                 sourceNode: null,
                 targetNode: null,

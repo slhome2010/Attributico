@@ -38,8 +38,7 @@ export default class AttributeGroupTree {
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
             loadError: (e, data) => loadError(e, data),
-            lazyLoad: (event, data) => {
-                /* console.log('key=>', data.node.key, 'title=>', data.node.title ) */
+            lazyLoad: (event, data) => {                
                 data.result = {
                     data: {
                         'user_token': user_token,

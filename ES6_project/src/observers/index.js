@@ -23,7 +23,7 @@ export default class Observer {
 
     printState(state) {
         let stateInfo = {
-            tree: state.tree.$div[0].id,
+            tree: state.tree !== null ? state.tree.$div[0].id : null,
             sourceNode: state.sourceNode !== null ? state.sourceNode.title : null,
             targetNode: state.targetNode !== null ? state.targetNode.title : null,
             activeNode: state.activeNode !== null ? state.activeNode.title : null,
