@@ -115,7 +115,7 @@ export default class Observer {
         }.bind(this));
     }
     /* Функция приведенная к синхронному виду. Деревья и узлы грузятся последовательно */
-    async asyncTreeReload() {
+    /* async asyncTreeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
         let trees = [];
         // Сформируем массив для последующего синхронного цикла for...of
@@ -123,7 +123,7 @@ export default class Observer {
             let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
             trees.push(tree)
         })
-        /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
+        
         if (!state.selfReload && state.activeNode !== null) {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });
         }
@@ -134,15 +134,14 @@ export default class Observer {
                 await this.smartReload(tree, state.affectedNodes)
                 this.setActiveNode(tree, state.activeNode, state.altActiveNode)
             } else
-                if ((tree !== state.tree) || state.selfReload) { // not reload active tree
+                if ((tree !== state.tree) || state.selfReload) { 
                     this.clearFilter(tree);
-                    tree.reload().done(() => {
-                        /* В каждом дереве установим активный узел или альтернативный, н-р, родителя */
+                    tree.reload().done(() => {                       
                         this.setActiveNode(tree, state.activeNode, state.altActiveNode)
                     });
                 }
         }
-    }
+    } */
 
     init() {
         this.store.subscribe(this.treeReload.bind(this))

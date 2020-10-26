@@ -1,6 +1,16 @@
 /** Backend functions for moveNode works with list of nodes for one of language
  * no matter from language_id.
  * There are using only node_id (attribute_id or gruop_id) in Sql query   **/
+/**
+ * @function moveNode
+ * 
+ * @param {sourceNode} FancytreeNode /  the node which is moving 
+ * @param {targetNode} FancytreeNode /  the node where the sourceNode is moving
+ * @param {clipboard} Array.FancytreeNode /  the an array of nodes that need to move
+ * @param {ctrlKey} Boolean /  True if the nodes are moved while the ctrlKey or altKey button is pressed
+ * @param {direct} String /  
+ * 
+**/
 /* sourceNode, targetNode, clipboard (or selNodes), ctrlKey, direct (hitMode : before?after?over), store */
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';

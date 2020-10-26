@@ -75,7 +75,7 @@ export function deleteAttribute(node, store) {
                     } else {
                         node.remove();
                     }
-                }             
+                }
             }
         });
     }
@@ -140,7 +140,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
-            store.dispatch(dndReplaceCategory(targetTree, sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
+            store.dispatch(dndReplaceCategory(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
         }
     });
     deSelectNodes();
@@ -199,7 +199,7 @@ export function copyPaste(action, actionNode, store) {
 
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source 
-                let parentNode = actionNode.getParentByKey('group') || actionNode.getParentByKey('category');
+                let parentNode = actionNode.getParentGroup() || actionNode.getParentCategory();
                 let sourceNode = clipboardNodes[lng_id][0];
                 let targetLevel = actionNode.getLevel();
                 let sourceLevel = sourceNode.getLevel();

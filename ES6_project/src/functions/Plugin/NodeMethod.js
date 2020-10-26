@@ -4,7 +4,7 @@
  * @returns {FancytreeNode}
  *
  **/
-$.ui.fancytree._FancytreeNodeClass.prototype.getParentByKey = function (key) {
+/* $.ui.fancytree._FancytreeNodeClass.prototype.getParentByKey = function (key) {
     key = (key == null) ? null : "" + key;
 
     var node = this;
@@ -15,7 +15,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getParentByKey = function (key) {
         }
     }
     return !node.isRootNode() ? node : null;
-};
+}; */
 /**
  * Return first sibling or parent not selected node
  * @returns {FancytreeNode}
@@ -96,24 +96,24 @@ $.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
 // Get nodes by condition
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentAttribute = function () {
     let node = this;
-    while (node.key.indexOf('attribute') < 0) {
+    while (node.key.indexOf('attribute') < 0 && !node.isRootNode()) {
         node = node.getParent()
     }
-    return node;
+    return !node.isRootNode() ? node : null;
 };
 
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentGroup = function () {
     let node = this;
-    while (node.key.indexOf('group') < 0) {
+    while (node.key.indexOf('group') < 0 && !node.isRootNode()) {
         node = node.getParent()
     }
-    return node;
+    return !node.isRootNode() ? node : null;
 };
 
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentCategory = function () {
     let node = this;
-    while (node.key.indexOf('category') < 0) {
+    while (node.key.indexOf('category') < 0 && !node.isRootNode()) {
         node = node.getParent()
     }
-    return node;
+    return !node.isRootNode() ? node : null;
 };
