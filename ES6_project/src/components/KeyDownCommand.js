@@ -6,11 +6,10 @@
 import { deSelectNodes } from '../functions/Select'
 import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
-//import { isCategory } from '../functions/Plugin/NodeMethod';
 import RefreshTree from './Events/RefreshTree';
 
 export class KeydownCommand {
-    constructor(event, data, store) { 
+    constructor(event, data, store) {
         this.e = event;
         this.node = data.node;
         this.tree = data.tree;
@@ -55,7 +54,7 @@ export class KeydownCommand {
                     CollapseExpande(this.tree);
                 }
                 break;
-                case 82:
+            case 82:
                 //     shift+R  cmd = "refresh";
                 if (this.access.refresh && this.e.shiftKey) {
                     RefreshTree(this.tree);
@@ -94,11 +93,18 @@ export class KeydownCommand {
                     deSelectNodes(this.node);
                     return false;
                 }
+
+                // Alt-V merge
+                if (this.access.merge && this.e.altKey) {
+                    copyPaste("merge", this.node, this.store);
+                    deSelectNodes(this.node);
+                    return false;
+                }
                 break;
-             case 88:
-                 // Ctrl-X cut
-                 if (this.access.cut && this.e.ctrlKey) {
-                    copyPaste("cut", this.node, this.store);                    
+            case 88:
+                // Ctrl-X cut
+                if (this.access.cut && this.e.ctrlKey) {
+                    copyPaste("cut", this.node, this.store);
                     return false;
                 }
                 break;

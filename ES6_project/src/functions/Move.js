@@ -1,6 +1,8 @@
-/** Backend functions for moveNode works with list of nodes for one of language
+/** 
+ * Backend functions for moveNode works with list of nodes for one of language
  * no matter from language_id.
- * There are using only node_id (attribute_id or gruop_id) in Sql query   **/
+ * There are using only node_id (attribute_id or gruop_id) in Sql query   
+**/
 /**
  * @function moveNode
  * 
@@ -8,10 +10,10 @@
  * @param {targetNode} FancytreeNode /  the node where the sourceNode is moving
  * @param {clipboard} Array.FancytreeNode /  the an array of nodes that need to move
  * @param {ctrlKey} Boolean /  True if the nodes are moved while the ctrlKey or altKey button is pressed
- * @param {direct} String /  
+ * @param {direct} String /  Node accept mode ('before','after','over')
+ * @param {store} Redux.Store /  State transfer to reducer 
  * 
 **/
-/* sourceNode, targetNode, clipboard (or selNodes), ctrlKey, direct (hitMode : before?after?over), store */
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';
 
@@ -49,6 +51,7 @@ export async function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direc
     }
 
     if (merge) {
+        // Merge group === replace group for child attributes and remove group (see in backend controller)
         url = 'index.php?route=' + extension + 'module/attributico/mergeAttributeGroup';
         affectedNodes = sourceNode.isGroup() ? null : [sourceGroup, targetNode.getParentGroup()]
         dispatchAction = dndMergeNode;
@@ -73,7 +76,7 @@ export async function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direc
             'group': targetNode.getParent().key,
             'target': targetNode.key,
             'direct': direct
-        },
+        }, // TODO POST request
         url: url,
         success: () => {
             store.dispatch(dispatchAction(sourceNode, targetNode, affectedNodes));

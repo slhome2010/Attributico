@@ -9,14 +9,14 @@ import { smartScroll } from '../../constants/global';
 import { moveNode } from '../../functions/Move';
 
 export default class AttributeGroupTree {
-    constructor(element,store) {
+    constructor(element, store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-attribute';
         this.tree = $("#attribute_group_tree" + this.lng_id);
         this.sortOrder = $('input[id = "sortOrder_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.lazyLoad = $('input[id = "lazyLoad_attribute_group_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.store = store;
-                
+
         this.config = {
             autoCollapse: true,
             autoScroll: true,
@@ -32,12 +32,12 @@ export default class AttributeGroupTree {
                     'language_id': this.lng_id,
                     'sortOrder': this.sortOrder,
                     'lazyLoad': this.lazyLoad,
-                    'tree': "1"                   
+                    'tree': "1"
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
             },
             loadError: (e, data) => loadError(e, data),
-            lazyLoad: (event, data) => {                
+            lazyLoad: (event, data) => {
                 data.result = {
                     data: {
                         'user_token': user_token,
@@ -61,8 +61,8 @@ export default class AttributeGroupTree {
                         return false;
                     }
                     // Reset filter setting _highlight to false for exclude tag <mark> from title
-                    this.tree.options.filter['highlight'] = false; 
-                    this.tree.clearFilter();                  
+                    this.tree.options.filter['highlight'] = false;
+                    this.tree.clearFilter();
                 },
                 edit: (event, data) => editDuty(event, data), // Editor was opened (available as data.input)                
                 beforeClose: function (event, data) {
@@ -87,29 +87,29 @@ export default class AttributeGroupTree {
                     }
                     return true;
                 },
-                dragEnter: (targetNode, data)  => {
+                dragEnter: (targetNode, data) => {
                     let targetLevel = targetNode.getLevel();
-                    let subjectLevel = data.otherNode.getLevel();
-                    let subjectNode = data.otherNode;
+                    let sourceLevel = data.otherNode.getLevel();
+                    let sourceNode = data.otherNode;
                     // embargo on levels mixing
-                    if (targetLevel === 1 || targetLevel > subjectLevel) {
+                    if (targetLevel === 1 || targetLevel > sourceLevel) {
                         return false;
                     }
-
-                    if (targetNode === subjectNode.parent) {
+                    // embargo on moving into oneself
+                    if (targetNode === sourceNode.parent) {
                         return false;
                     }
                     // embargo to sort nodes if tree option "sortOrder" turned off
-                    if (targetNode.parent === subjectNode.parent && !data.tree.options.source.data.sortOrder && !data.originalEvent.ctrlKey) {
+                    if (targetNode.parent === sourceNode.parent && !data.tree.options.source.data.sortOrder && !data.originalEvent.ctrlKey) {
                         return false;
                     }
 
-                    if (targetLevel === subjectLevel && !data.originalEvent.ctrlKey) {
+                    if (targetLevel === sourceLevel && !data.originalEvent.ctrlKey) {
                         return ["before", "after"];
                     }
                     return ["over"];
                 },
-                dragDrop: (targetNode, data)  => { 
+                dragDrop: (targetNode, data) => {
 
                     moveNode(data.otherNode, targetNode, selNodes, data.originalEvent.ctrlKey, data.hitMode, this.store);
 
@@ -134,15 +134,16 @@ export default class AttributeGroupTree {
                     deSelectNodes(data.node);
                 }
             },
-            keydown: (e, data)  => {
-                let command = new KeydownCommand(e, data, this.store);               
+            keydown: (e, data) => {
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
                     addChild: true,
                     addSibling: true,
                     copy: data.node.hasPermission(['attribute']),
-                    cut: data.node.hasPermission(['attribute']),
-                    paste: true
+                    cut: data.node.hasPermission(['group', 'attribute']),
+                    paste: true,
+                    merge: data.node.hasPermission(['group', 'attribute'])
                 };
                 command.execute();
             },
@@ -157,7 +158,6 @@ export default class AttributeGroupTree {
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
                 filter.attachEvents();
-               /*  console.log(data.tree.$div[0].id, ' has initialised'); */
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 

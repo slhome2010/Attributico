@@ -45,21 +45,21 @@ export function deleteAttribute(node, store) {
                 let affectedNodes = []
                 if (node.isTemplate() || node.isValue()) {
                     // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
-                    if (selNodes) {
+                    /* if (selNodes) {
                         for (let selnode of selNodes) {
                             affectedNodes.push(selnode.getParentAttribute())
                         }
-                    } else {
-                        affectedNodes.push(node.getParentAttribute())
-                    }
+                    } else { */
+                    affectedNodes.push(node.getParentAttribute())
+                    /*  } */
                 } else if (node.isAttribute()) {
-                    if (selNodes) {
+                    /* if (selNodes) {
                         for (let selnode of selNodes) {
                             affectedNodes.push(selnode.getParentGroup())
                         }
-                    } else {
-                        affectedNodes.push(node.getParentGroup())
-                    }
+                    } else { */
+                    affectedNodes.push(node.getParentGroup())
+                    /*  } */
                 } else {
                     // Delete Group  
                     affectedNodes = null
@@ -67,15 +67,15 @@ export function deleteAttribute(node, store) {
                 // Надо до remove иначе node может уже не быть
                 store.dispatch(deleteNode(node, affectedNodes));
 
-                if (affectedNodes === null) {
-                    if (selNodes) {
-                        $.each(selNodes, (i, selnode) => {
-                            selnode.remove();
-                        });
-                    } else {
-                        node.remove();
-                    }
+                /* if (affectedNodes === null) { */
+                if (selNodes) {
+                    $.each(selNodes, (i, selnode) => {
+                        selnode.remove();
+                    });
+                } else {
+                    node.remove();
                 }
+                /*  } */
             }
         });
     }
@@ -148,12 +148,22 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
 
 export function copyPaste(action, actionNode, store) {
     let activeTree = actionNode.tree;
+    // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
+    let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
+    let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
+    let direct = 'after';
+    let ctrlKey = false;
+    let removeSourceNodes = true;
+    let parentNode;
+    let sourceNode;
+    let targetNode;
+    let targetLevel;
+    let sourceLevel;
+
     // actionNode в операциях cut & copy играет роль sourceNode, а в операции paste targetNode
     switch (action) {
         case "cut":
         case "copy":
-            // Селектор нужен т.к. источником узлов могут служить разные деревья. В селекторе убираем цифры.
-            let TREE_SELECTOR = '[name ^=' + activeTree.$div[0].id.replace(/[0-9]/g, '') + ']';
             pasteMode = action;
             // selNodes надо переписать в буфер обмена, т.к. при нажатии без ctrl сработет deselectNodes()
             // заполняем буфер обмена clipboard выделенными узлами для каждого языка
@@ -163,21 +173,20 @@ export function copyPaste(action, actionNode, store) {
             // если нужен список узлов, то используется selNodes или [sourceNode.key]
             // однако для функций addAttribute... нужна структура типа :
             // [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
-            $(TREE_SELECTOR).each(function (indx, element) {
-                let tree = $.ui.fancytree.getTree("#" + element.id);
-                let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
+            $(TREE_SELECTOR).each(function (indx, selector) {
+                let tree = $.ui.fancytree.getTree("#" + selector.id);
+                let lng_id = parseInt(selector.id.replace(/\D+/ig, ''));
 
                 clipboardNodes[lng_id] = [];
                 clipboardTitles[lng_id] = [];
 
                 if (selNodes) {
-                    selNodes.forEach(function (node, i) {
+                    selNodes.forEach(node => {
                         let selNode = tree.getNodeByKey(node.key);
                         if (selNode !== null) {
                             clipboardNodes[lng_id].push(selNode);
                             clipboardTitles[lng_id].push(selNode.title);
                         }
-
                     });
                 } else {
                     let selNode = tree.getNodeByKey(actionNode.key);
@@ -189,32 +198,37 @@ export function copyPaste(action, actionNode, store) {
             });
             break;
         case "paste":
-            let direct = 'after';
-            let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
+            direct = 'after';
+            ctrlKey = false;
+            removeSourceNodes = true;
 
             if (clipboardNodes.length == 0) {
-                alert("Clipoard is empty.");
+                alert("Clipboard is empty.");
                 break;
             }
 
             if (pasteMode == "cut") {
                 // Cut mode: check for recursion and remove source 
-                let parentNode = actionNode.getParentGroup() || actionNode.getParentCategory();
-                let sourceNode = clipboardNodes[lng_id][0];
-                let targetLevel = actionNode.getLevel();
-                let sourceLevel = sourceNode.getLevel();
-
-                if (targetLevel < sourceLevel) {
-                    direct = 'over';
-                }
+                parentNode = actionNode.getParentGroup() || actionNode.getParentCategory();
+                sourceNode = clipboardNodes[lng_id][0];
+                targetNode = actionNode;
+                targetLevel = actionNode.getLevel();
+                sourceLevel = sourceNode.getLevel();
 
                 if (parentNode.isCategory()) {
-                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], true, store);
+                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], removeSourceNodes, store);
                 } else {
-                    // clipboardNodes[lng_id] - список узлов не важно для какого языка
-                    moveNode(sourceNode, actionNode, clipboardNodes[lng_id], false, direct, store)
+                    if (targetLevel !== sourceLevel) {
+                        direct = 'over';
+                    }
+                    // embargo on levels mixing
+                    if (targetLevel === 1 || targetLevel > sourceLevel) {
+                        alert('Merging nodes of different levels is impossible.')
+                    } else {
+                        // clipboardNodes[lng_id] - список узлов не важно для какого языка
+                        moveNode(sourceNode, targetNode, clipboardNodes[lng_id], ctrlKey, direct, store)
+                    }
                 }
-
             } else {
                 pasteNodes(actionNode, lng_id, store);
             }
@@ -222,7 +236,30 @@ export function copyPaste(action, actionNode, store) {
             clipboardNodes = [];
             clipboardTitles = [];
             pasteMode = null;
+            break;
+        case "merge":
+            direct = 'over';
+            ctrlKey = true;
 
+            if (clipboardNodes.length == 0) {
+                alert("Clipboard is empty.");
+                break;
+            }
+
+            if (pasteMode == "cut") {
+                sourceNode = clipboardNodes[lng_id][0];
+                targetLevel = actionNode.getLevel();
+                sourceLevel = sourceNode.getLevel();
+                if (targetLevel === sourceLevel) {
+                    moveNode(sourceNode, actionNode, clipboardNodes[lng_id], ctrlKey, direct, store)
+                } else {
+                    alert('Merging nodes of different levels is impossible.')
+                }
+            }
+
+            clipboardNodes = [];
+            clipboardTitles = [];
+            pasteMode = null;
             break;
         default:
             alert("Unhandled clipboard action '" + action + "'");
