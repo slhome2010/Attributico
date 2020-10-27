@@ -106,13 +106,13 @@ class ControllerModuleAttributico extends Controller
         if ($this->session->data['free']) {
             $this->data['heading_title'] = $this->language->get('heading_title') . ' View ' . MODULE_VERSION . '(free)';
         }
-        
+
         $this->data['duty_check'] = $this->duty_check();
         $this->data['status'] = $this->config->get('module_attributico_status');
         if (!$this->data['status'] && !$this->data['duty_check']) {
             $this->error['warning'] = $this->language->get('error_status');
         }
-        
+
         if (isset($this->session->data['a_debug_mode'])) {
             $this->debug_mode = $this->session->data['a_debug_mode'];
         }
@@ -425,7 +425,7 @@ class ControllerModuleAttributico extends Controller
         } else {
             $this->data['attributico_multistore'] = 0;
         }
-        
+
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
             $this->data['column_left'] = $this->load->controller('common/column_left');
@@ -803,7 +803,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
-    
+
     //----------------------------------------CategoryTree------------------------------------------------------------------
     public function getCategoryTree()
     {
@@ -1189,10 +1189,10 @@ class ControllerModuleAttributico extends Controller
     /* Paste attributes */
     public function addAttributes()
     {
-    /** $attributes structure example
-     *  [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
-     *  empty if language not present by any id   
-     * **/    
+        /** $attributes structure example
+         *  [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
+         *  empty if language not present by any id   
+         * **/
         $data = array();
         $data['new'] = false;
         $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
@@ -1227,9 +1227,9 @@ class ControllerModuleAttributico extends Controller
     public function deleteAttributes()
     {
         $data = array();
-        $keys = isset($this->request->get['keys']) ? $this->request->get['keys'] : array('0', '0');
-        $titles = isset($this->request->get['titles']) ? $this->request->get['titles'] : array('', '');
-        $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
+        $keys = isset($this->request->post['keys']) ? $this->request->post['keys'] : array('0', '0');
+        $titles = isset($this->request->post['titles']) ? $this->request->post['titles'] : array('', '');
+        $language_id = isset($this->request->post['language_id']) ? $this->request->post['language_id'] : $this->config->get('config_language_id');
 
         $combine = array_combine($keys, $titles);
 
@@ -1262,9 +1262,9 @@ class ControllerModuleAttributico extends Controller
     public function replaceAttributeGroup()
     {
         $attribute_group_id = '';
-        $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
-        $subjects = isset($this->request->get['subjects']) ? $this->request->get['subjects'] : array();
-        $group = isset($this->request->get['group']) ? explode("_", $this->request->get['group']) : array();
+        $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $subjects = isset($this->request->post['subjects']) ? $this->request->post['subjects'] : array();
+        $group = isset($this->request->products['group']) ? explode("_", $this->request->post['group']) : array();
 
         $this->load->model('catalog/attributico');
 
@@ -1286,9 +1286,9 @@ class ControllerModuleAttributico extends Controller
     public function sortAttributeGroup()
     {
         $data = array();
-        $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
-        $direct = isset($this->request->get['direct']) ? $this->request->get['direct'] : "before";
-        $subjects = isset($this->request->get['subjects']) ? $this->request->get['subjects'] : array('0', '0');
+        $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $direct = isset($this->request->post['direct']) ? $this->request->post['direct'] : "before";
+        $subjects = isset($this->request->post['subjects']) ? $this->request->post['subjects'] : array('0', '0');
 
         $data['target_id'] = $target[1];
         $data['direct'] = $direct;
@@ -1309,8 +1309,8 @@ class ControllerModuleAttributico extends Controller
 
     public function mergeAttributeGroup()
     {
-        $target = isset($this->request->get['target']) ? explode("_", $this->request->get['target']) : array('0', '0');
-        $subjects = isset($this->request->get['subjects']) ? $this->request->get['subjects'] : array('0', '0');
+        $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $subjects = isset($this->request->post['subjects']) ? $this->request->post['subjects'] : array('0', '0');
 
         if ($this->session->data['free']) {
             return;
@@ -1559,7 +1559,7 @@ class ControllerModuleAttributico extends Controller
         } */
         $data['module_attributico_status'] = 0;
 
-        $this->load->model('setting/setting');        
+        $this->load->model('setting/setting');
         $this->model_setting_setting->editSetting('module_attributico', $data);
         $this->cache->delete('attributico');
     }
@@ -1567,12 +1567,12 @@ class ControllerModuleAttributico extends Controller
     public function duty_check()
     {
         $query = $this->db->query("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='" . DB_DATABASE . "' AND TABLE_NAME='" . DB_PREFIX . "attribute_description' AND COLUMN_NAME='duty'");
-        
+
         if (!empty($query->row)) {
             return true;
         } else {
             return false;
-        }        
+        }
     }
 
     public function dutyUpgrade()

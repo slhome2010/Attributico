@@ -34,13 +34,12 @@ export function deleteAttribute(node, store) {
     if (level === 2 || level === 3 || level === 5) {
         $.ajax({
             data: {
-                'user_token': user_token,
-                'token': token,
                 'keys': selNodes ? getSelectedKeys(selNodes) : [node.key],
                 'titles': selNodes ? getSelectedTitles(selNodes) : [node.title],
                 'language_id': node.getLanguageId()
             },
-            url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
+            url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes' + '&user_token=' + user_token + '&token=' + token,
+            type: 'POST',
             success: function () {
                 let affectedNodes = []
                 let removeVisibleNodes = true
