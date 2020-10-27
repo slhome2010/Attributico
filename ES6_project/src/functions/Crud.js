@@ -107,7 +107,6 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
     }).done(function () {
         // Это либо смена категории либо копипаст из CategoryAttributeTree
         if (!remove) {
-            //smartReload(sourceNode.tree, clipboard ? clipboard : [sourceNode]); // TODO возможно надо будет удалить если включено в reloadAttribute
             deSelectCategories();
             reactivateCategory(targetNode);
             // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
@@ -262,22 +261,23 @@ export function copyPaste(action, actionNode, store) {
 export function pasteNodes(targetNode, lng_id, store) {
     let parentNode = targetNode.getParentGroup() || targetNode.getParentCategory();
     let sourceNode = clipboardNodes[lng_id][0];
-    let oldClipboardStructure = [];
+    /* let oldClipboardStructure = []; */
     // Make array for addAttribute... (see below)
-    clipboardTitles.forEach((listNodes, lngId) => {
+    /* clipboardTitles.forEach((listNodes, lngId) => {
         let lng = lngId
         listNodes.forEach((node, index) => {
             oldClipboardStructure.push([])
             oldClipboardStructure[index][lng] = node
         })
     })
-    oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0)
+    oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0) */
     /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
                 'target': parentNode.key,
-                'attributes': oldClipboardStructure
+                'titles': clipboardTitles,
+                'attributes': getSelectedKeys(clipboardNodes[lng_id]),
             },
             url: 'index.php?route=' + extension + 'module/attributico/addAttributes' + '&user_token=' + user_token + '&token=' + token,
             type: 'POST',

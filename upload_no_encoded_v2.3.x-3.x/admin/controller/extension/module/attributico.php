@@ -1192,11 +1192,12 @@ class ControllerModuleAttributico extends Controller
     {
         /** $attributes structure example
          *  [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
-         *  empty if language not present by any id   
-         * **/
+         *  empty if language not present by any id
+         * * */
         $data = array();
         $data['new'] = false;
         $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
+        $titles = isset($this->request->post['titles']) ? $this->request->post['titles'] : array('0', '0');
         $attributes = isset($this->request->post['attributes']) ? $this->request->post['attributes'] : array('0', '0');
         $attribute_group_id = '';
 
@@ -1207,15 +1208,30 @@ class ControllerModuleAttributico extends Controller
             return 0;
         }
 
+        $attributes_id = [];
+        foreach ($attributes as $attribute) {
+            $attributes_id[] = explode("_", $attribute)[1];
+        }
+
         $languages = $this->session->data['languages'];
+        // Transform arr.id [123, 124 ... 129] and arr.titles [[],[тайтл123,тайтл124... ],[],[title123,title124,...]
+        // to arr [123 => [тайтл123,title123], 124 => [тайтл123,title123], ...]
+        $new_titles = [];
+        foreach ($languages as $language) {
+            foreach ($titles[$language['language_id']] as $key => $title) {
+                $new_titles[$attributes_id[$key]][$language['language_id']] = $title;
+            }
+        }
+
         $this->load->model('catalog/attributico');
         $this->cache->delete('attributico');
 
-        foreach ($attributes as $attribute) {
+        foreach ($new_titles as $attribute_id => $title) {
             if ($attribute_group_id) {
                 $data['attribute_group_id'] = $attribute_group_id;
                 foreach ($languages as $language) {
-                    $data['attribute_description'][$language['language_id']]['name'] = $attribute[$language['language_id']];
+                    $data['attribute_description'][$language['language_id']]['name'] = $title[$language['language_id']];
+                    $data['attribute_description'][$language['language_id']]['attribute_id'] = $attribute_id;
                 }
                 $id = $this->model_catalog_attributico->addAttribute($data);
             }
