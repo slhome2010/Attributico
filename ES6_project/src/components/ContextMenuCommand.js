@@ -58,6 +58,10 @@ export class ContextmenuCommand {
                 copyPaste(this.ui.cmd, this.node, this.store);
                 deSelectNodes(this.node);
                 break;
+            case 'merge':
+                copyPaste(this.ui.cmd, this.node, this.store);
+                deSelectNodes(this.node);
+                break;
             default:
                 alert("Todo: appply action '" + this.ui.cmd + "' to node " + this.node);
         }

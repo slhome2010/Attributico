@@ -898,7 +898,7 @@
     const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
     const textNewGroup = <?php echo json_encode($text_New_group) ?>;
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>; 
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
 
     let filterLabels = [];
     let contextmenuConfig = [];
@@ -932,6 +932,12 @@
                 title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>[Ctrl+V]</kbd>",
                 cmd: "paste",
                 uiIcon: "ui-icon-clipboard",
+                disabled: true
+            },
+            {
+                title: <?php echo json_encode($text_Merge) ?>[lng_id] + "<kbd>[Alt+V]</kbd>",
+                cmd: "merge",
+                uiIcon: "ui-icon-link",
                 disabled: true
             },
             {

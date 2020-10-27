@@ -169,8 +169,9 @@ export default class AttributeGroupTree {
                         data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
                         data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
-                        data.tree.$div.contextmenu("enableEntry", "cut", node.isAttribute());
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.hasPermission(['group', 'attribute']));
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
+                        data.tree.$div.contextmenu("enableEntry", "merge", !(clipboardNodes.length == 0) && !node.isRootNode() && node.hasPermission(['group', 'attribute']));
                         node.setActive();
                     },
                     select: (event, ui) => {

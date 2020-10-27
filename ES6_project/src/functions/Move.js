@@ -74,7 +74,7 @@ export async function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direc
             'group': targetNode.getParent().key,
             'target': targetNode.key,
             'direct': direct
-        }, // TODO POST request
+        },
         url: url + '&user_token=' + user_token + '&token=' + token,
         type: 'POST',
         success: () => {

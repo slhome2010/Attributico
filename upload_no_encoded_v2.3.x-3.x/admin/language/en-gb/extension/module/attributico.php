@@ -46,6 +46,7 @@ $_['text_Delete'] = 'Delete';
 $_['text_Copy'] = 'Copy';
 $_['text_Cut'] = 'Cut';
 $_['text_Paste'] = 'Paste';
+$_['text_Merge'] = 'Merge';
 $_['text_Options'] = 'Options';
 $_['text_Sort'] = 'Sort (ASC)';
 $_['text_sortOrder'] = 'Sort order';

@@ -839,17 +839,33 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">    
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
+<script type="text/javascript">
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const config_language = '{{config_language}}';
     const token = '{{token}}';
     const user_token = '{{user_token}}';
     const extension = '{{extension}}'; // для v2.3 другая структура каталогов
     const edit = '{{edit}}'; // для v1.5 другая функция входа в товар
-    const textNewAttribute = {{ text_New_attribute| json_encode()}};
-    const textNewGroup = {{ text_New_group| json_encode()}};
-    const textConfirm = {{ text_confirm| json_encode()}};
-    const FILTERSETTINGS = {{ filter_settings| json_encode()}};
+    const textNewAttribute = {
+        {
+            text_New_attribute | json_encode()
+        }
+    };
+    const textNewGroup = {
+        {
+            text_New_group | json_encode()
+        }
+    };
+    const textConfirm = {
+        {
+            text_confirm | json_encode()
+        }
+    };
+    const FILTERSETTINGS = {
+        {
+            filter_settings | json_encode()
+        }
+    };
 
     let filterLabels = [];
     let contextmenuConfig = [];
@@ -857,70 +873,264 @@
 
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
-        contextmenuConfig[lng_id] = [
-            { title: {{ text_Edit| json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
-            { title: {{ text_Delete| json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
-            { title: {{ text_Cut| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "cut", uiIcon: "ui-icon-scissors", disabled: true},
-            { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
-            { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>[Ctrl+V]</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
-            { title: "----" },
-            { title: {{ text_Expande| json_encode()}}[lng_id] + "<kbd>[Ctrl+B]</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
-            { title: {{ text_Refresh| json_encode()}}[lng_id] + "<kbd>[Shift+R]</kbd>", cmd: "refresh", uiIcon: "ui-icon-refresh"},
-            { title: "----" },
-            { title: {{ text_Options| json_encode()}}[lng_id], cmd: "options", uiIcon: "ui-icon-gear"},
-            { title: "----" },
-            { title: {{ text_New_group| json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plusthick"},
-            { title: {{ text_New_attribute| json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-plus"}
+        contextmenuConfig[lng_id] = [{
+                title: {
+                    {
+                        text_Edit | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Shift+Click]</kbd>",
+                cmd: "rename",
+                uiIcon: "ui-icon-pencil"
+            },
+            {
+                title: {
+                    {
+                        text_Delete | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Del]</kbd>",
+                cmd: "remove",
+                uiIcon: "ui-icon-trash"
+            },
+            {
+                title: {
+                    {
+                        text_Cut | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+C]</kbd>",
+                cmd: "cut",
+                uiIcon: "ui-icon-scissors",
+                disabled: true
+            },
+            {
+                title: {
+                    {
+                        text_Copy | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+C]</kbd>",
+                cmd: "copy",
+                uiIcon: "ui-icon-copy",
+                disabled: true
+            },
+            {
+                title: {
+                    {
+                        text_Paste | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+V]</kbd>",
+                cmd: "paste",
+                uiIcon: "ui-icon-clipboard",
+                disabled: true
+            },
+            {
+                title: {
+                    {
+                        text_Merge | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Alt+V]</kbd>",
+                cmd: "merge",
+                uiIcon: "ui-icon-link",
+                disabled: true
+            },
+            {
+                title: "----"
+            },
+            {
+                title: {
+                    {
+                        text_Expande | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+B]</kbd>",
+                cmd: "expande",
+                uiIcon: "ui-icon-folder-open"
+            },
+            {
+                title: {
+                    {
+                        text_Refresh | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Shift+R]</kbd>",
+                cmd: "refresh",
+                uiIcon: "ui-icon-refresh"
+            },
+            {
+                title: "----"
+            },
+            {
+                title: {
+                    {
+                        text_Options | json_encode()
+                    }
+                } [lng_id],
+                cmd: "options",
+                uiIcon: "ui-icon-gear"
+            },
+            {
+                title: "----"
+            },
+            {
+                title: {
+                    {
+                        text_New_group | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+M]</kbd>",
+                cmd: "addSibling",
+                uiIcon: "ui-icon-plusthick"
+            },
+            {
+                title: {
+                    {
+                        text_New_attribute | json_encode()
+                    }
+                } [lng_id] + "<kbd>[Ctrl+Q]</kbd>",
+                cmd: "addChild",
+                uiIcon: "ui-icon-plus"
+            }
         ];
 
         filterLabels[lng_id] = {
-            title: {{ text_filter | json_encode() }}[lng_id],
-            button: {{ button_filter_action | json_encode() }} [lng_id],
+            title: {
+                {
+                    text_filter | json_encode()
+                }
+            } [lng_id],
+            button: {
+                {
+                    button_filter_action | json_encode()
+                }
+            } [lng_id],
             checkbox: {
-                autoComplete: {{ text_autoComplete | json_encode() }} [lng_id],
-                attributesOnly: {{ text_Attributes_only | json_encode() }} [lng_id],
-                leavesOnly: {{ text_Leaves_only | json_encode() }} [lng_id],
+                autoComplete: {
+                    {
+                        text_autoComplete | json_encode()
+                    }
+                } [lng_id],
+                attributesOnly: {
+                    {
+                        text_Attributes_only | json_encode()
+                    }
+                } [lng_id],
+                leavesOnly: {
+                    {
+                        text_Leaves_only | json_encode()
+                    }
+                } [lng_id],
             },
             spancheckbox: {
-                hideMode: {{ text_Hide_unmatched_nodes | json_encode() }} [lng_id],
-                autoExpand: {{ text_Auto_expand | json_encode() }} [lng_id],
-                counter: {{ text_Counter_badges | json_encode() }} [lng_id],
-                hideExpandedCounter: {{ text_hideExpandedCounter | json_encode() }} [lng_id],
-                highlight: {{ text_Highlight | json_encode() }} [lng_id],
-                fuzzy: {{ text_Fuzzy | json_encode() }} [lng_id],
-                regex: {{ text_Regular_expression | json_encode() }} [lng_id],
+                hideMode: {
+                    {
+                        text_Hide_unmatched_nodes | json_encode()
+                    }
+                } [lng_id],
+                autoExpand: {
+                    {
+                        text_Auto_expand | json_encode()
+                    }
+                } [lng_id],
+                counter: {
+                    {
+                        text_Counter_badges | json_encode()
+                    }
+                } [lng_id],
+                hideExpandedCounter: {
+                    {
+                        text_hideExpandedCounter | json_encode()
+                    }
+                } [lng_id],
+                highlight: {
+                    {
+                        text_Highlight | json_encode()
+                    }
+                } [lng_id],
+                fuzzy: {
+                    {
+                        text_Fuzzy | json_encode()
+                    }
+                } [lng_id],
+                regex: {
+                    {
+                        text_Regular_expression | json_encode()
+                    }
+                } [lng_id],
             },
             dropdown: {
-                empty: {{ f_empty | json_encode() }} [lng_id],
-                digital: {{ f_digital | json_encode() }} [lng_id],
-                html: {{ f_html | json_encode() }} [lng_id],
-                default: {{ f_default | json_encode() }} [lng_id],
+                empty: {
+                    {
+                        f_empty | json_encode()
+                    }
+                } [lng_id],
+                digital: {
+                    {
+                        f_digital | json_encode()
+                    }
+                } [lng_id],
+                html: {
+                    {
+                        f_html | json_encode()
+                    }
+                } [lng_id],
+                default: {
+                    {
+                        f_default | json_encode()
+                    }
+                } [lng_id],
             }
         };
 
         dialogItems[lng_id] = {
             sortorder: {
-                label: {{ text_sortOrder | json_encode() }}[lng_id],
+                label: {
+                    {
+                        text_sortOrder | json_encode()
+                    }
+                } [lng_id],
                 selector: 'sortOrder',
-                state: {{ attributico_sortorder }}
+                state: {
+                    {
+                        attributico_sortorder
+                    }
+                }
             },
             lazyload: {
-                label: {{ text_lazyLoad | json_encode() }} [lng_id],
+                label: {
+                    {
+                        text_lazyLoad | json_encode()
+                    }
+                } [lng_id],
                 selector: 'lazyLoad',
-                state: {{ attributico_lazyload }}
+                state: {
+                    {
+                        attributico_lazyload
+                    }
+                }
             },
             autocollapse: {
-                label: {{ text_autoCollapse | json_encode() }} [lng_id],
+                label: {
+                    {
+                        text_autoCollapse | json_encode()
+                    }
+                } [lng_id],
                 selector: 'autoCollapse',
                 state: '1'
             },
             hierarchy: {
-                label: {{ text_multiSelect | json_encode() }} [lng_id],
+                label: {
+                    {
+                        text_multiSelect | json_encode()
+                    }
+                } [lng_id],
                 selector: 'multiSelect',
-                state: {{ attributico_multiselect }}
+                state: {
+                    {
+                        attributico_multiselect
+                    }
+                }
             },
             divergency: {
-                label: {{ text_Diver | json_encode() }} [lng_id],
+                label: {
+                    {
+                        text_Diver | json_encode()
+                    }
+                } [lng_id],
                 selector: 'diver',
                 state: '0'
             }

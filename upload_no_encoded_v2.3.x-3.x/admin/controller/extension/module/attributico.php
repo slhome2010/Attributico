@@ -289,6 +289,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_Copy'][$language['language_id']] = $lng->get('text_Copy');
             $this->data['text_Cut'][$language['language_id']] = $lng->get('text_Cut');
             $this->data['text_Paste'][$language['language_id']] = $lng->get('text_Paste');
+            $this->data['text_Merge'][$language['language_id']] = $lng->get('text_Merge');
             $this->data['text_lazyLoad'][$language['language_id']] = $lng->get('text_lazyLoad');
             // options
             $this->data['text_Options'][$language['language_id']] = $lng->get('text_Options');
