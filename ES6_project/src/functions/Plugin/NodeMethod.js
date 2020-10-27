@@ -22,8 +22,9 @@
  *
  **/
 $.ui.fancytree._FancytreeNodeClass.prototype.findUnselectedSibling = function () {
-    var siblingNode = this.getNextSibling() || this.getPrevSibling() || this.getParent();
-    while (siblingNode.isSelected() && !siblingNode.isRootNode()) {
+    let siblingNode = this.getNextSibling() || this.getPrevSibling() || this.getParent();
+
+    while (siblingNode !== null && siblingNode.isSelected() && !siblingNode.isRootNode()) {
         siblingNode = siblingNode.getPrevSibling() || siblingNode.getParent();
     }
     return siblingNode;

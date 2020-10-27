@@ -43,39 +43,35 @@ export function deleteAttribute(node, store) {
             url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes',
             success: function () {
                 let affectedNodes = []
+                let removeVisibleNodes = true
+                // let cloneNode = Object.assign({}, node); none deep-clone
+                // Deep-clone object
+                // let cloneNode = jQuery.extend(true, {}, node)
                 if (node.isTemplate() || node.isValue()) {
-                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click 
-                    /* if (selNodes) {
-                        for (let selnode of selNodes) {
-                            affectedNodes.push(selnode.getParentAttribute())
-                        }
-                    } else { */
                     affectedNodes.push(node.getParentAttribute())
-                    /*  } */
+                    // Не удаляем видимые узлы, т.к. родительский перезагрузится и их там может уже не быть
+                    // TODO устранить конфликт перезагрузки и удаления видимиых узлов
+                    removeVisibleNodes = false
                 } else if (node.isAttribute()) {
-                    /* if (selNodes) {
-                        for (let selnode of selNodes) {
-                            affectedNodes.push(selnode.getParentGroup())
-                        }
-                    } else { */
                     affectedNodes.push(node.getParentGroup())
-                    /*  } */
                 } else {
                     // Delete Group  
                     affectedNodes = null
                 }
-                // Надо до remove иначе node может уже не быть
+                // Надо до remove иначе node может уже не быть придется работать с клоном. У клона нет siblings.
                 store.dispatch(deleteNode(node, affectedNodes));
 
-                /* if (affectedNodes === null) { */
-                if (selNodes) {
-                    $.each(selNodes, (i, selnode) => {
-                        selnode.remove();
-                    });
-                } else {
-                    node.remove();
+                if (removeVisibleNodes) {
+                    // selNodes не всегда есть, т.к. они создаются только по ctrl+click
+                    if (selNodes) {
+                        selNodes.forEach(selnode => {
+                            selnode.remove();
+                        });
+                    } else {
+                        node.remove();
+                    }
                 }
-                /*  } */
+
             }
         });
     }
@@ -127,8 +123,7 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
 
 export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, store) {
     let category_id = sourceNode.getParent().key;
-    // Если targetNode == null, то это просто операция удаления
-    let targetTree = targetNode !== null ? targetNode.tree : sourceNode.tree
+
     $.ajax({
         data: {
             'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
@@ -140,6 +135,7 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         success: function () {
             reactivateCategory(targetNode);
             // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
+            // Если targetNode == null, то это просто операция удаления
             store.dispatch(dndReplaceCategory(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
         }
     });
@@ -153,7 +149,6 @@ export function copyPaste(action, actionNode, store) {
     let lng_id = parseInt(activeTree.$div[0].id.replace(/\D+/ig, ''));
     let direct = 'after';
     let ctrlKey = false;
-    let removeSourceNodes = true;
     let parentNode;
     let sourceNode;
     let targetNode;
@@ -200,7 +195,6 @@ export function copyPaste(action, actionNode, store) {
         case "paste":
             direct = 'after';
             ctrlKey = false;
-            removeSourceNodes = true;
 
             if (clipboardNodes.length == 0) {
                 alert("Clipboard is empty.");
@@ -216,7 +210,7 @@ export function copyPaste(action, actionNode, store) {
                 sourceLevel = sourceNode.getLevel();
 
                 if (parentNode.isCategory()) {
-                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], removeSourceNodes, store);
+                    addAttributeToCategory(sourceNode, parentNode, clipboardNodes[lng_id], true, store);
                 } else {
                     if (targetLevel !== sourceLevel) {
                         direct = 'over';

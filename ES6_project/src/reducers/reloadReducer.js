@@ -34,7 +34,7 @@ export default function reload(state = {}, action) {
                 ...state,
                 boundTrees: ATTRIBUTE_SYNCRO_TREES,
                 affectedNodes: action.affectedNodes,
-                tree: action.targetNode.tree,
+                tree: action.targetNode !== null ? action.targetNode.tree : action.sourceNode.tree,
                 sourceNode: action.sourceNode,
                 targetNode: action.targetNode,
                 activeNode: action.sourceNode,
