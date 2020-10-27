@@ -64,7 +64,9 @@ export default class AttributeTree {
                     this.tree.options.filter['highlight'] = false;
                     this.tree.clearFilter();
                 },
-                edit: (event, data) => editDuty(event, data), // Editor was opened (available as data.input)                
+                // Editor was opened (available as data.input)
+                // Alt+Shift+click on input call autocomplete function
+                edit: (event, data) => editDuty(event, data),
                 beforeClose: function (event, data) {
                     // Return false to prevent cancel/save (data.input is available)
                 },

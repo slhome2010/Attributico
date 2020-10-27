@@ -14,8 +14,7 @@ export function saveAfterEdit(event, data, store) {
         url: 'index.php?route=' + extension + 'module/attributico/editAttribute'
     }).done(function (result) {
         // Server might return an error or a modified title
-        // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
-        // in case server modified it 
+        // Maybe also check for non-ajax errors, e.g. 'title invalid', ... in case server modified it         
         data.node.setTitle(result.acceptedTitle);
 
         let affectedNodes
