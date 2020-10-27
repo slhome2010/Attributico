@@ -1,7 +1,7 @@
 import { updateNode } from '../../actions';
 
-export function saveAfterEdit(event, data, store) {   
-    let lng_id = data.node.getLanguageId() //parseInt(data.tree.$div[0].id.replace(/\D+/ig, ''));
+export function saveAfterEdit(event, data, store) {
+    let lng_id = data.node.getLanguageId()
     $.ajax({
         data: {
             'user_token': user_token,
@@ -16,12 +16,12 @@ export function saveAfterEdit(event, data, store) {
         // Server might return an error or a modified title
         // Maybe also check for non-ajax errors, e.g. 'title invalid', ...
         // in case server modified it 
-        data.node.setTitle(result.acceptedTitle); 
+        data.node.setTitle(result.acceptedTitle);
 
-        let affectedNodes          
+        let affectedNodes
         if (data.node.isTemplate() || data.node.isValue()) {
             affectedNodes = [data.node.getParentAttribute()]
-        } else if (data.node.isAttribute()) {
+        } else if (data.node.isAttribute() || data.node.isDuty()) {
             affectedNodes = [data.node.getParentGroup()]
         } else {
             affectedNodes = null

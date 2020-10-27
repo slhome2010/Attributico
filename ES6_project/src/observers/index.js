@@ -34,18 +34,25 @@ export default class Observer {
         console.log('stateInfo', stateInfo)
     }
 
-    setActiveNode(tree, estimatedAactiveNode, possibleActiveNode) {
+    async setExpandedParents(node) {
+        let parentList = node.getParentList()
+        for (let parent of parentList) {
+            await parent.setExpanded(true)
+        }
+    }
+
+    async setActiveNode(tree, estimatedAactiveNode, possibleActiveNode) {
         let currentActiveNode = tree.getActiveNode();
         let activeNode = estimatedAactiveNode !== null ? tree.getNodeByKey(estimatedAactiveNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
         let altActiveNode = possibleActiveNode != null ? tree.getNodeByKey(possibleActiveNode.key) : null;
-        /* console.log('6 Set active for:', tree.$div[0].id); */
+
         if (activeNode !== null) {
-            /* console.log('activeNode', activeNode.key, activeNode.title); */
-            activeNode.getParent().setExpanded(true).done(() => { activeNode.setActive(true) });
+            await this.setExpandedParents(activeNode)
+            activeNode.setActive(true)
             /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
         } else if (altActiveNode !== null) {
-            /* console.log('!altActiveNode', altActiveNode.key, altActiveNode.title); */
-            altActiveNode.getParent().setExpanded(true).done(() => { altActiveNode.setActive(true) });
+            await this.setExpandedParents(altActiveNode)
+            altActiveNode.setActive(true)
         }
     }
 
