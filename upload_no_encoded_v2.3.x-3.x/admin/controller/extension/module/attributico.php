@@ -1190,7 +1190,7 @@ class ControllerModuleAttributico extends Controller
     /* Paste attributes */
     public function addAttributes()
     {
-        /** $attributes structure example
+        /** $titles oldstructure example
          *  [[empty,A1ru,empty,A1en],[empty,A2ru,empty,A2en],...[empty,A100ru,empty,A100en]]
          *  empty if language not present by any id
          * * */

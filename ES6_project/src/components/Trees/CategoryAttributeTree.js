@@ -9,10 +9,10 @@ import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {
-    constructor(element,store) {
-        this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));        
+    constructor(element, store) {
+        this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.tree = $("#category_attribute_tree" + this.lng_id);
-        this.sortOrder = $('input[id = "sortOrder_category_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");        
+        this.sortOrder = $('input[id = "sortOrder_category_attribute_tree' + this.lng_id + '"]:checkbox').is(":checked");
         this.store = store;
 
         this.config = {
@@ -155,7 +155,7 @@ export default class CategoryAttributeTree {
                     addChild: true,
                     addSibling: false,
                     copy: data.node.isAttribute(),
-                    cut: data.node.hasPermission(['attribute']),
+                    cut: data.node.isOneOf(['attribute']),
                     paste: true,
                     refresh: false
                 };
@@ -164,10 +164,10 @@ export default class CategoryAttributeTree {
             focusTree: function (e, data) {
                 data.tree.$container.focus();
             },
-            init: (event, data) => {               
+            init: (event, data) => {
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
-                    
+
                 data.tree.$div.contextmenu({
                     delegate: "span.fancytree-title",
                     menu: contextmenuConfig[this.lng_id],

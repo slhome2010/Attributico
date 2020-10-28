@@ -34,7 +34,7 @@ export default class Observer {
         console.log('stateInfo', stateInfo)
     }
 
-    async setExpandedParents(node) {
+    async expandeAllParents(node) {
         let parentList = node.getParentList()
         for (let parent of parentList) {
             await parent.setExpanded(true)
@@ -47,16 +47,16 @@ export default class Observer {
         let altActiveNode = possibleActiveNode != null ? tree.getNodeByKey(possibleActiveNode.key) : null;
 
         if (activeNode !== null) {
-            await this.setExpandedParents(activeNode)
+            await this.expandeAllParents(activeNode)
             activeNode.setActive(true)
             /* Если бы могли, то подогнали бы в область видимости newnode.makeVisible(); newnode.scrollIntoView(); */
         } else if (altActiveNode !== null) {
-            await this.setExpandedParents(altActiveNode)
+            await this.expandeAllParents(altActiveNode)
             altActiveNode.setActive(true)
         }
     }
 
-    async allChildLoaded(node) {
+    async loadAllChildren(node) {
         let childrens = node.getChildren()
 
         for (let child of childrens) {
@@ -68,28 +68,24 @@ export default class Observer {
         }
     }
 
-    async parentLoaded(node) {
-
+    async loadParent(node) {
         node.resetLazy();
         await node.load(true)
-
     }
 
-    async allNodesLoaded(tree, nodeList) {
+    async loadAllLazyNodes(tree, nodeList) {
         for (let node of nodeList) {
             let findedNode = tree.getNodeByKey(node.key);
             if (findedNode.isGroup()) {
-                await this.parentLoaded(findedNode)
+                await this.loadParent(findedNode)
             } else {
-                await this.allChildLoaded(findedNode)
+                await this.loadAllChildren(findedNode)
             }
-            /* console.log('2 Childrens loaded for:', findedNode.title, findedNode.tree.$div[0].id) */
         }
     }
 
     async smartReload(tree, nodeList) {
-        await this.allNodesLoaded(tree, nodeList)
-        /* console.log('3 Nodes loaded for:', tree.$div[0].id,);  */
+        await this.loadAllLazyNodes(tree, nodeList)
     }
 
     /* Асинхронная функция. Деревья и узлы грузятся параллельно, но установка активного узла только после загрузки. */

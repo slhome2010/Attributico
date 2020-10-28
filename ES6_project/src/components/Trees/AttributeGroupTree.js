@@ -57,7 +57,7 @@ export default class AttributeGroupTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.hasPermission(['group', 'attribute', 'template', 'value', 'duty'])) {
+                    if (!data.node.isOneOf(['group', 'attribute', 'template', 'value', 'duty'])) {
                         return false;
                     }
                     // Reset filter setting _highlight to false for exclude tag <mark> from title
@@ -137,13 +137,13 @@ export default class AttributeGroupTree {
             keydown: (e, data) => {
                 let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
-                    remove: data.node.hasPermission(['group', 'attribute', 'template', 'value']),
-                    addChild: true,
+                    remove: data.node.isOneOf(['group', 'attribute', 'template', 'value']),
+                    addChild: !data.node.isTopLevel() ? true : false,
                     addSibling: true,
-                    copy: data.node.hasPermission(['attribute']),
-                    cut: data.node.hasPermission(['group', 'attribute']),
-                    paste: true,
-                    merge: data.node.hasPermission(['group', 'attribute'])
+                    copy: data.node.isOneOf(['attribute']),
+                    cut: data.node.isOneOf(['group', 'attribute']),
+                    paste: !data.node.isTopLevel() ? true : false,
+                    merge: data.node.isOneOf(['group', 'attribute'])
                 };
                 command.execute();
             },
@@ -166,12 +166,13 @@ export default class AttributeGroupTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['group', 'attribute', 'template', 'value']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'template', 'value', 'duty']));
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.isOneOf(['group', 'attribute', 'template', 'value']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.isOneOf(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
-                        data.tree.$div.contextmenu("enableEntry", "cut", node.hasPermission(['group', 'attribute']));
-                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
-                        data.tree.$div.contextmenu("enableEntry", "merge", !(clipboardNodes.length == 0) && !node.isRootNode() && node.hasPermission(['group', 'attribute']));
+                        data.tree.$div.contextmenu("enableEntry", "cut", node.isOneOf(['group', 'attribute']));
+                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.isTopLevel());
+                        data.tree.$div.contextmenu("enableEntry", "merge", !(clipboardNodes.length == 0) && node.isOneOf(['group', 'attribute']) && pasteMode == "cut");
+                        data.tree.$div.contextmenu("enableEntry", "addChild", !node.isTopLevel());
                         node.setActive();
                     },
                     select: (event, ui) => {

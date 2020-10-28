@@ -2,14 +2,14 @@ import { ContextmenuCommandDuty } from '../ContextMenuCommand';
 import { KeydownCommandDuty } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { loadError } from '../Events/LoadError';
-//import { hasPermission, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
+//import { isOneOf, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
 import { saveAfterEdit } from '../Events/SaveAfterEdit';
 import { editDuty } from '../Events/EditDuty';
 import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- duty attribute tree ----------------------------------------------
 export default class DutyTree {
-    constructor(element,store) {
+    constructor(element, store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-duty';
         this.tree = $("#duty_attribute_tree" + this.lng_id);
@@ -30,7 +30,7 @@ export default class DutyTree {
                     'token': token,
                     'language_id': this.lng_id,
                     'sortOrder': this.sortOrder,
-                    'lazyLoad': this.lazyLoad,                   
+                    'lazyLoad': this.lazyLoad,
                     'tree': "2"
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getAttributeGroupTree'
@@ -44,7 +44,7 @@ export default class DutyTree {
                         'key': data.node.key,
                         'language_id': this.lng_id,
                         'sortOrder': this.sortOrder,
-                        'lazyLoad': this.lazyLoad,                        
+                        'lazyLoad': this.lazyLoad,
                         'tree': "2"
                     }, // cache:true,
                     url: data.node.isGroup() ? 'index.php?route=' + extension + 'module/attributico/getLazyGroup' : 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
@@ -56,11 +56,11 @@ export default class DutyTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.hasPermission(['group', 'attribute', 'duty'])) {
+                    if (!data.node.isOneOf(['group', 'attribute', 'duty'])) {
                         return false;
                     }
                     // Reset filter setting _highlight to false for exclude tag <mark> from title
-                    this.tree.options.filter['highlight'] = false; 
+                    this.tree.options.filter['highlight'] = false;
                     this.tree.clearFilter();
                 },
                 edit: (event, data) => editDuty(event, data),
@@ -77,7 +77,7 @@ export default class DutyTree {
             keydown: (e, data) => {
                 let command = new KeydownCommandDuty(e, data, this.store);
                 command.permissions = {
-                    remove: data.node.hasPermission(['duty']),
+                    remove: data.node.isOneOf(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,
@@ -87,11 +87,11 @@ export default class DutyTree {
             },
             filter: {
                 autoApply: $("#fs_" + this.currentTab + "_autoApply" + this.lng_id).is(":checked"),
-                counter: $("#fs_" + this.currentTab + "_counter" + this.lng_id).is(":checked"), 
-                fuzzy: $("#fs_" + this.currentTab + "_fuzzy" + this.lng_id).is(":checked"), 
-                hideExpandedCounter: $("#fs_" + this.currentTab + "_hideExpandedCounter" + this.lng_id).is(":checked"), 
-                highlight: $("#fs_" + this.currentTab + "_highlight" + this.lng_id).is(":checked"), 
-                mode: $("#fs_" + this.currentTab + "_hideMode" + this.lng_id).is(":checked") ? "hide" : "dimm" 
+                counter: $("#fs_" + this.currentTab + "_counter" + this.lng_id).is(":checked"),
+                fuzzy: $("#fs_" + this.currentTab + "_fuzzy" + this.lng_id).is(":checked"),
+                hideExpandedCounter: $("#fs_" + this.currentTab + "_hideExpandedCounter" + this.lng_id).is(":checked"),
+                highlight: $("#fs_" + this.currentTab + "_highlight" + this.lng_id).is(":checked"),
+                mode: $("#fs_" + this.currentTab + "_hideMode" + this.lng_id).is(":checked") ? "hide" : "dimm"
             },
             init: (event, data) => {
                 let filter = new Filter(this.currentTab, data.tree, this.lng_id);
@@ -105,8 +105,8 @@ export default class DutyTree {
                     menu: contextmenuConfig[this.lng_id],
                     beforeOpen: function (event, ui) {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", node.hasPermission(['duty']));
-                        data.tree.$div.contextmenu("enableEntry", "rename", node.hasPermission(['group', 'attribute', 'duty']));
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.isOneOf(['duty']));
+                        data.tree.$div.contextmenu("enableEntry", "rename", node.isOneOf(['group', 'attribute', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
                         node.setActive();

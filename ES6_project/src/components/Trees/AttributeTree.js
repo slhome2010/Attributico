@@ -57,7 +57,7 @@ export default class AttributeTree {
                     minWidth: "18em"
                 },
                 beforeEdit: function (event, data) {
-                    if (!data.node.hasPermission(['duty'])) {
+                    if (!data.node.isOneOf(['duty'])) {
                         return false;
                     }
                     // Reset filter setting _highlight to false for exclude tag <mark> from title

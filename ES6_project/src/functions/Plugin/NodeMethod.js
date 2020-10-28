@@ -44,7 +44,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.getLanguageId = function () {
  * @returns boolean
  *
  **/
-$.ui.fancytree._FancytreeNodeClass.prototype.hasPermission = function (actions) {
+$.ui.fancytree._FancytreeNodeClass.prototype.isOneOf = function (actions) {
     let permission = false;
     for (let i = 0; i < actions.length; i++) {
         permission = permission || (this.key.indexOf(actions[i]) > -1) && !this.unselectable;
@@ -97,24 +97,24 @@ $.ui.fancytree._FancytreeNodeClass.prototype.isCategory = function () {
 // Get nodes by condition
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentAttribute = function () {
     let node = this;
-    while (node.key.indexOf('attribute') < 0 && !node.isRootNode()) {
+    while (node.key.indexOf('attribute') < 0 && !node.isTopLevel()) {
         node = node.getParent()
     }
-    return !node.isRootNode() ? node : null;
+    return !node.isTopLevel() ? node : null;
 };
 
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentGroup = function () {
     let node = this;
-    while (node.key.indexOf('group') < 0 && !node.isRootNode()) {
+    while (node.key.indexOf('group') < 0 && !node.isTopLevel()) {
         node = node.getParent()
     }
-    return !node.isRootNode() ? node : null;
+    return !node.isTopLevel() ? node : null;
 };
 
 $.ui.fancytree._FancytreeNodeClass.prototype.getParentCategory = function () {
     let node = this;
-    while (node.key.indexOf('category') < 0 && !node.isRootNode()) {
+    while (node.key.indexOf('category') < 0) {
         node = node.getParent()
     }
-    return !node.isRootNode() ? node : null;
+    return node;
 };

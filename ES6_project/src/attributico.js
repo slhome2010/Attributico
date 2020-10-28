@@ -17,7 +17,7 @@ import dialogOptionEvents from './components/DialogOption';
 import commonSettings from './components/CommonSettings';
 import configureStore from './store';
 import reducer from './reducers';
-import Observer from './observers';
+import Observer from './observers/observer';
 
 window.tools = tools;
 window.apply = apply;
@@ -40,7 +40,7 @@ $(function () {
     $('.dialog-options').each(buildDialog);
 
     const initialState = {};
-    const store = configureStore( reducer, initialState );
+    const store = configureStore(reducer, initialState);
 
     const observer = new Observer(store);
     observer.init();
