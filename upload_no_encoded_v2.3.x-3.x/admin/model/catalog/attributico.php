@@ -141,9 +141,9 @@ class ModelCatalogAttributico extends Model
 
         foreach ($query->rows as $result) {
             $attribute_data[$result['language_id']] = array(
-                'attribute_id' => $result['attribute_id'], 
-                'name' => $result['name'], 
-                'group_name' => $result['group_name'], 
+                'attribute_id' => $result['attribute_id'],
+                'name' => $result['name'],
+                'group_name' => $result['group_name'],
                 'attribute_group_id' => $result['attribute_group_id'],
                 'sort_order' => $result['sort_order'],
             );
@@ -344,19 +344,28 @@ class ModelCatalogAttributico extends Model
 
     public function addAttribute($data)
     {
-    /** $data['attribute_description'] structure example [empty,'name'=>A1ru,empty,'name'=>A1en]
-     *  empty if language not present by any id   [1] name = A1ru
-     *                                            [3] name = A1en
-     *
-     *  in foreach, cache delete in controller **/
+        /**
+         * $data['attribute_description'] structure example [empty,'name'=>A1ru,empty,'name'=>A1en]
+         *  empty if language not present by any id   [1] name = A1ru
+         *                                            [3] name = A1en
+         *
+         *  in foreach, cache delete in controller
+         **/
         $maxorder = $this->db->query("SELECT MAX(`sort_order`) AS maxorder FROM " . DB_PREFIX . "attribute");
         $this->db->query("INSERT INTO " . DB_PREFIX . "attribute SET attribute_group_id = '" . (int)$data['attribute_group_id'] . "', sort_order = '" . ((int)$maxorder->row['maxorder'] + 1) . "'");
         // этот id будет добавлен к имени при добавлении: Новый атрибут_234, при копировании не добавляется - флаг data['new']
         $attribute_id = $this->db->getLastId();
 
         foreach ($data['attribute_description'] as $language_id => $value) {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language_id . "',
-             name = '" . $this->db->escape($value['name']) . ($data['new'] ? '_' . $attribute_id : '') . "'");
+            $sql = "INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language_id . "',
+             name = '" . $this->db->escape($value['name']) . ($data['new'] ? '_' . $attribute_id : '') . "'";
+            // при копировании переносим значение duty из прежнего атрибута
+            if (!$data['new']) {
+                $duty = $this->whoisOnDuty($value['attribute_id'], ['language_id' => $language_id]);
+                $sql .= ",duty = '" . $this->db->escape($duty) . "'";
+            }
+
+            $this->db->query($sql);
         }
 
         return $attribute_id;
@@ -441,7 +450,7 @@ class ModelCatalogAttributico extends Model
 
         foreach ($data['attribute_group_description'] as $language_id => $value) {
             $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int)$attribute_group_id . "', language_id = '" . (int)$language_id .
-             "', name = '" . $this->db->escape($value['name'] . '_' . $attribute_group_id) . "'");
+                "', name = '" . $this->db->escape($value['name'] . '_' . $attribute_group_id) . "'");
         }
 
         return $attribute_group_id;

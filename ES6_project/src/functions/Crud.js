@@ -261,17 +261,7 @@ export function copyPaste(action, actionNode, store) {
 export function pasteNodes(targetNode, lng_id, store) {
     let parentNode = targetNode.getParentGroup() || targetNode.getParentCategory();
     let sourceNode = clipboardNodes[lng_id][0];
-    /* let oldClipboardStructure = []; */
-    // Make array for addAttribute... (see below)
-    /* clipboardTitles.forEach((listNodes, lngId) => {
-        let lng = lngId
-        listNodes.forEach((node, index) => {
-            oldClipboardStructure.push([])
-            oldClipboardStructure[index][lng] = node
-        })
-    })
-    oldClipboardStructure = oldClipboardStructure.filter(element => element.length > 0) */
-    /* oldClipboardStructure = oldClipboardStructure.filter(String) // Почему-то тоже работает */
+
     if (parentNode.isGroup()) {
         $.ajax({
             data: {
