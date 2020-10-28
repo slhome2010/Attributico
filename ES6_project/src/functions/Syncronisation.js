@@ -28,19 +28,3 @@ export function reloadAttribute() {
         });
     });
 }
-
-/* export function smartReload(tree, nodeList) {
-    nodeList.forEach(function (node) {
-        let findedNode = tree.getNodeByKey(node.key);
-        if (findedNode !== null) {
-            findedNode.getChildren().forEach(child => {
-                if (child.isTemplate() || child.isValue()) {
-                    child.resetLazy();
-                    child.load(true).done(function (result) {
-                        //   console.log(tree.$div[0].id, child.key);
-                    });
-                }
-            });
-        }
-    });
-} */
