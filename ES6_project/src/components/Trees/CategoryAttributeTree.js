@@ -129,7 +129,7 @@ export default class CategoryAttributeTree {
                     return true;
                 },
                 dragDrop: (node, data) => {
-                    let targetNode = node.getParent().isRootNode() ? node : node.getParent(); // add to rootNode = category_id
+                    let targetNode = node.isTopLevel() ? node : node.getParent(); // add to rootNode = category_id
                     addAttributeToCategory(data.otherNode, targetNode, selNodes, false, this.store);
                 }
             },
@@ -155,7 +155,7 @@ export default class CategoryAttributeTree {
                     addChild: true,
                     addSibling: false,
                     copy: data.node.isAttribute(),
-                    cut: data.node.isOneOf(['attribute']),
+                    cut: data.node.isAttribute(),
                     paste: true,
                     refresh: false
                 };

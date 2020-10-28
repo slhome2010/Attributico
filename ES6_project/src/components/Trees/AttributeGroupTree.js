@@ -81,8 +81,7 @@ export default class AttributeGroupTree {
                 preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
                 preventRecursiveMoves: false, // Prevent dropping nodes on own descendants
                 dragStart: (node, data) => {
-                    //  if (data.node.isRootNode() || data.node.getLevel() !== 3) {
-                    if (data.node.isRootNode() || data.node.getLevel() > 3) {
+                    if (data.node.isTopLevel() || data.node.getLevel() > 3) {
                         return false;
                     }
                     return true;
@@ -92,7 +91,7 @@ export default class AttributeGroupTree {
                     let sourceLevel = data.otherNode.getLevel();
                     let sourceNode = data.otherNode;
                     // embargo on levels mixing
-                    if (targetLevel === 1 || targetLevel > sourceLevel) {
+                    if (targetNode.isTopLevel() || targetLevel > sourceLevel) {
                         return false;
                     }
                     // embargo on moving into oneself
@@ -140,7 +139,7 @@ export default class AttributeGroupTree {
                     remove: data.node.isOneOf(['group', 'attribute', 'template', 'value']),
                     addChild: !data.node.isTopLevel() ? true : false,
                     addSibling: true,
-                    copy: data.node.isOneOf(['attribute']),
+                    copy: data.node.isAttribute(),
                     cut: data.node.isOneOf(['group', 'attribute']),
                     paste: !data.node.isTopLevel() ? true : false,
                     merge: data.node.isOneOf(['group', 'attribute'])

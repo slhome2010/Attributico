@@ -5,7 +5,7 @@ import { smartScroll } from '../../constants/global';
 
 // --------------------------------------- category tree ------------------------------------------------
 export default class CategoryTree {
-    constructor(element,store) {
+    constructor(element, store) {
         this.lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         this.currentTab = 'tab-category';
         this.tree = $("#category_tree" + this.lng_id);
@@ -28,7 +28,7 @@ export default class CategoryTree {
                 },
                 url: 'index.php?route=' + extension + 'module/attributico/getCategoryTree'
             },
-            activate: (event, data) => {                
+            activate: (event, data) => {
                 let tree = $.ui.fancytree.getTree("#category_attribute_tree" + this.lng_id);
                 currentCategory = data.node.key;
                 tree.reload({
@@ -52,15 +52,15 @@ export default class CategoryTree {
                     return false;
                 },
                 dragEnter: function (node, data) {
-                    if (data.otherNode.getParent().key === node.key) { // category_id is itself
+                    if (data.otherNode.getParent().key === node.key || node.isTopLevel()) { // category_id is itself
                         return false;
                     }
                     return true;
                 },
-                dragDrop: (node, data) => {    
+                dragDrop: (node, data) => {
                     // Если источником является дерево атрибутов, то удалять не надо т.к. это ADD. 
                     // Если дерево атрибутов категории, то удаляем, т.к. это REPLACE.
-                    let noRemove = data.otherNode.tree.$div[0].id.indexOf('attribute_tree');               
+                    let noRemove = data.otherNode.tree.$div[0].id.indexOf('attribute_tree');
                     addAttributeToCategory(data.otherNode, node, selNodes, noRemove, this.store);
                 }
             },
@@ -83,7 +83,7 @@ export default class CategoryTree {
             focusTree: function (e, data) {
                 data.tree.$container.focus();
             },
-            init: (event, data) => {                
+            init: (event, data) => {
                 if ($(smartScroll).is(":checked"))
                     data.tree.$container.addClass("smart-scroll");
 
@@ -95,7 +95,7 @@ export default class CategoryTree {
                         ["remove", "rename", "addSibling", "addChild"].forEach(function (item, index, array) {
                             data.tree.$div.contextmenu("enableEntry", item, false);
                         });
-                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.getParent().isRootNode());
+                        data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.isTopLevel());
                         node.setActive();
                     },
                     select: (event, ui) => {
