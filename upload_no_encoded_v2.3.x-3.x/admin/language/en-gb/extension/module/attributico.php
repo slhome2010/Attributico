@@ -12,8 +12,8 @@ $_['text_rewrite'] = 'Rewrite';
 $_['text_insert'] = 'Insert';
 $_['text_clear'] = 'Clear';
 $_['text_keep'] = 'Keep';
-$_['text_duty'] = 'Take duty template';
-$_['text_duty_only'] = 'Take duty only if values is empty';
+$_['text_duty'] = 'Replace with duty';
+$_['text_duty_only'] = 'Duty only in empty';
 
 // Filter
 $_['text_autoCollapse'] = 'autoCollapse';

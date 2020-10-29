@@ -153,26 +153,21 @@
                     url: 'index.php?route=' + extension + 'module/attributico/getMethods&token=<?php echo $token; ?>',
                     dataType: "json",
                     success: function (json) {
-$.each(json, function (key, option) {
-                                    console.log(option)
-                                });
-                      method = '4';
+                      $('#method-view').append(json)                      
+                      method = $('#method-view option:selected').val()                     
                     }
-                });
-
-                //Category onchange event
-                $('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function (e) {
-                    if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
-                        newCategory($(this).val())
-                    }
-                });
+                });               
 
                 function newCategory(category_id) {
                     $.each(product_attribute_id, function (key, attribute_id) { 
                         addAttributeDuty(attribute_id, key);
                     });
                     $.ajax({
-                        url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes&token=<?php echo $token; ?>&category_id='+category_id,
+                      data: {
+                            'token': '<?php echo $token;?>',
+                            'category_id': category_id
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes',
                         dataType: 'json',
                         success: function (json) {
                             if (add_category_attribute) {
@@ -201,8 +196,7 @@ $.each(json, function (key, option) {
 
                 function getSelectedCategories() {
                     var selKeys = []; $('input[name=\'product_category[]\']').each(function (indx, element) {
-                        if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
-                            //   console.log($(this).val());
+                        if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {                            
                             selKeys.push($(this).val());
                         }
                     });
@@ -233,7 +227,12 @@ $.each(json, function (key, option) {
 
                 function addAttributeDuty(attribute_id, attribute_row) {
                     $.ajax({
-                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeDuty&token=<?php echo $token; ?>&attribute_id=' + attribute_id,
+                      data: {
+                            'token': '<?php echo $token;?>',
+                            'attribute_id': attribute_id,
+                            'method': method
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeDuty',
                         dataType: 'json',
                         success: function (json) {
                             $.each(json, function (language_id, duty) {
@@ -248,6 +247,23 @@ $.each(json, function (key, option) {
                         }
                     });
                 }
+
+                //Category onchange event
+                $('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function (e) {
+                  const getMethod = $.ajax({
+                    url: 'index.php?route=' + extension + 'module/attributico/getMethod&token=<?php echo $token; ?>',
+                    dataType: "text",
+                    success: function (result) {                                           
+                      method = result                     
+                    }
+                });  
+                // Reset Override method  
+                $('#method-view option:first').attr('selected', 'yes');
+                
+                    if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
+                        newCategory($(this).val())
+                    }
+                });
 
                 // Set selected value or template in textarea
                 $('#attribute tbody').on('change', 'select', function() {
@@ -285,30 +301,40 @@ $.each(json, function (key, option) {
                 // Set filter values display mode when start
                 $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click();
 
+                
+
+                // Set filter mode for attribute values
+                $('#attribute input[type=\'radio\']').on('change', function () {
+                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());
+                    method = $('#method-view option:selected').val() // А что это дает???  
+                    $('#attribute tbody tr').each(function(index, element) {
+                    });
+                });
+
                 // Set template mode
-                $('#template-view').click(function () {
+                $('#template-view').on('click', function () {
                     localStorage.setItem('display_attribute', 'template');
                     $(this).addClass('btn-info');
                     $('#values-view').removeClass('btn-info');
+                    method = $('#method-view option:selected').val() // А что это дает???  
                     $('#attribute tbody tr').each(function(index, element) {
                     });
                 });
 
                 // Set values mode
-                $('#values-view').click(function () {
-                    localStorage.setItem('display_attribute', 'values');
+                $('#values-view').on('click', function () {
+                    localStorage.setItem('display_attribute', 'values');                    
                     $(this).addClass('btn-info');
-                    $('#template-view').removeClass('btn-info');
+                    $('#template-view').removeClass('btn-info'); 
+                    method = $('#method-view option:selected').val() // А что это дает???                  
                     $('#attribute tbody tr').each(function(index, element) {
                     });
+                });                
+                
+                // Override method 
+                $('#method-view').on('change', () => {
+                  method = $('#method-view option:selected').val()                  
                 });
-
-                // Set filter mode for attribute values
-                $('#attribute input[type=\'radio\']').on('change', function () {
-                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());
-                    $('#attribute tbody tr').each(function(index, element) {
-                    });
-                });            
             ]]>            </add>
         </operation>
         <operation>

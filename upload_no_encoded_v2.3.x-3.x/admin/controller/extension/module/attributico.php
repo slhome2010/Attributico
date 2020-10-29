@@ -560,7 +560,7 @@ class ControllerModuleAttributico extends Controller
     {
         $json = array();
         $attribute_id = isset($this->request->get['attribute_id']) ? (int) $this->request->get['attribute_id'] : 0;
-        $method = $this->config->get('attributico_product_text');
+        $method = isset($this->request->get['method']) ? $this->request->get['method'] : $this->config->get('attributico_product_text');
 
         if ($this->config->get('attributico_autoadd')) {
 
@@ -597,8 +597,8 @@ class ControllerModuleAttributico extends Controller
     public function getMethods()
     {
         $method = $this->config->get('attributico_product_text');
-       
-        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";        
+
+        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
 
         if (version_compare(VERSION, '2.2.0', '>=')) {
             $this->load->language($extension . 'module/attributico');
@@ -607,11 +607,11 @@ class ControllerModuleAttributico extends Controller
             $this->language->load('module/attributico');
             $ssl = 'SSL';
         }
-       
-        $options =  "<option ". /* $method !=='3' && $method !=='4' ? "selected ":"" . */ "value='0'>" . $this->language->get('text_select') . "</option>";
-        $options .= "<option ". /* $method =='3' ? "selected ":"" . */ "value='3'>" . $this->language->get('text_duty') . "</option>";
-        $options .= "<option ". /* $method =='4' ? "selected ":"" . */ "value='4'>" . $this->language->get('text_duty_only') . "</option>";
-       
+
+        $options =  "<option ". ($method !=='3' && $method !=='4' ? "selected ":"") . "value='0'>" . $this->language->get('text_select') . "</option>";
+        $options .= "<option ". ($method =='3' ? "selected ":"") . "value='3'>" . $this->language->get('text_duty') . "</option>";
+        $options .= "<option ". ($method =='4' ? "selected ":"") . "value='4'>" . $this->language->get('text_duty_only') . "</option>";
+
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($options));
     }
