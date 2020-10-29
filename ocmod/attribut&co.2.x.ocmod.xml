@@ -149,11 +149,14 @@
                 var extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
                 var add_category_attribute = '<?php echo $attributico_autoadd; ?>';
                 var method;
-                var getMethod = $.ajax({
-                    url: 'index.php?route=' + extension + 'module/attributico/getMethod&token=<?php echo $token; ?>',
-                    dataType: "text",
-                    success: function (txt) {
-                      method = txt;
+                var getMethods = $.ajax({
+                    url: 'index.php?route=' + extension + 'module/attributico/getMethods&token=<?php echo $token; ?>',
+                    dataType: "json",
+                    success: function (json) {
+$.each(json, function (key, option) {
+                                    console.log(option)
+                                });
+                      method = '4';
                     }
                 });
 
@@ -248,25 +251,27 @@
 
                 // Set selected value or template in textarea
                 $('#attribute tbody').on('change', 'select', function() {
-        var select = $(this);
-        var textarea_val = select.next('textarea').val();
-        textarea_val = (textarea_val == '') ? textarea_val : textarea_val +
-            '<?php echo quotemeta($attributico_splitter); ?>';
-
-
-        console.log(localStorage.getItem('filter-values'), $(this).attr("attribute_id"), $(this).attr("language_id"));
-        if (localStorage.getItem('display_attribute') == 'template') {
-            select.next('textarea').val(select.val());
-            console.log(select); /* select.selectedIndex = 0 */
-            if (localStorage.getItem('filter-values') == 'duty'/*  && select.options.selectedIndex != 0 */) {
-                let row = select.next('textarea').attr("name").match(/[0-9]+/)[0];
-                let attribute_id = $(this).attr("attribute_id")
-                addAttributeDuty(attribute_id, row)
-            }
-        } else {
-            select.next('textarea').val(textarea_val + select.val());
-        }
-    });
+                    var select = $(this);
+                    var textarea_val = select.next('textarea').val();
+                    textarea_val = (textarea_val == '') ? textarea_val : textarea_val +
+                        '<?php echo quotemeta($attributico_splitter); ?>';
+                    if (localStorage.getItem('display_attribute') == 'template') {
+                        if (this.selectedIndex != 0) {
+                            select.next('textarea').val(select.val());            
+                            if (localStorage.getItem('filter-values') == 'duty') {               
+                                let row = select.next('textarea').attr("name").match(/[0-9]+/)[0];
+                                let attribute_id = select.attr("attribute_id")
+                                addAttributeDuty(attribute_id, row)
+                            }
+                            this.selectedIndex = 0
+                        }            
+                    } else {
+                        if (this.selectedIndex != 0) {
+                            select.next('textarea').val(textarea_val + select.val());
+                            this.selectedIndex = 0
+                        }
+                    }
+                });
 
                 // Set attribute values display mode when start
                 if (localStorage.getItem('display_attribute') == 'template') {
@@ -346,7 +351,7 @@
             <add position="replace"><![CDATA[
                 <td class="text-left">
                     <?php echo $entry_text; ?>
-                    <div class="pull-right">
+                    <div class="pull-right form-inline">
                         <label class="radio-inline">
                             <input type="radio" name="filter-values" id="filter-nofilter" value="all" checked>
                             <?php echo $entry_flter_all; ?>
@@ -366,6 +371,8 @@
                             <button type="button" id="values-view" class="btn btn-default"><i class="fa fa-th"></i>
                                 <?php echo $entry_attribute_values; ?></button>
                         </div>
+                        <select class="form-control" id="method-view">                          
+                        </select>                       
                     </div>
                 </td>
             ]]>            </add>

@@ -594,6 +594,29 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput($method);
     }
 
+    public function getMethods()
+    {
+        $method = $this->config->get('attributico_product_text');
+       
+        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";        
+
+        if (version_compare(VERSION, '2.2.0', '>=')) {
+            $this->load->language($extension . 'module/attributico');
+            $ssl = true;
+        } else {
+            $this->language->load('module/attributico');
+            $ssl = 'SSL';
+        }
+       
+        $options =  "<option ". /* $method !=='3' && $method !=='4' ? "selected ":"" . */ "value='0'>" . $this->language->get('text_select') . "</option>";
+        $options .= "<option ". /* $method =='3' ? "selected ":"" . */ "value='3'>" . $this->language->get('text_duty') . "</option>";
+        $options .= "<option ". /* $method =='4' ? "selected ":"" . */ "value='4'>" . $this->language->get('text_duty_only') . "</option>";
+       
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($options));
+    }
+
+
     public function getAttributeGroupTree()
     {
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
