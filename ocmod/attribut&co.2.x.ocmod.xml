@@ -313,6 +313,20 @@
                     });                   
                 }
 
+                function getAttributeInfo(attribute_id) {
+                    $.ajax({
+                      data: {
+                            'token': token,
+                            'user_token': user_token,
+                            'attribute_id': attribute_id
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeInfo',
+                        dataType: 'json',
+                        success: function (json) {
+                            console.log(json)
+                        }
+                    });
+                }
 
                 // Event Category onchange
                 $('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function (e) {  
@@ -381,8 +395,9 @@
         <operation>
             <search><![CDATA[$('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(item['value']);]]></search>
             <add position="after"><![CDATA[
-		        makeValuesList($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
-                addAttributeDuty($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
+		        makeValuesList(item.value, attribute_row);
+                addAttributeDuty(item.value, attribute_row);
+                getAttributeInfo(item.value);
             ]]>            </add>
         </operation>
         <operation>

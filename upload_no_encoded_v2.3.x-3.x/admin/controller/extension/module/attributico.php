@@ -675,6 +675,17 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+    public function getAttributeInfo()    
+    {
+        $json = array();
+        $attribute_id = isset($this->request->get['attribute_id']) ? (int) $this->request->get['attribute_id'] : 0;
+        
+        $this->load->model('catalog/attributico');
+        $attribute_info = $this->model_catalog_attributico->getAttributeInfo($attribute_id);
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($attribute_info));
+    }
 
     public function getAttributeGroupTree()
     {
