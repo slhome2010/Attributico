@@ -146,40 +146,60 @@
             <search><![CDATA[function addAttribute() {]]></search>
             <add position="before"><![CDATA[           
                 let product_attribute_id = new Array();
-                const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
-                const add_category_attribute = '<?php echo $attributico_autoadd; ?>';                
+                const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов                  
                 const token = '<?php echo $token;?>';
                 const user_token = '<?php echo $token;?>';
+                let add_category_attribute; 
+                let splitter;             
                 let method;
 
+                //const getSettings = $.ajax({
+                //    data: {
+                //            'token': token,
+                //            'user_token': user_token
+                //        },
+                //    url: 'index.php?route=' + extension + 'module/attributico/getSettings',
+                //    dataType: "json",
+                //    success: function (json) {
+                //       console.log(json.splitter, json.attributico_autoadd, json.extension)                       
+                //       splitter = quotemeta(json.splitter)
+                //       add_category_attribute = json.attributico_autoadd
+//
+                //       getServPanel()
+               //    }
+               // });               
+
                 const getServPanel = $.ajax({
-                    data: {
-                            'token': token,
-                            'user_token': user_token
+                        data: {
+                                'token': token,
+                                'user_token': user_token
                         },
-                    url: 'index.php?route=' + extension + 'module/attributico/getServPanel',
-                    dataType: "json",
-                    success: function (json) {
-                        $('#serv-panel').append(json)                      
-                       
-                        method = $('#method-view option:selected').val()  
-                      
-                        // Set attribute values display mode when start
-                        if (localStorage.getItem('display_attribute') == 'template') {
-                            $('#values-view').removeClass('btn-info');
-                            $('#template-view').addClass('btn-info');
-                        } else {
-                            $('#values-view').addClass('btn-info');
-                            $('#template-view').removeClass('btn-info');
+                        url: 'index.php?route=' + extension + 'module/attributico/getServPanel',
+                        dataType: "json",
+                        success: function (json) {                            
+                            splitter = json.splitter
+                            add_category_attribute = json.attributico_autoadd 
+
+                            $('#serv-panel').append(json.serv_panel) 
+
+                            method = $('#method-view option:selected').val()  
+                        
+                            // Set attribute values display mode when start
+                            if (localStorage.getItem('display_attribute') == 'template') {
+                                $('#values-view').removeClass('btn-info');
+                                $('#template-view').addClass('btn-info');
+                            } else {
+                                $('#values-view').addClass('btn-info');
+                                $('#template-view').removeClass('btn-info');
+                            }
+
+                            // Set filter values display mode when start
+                            $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click(); 
+
+                            // Load values for all attributes and lang
+                            loadValues()
                         }
-
-                        // Set filter values display mode when start
-                        $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click(); 
-
-                        // Load values for all attributes and lang
-                        loadValues()
-                    }
-                });               
+                    });  
 
                 function newCategory(category_id) {
                     $.each(product_attribute_id, function (key, attribute_id) { 
@@ -305,8 +325,7 @@
                 $('#attribute tbody').on('change', 'select', function() {
                     var select = $(this);
                     var textarea_val = select.next('textarea').val();
-                    textarea_val = (textarea_val == '') ? textarea_val : textarea_val +
-                        '<?php echo quotemeta($attributico_splitter); ?>';
+                    textarea_val = (textarea_val == '') ? textarea_val : textarea_val + splitter;                        
                     if (localStorage.getItem('display_attribute') == 'template') {
                         if (this.selectedIndex != 0) {
                             select.next('textarea').val(select.val());            
@@ -397,17 +416,7 @@
             <add position="after"><![CDATA[newCategory(item['value']);]]></add>
         </operation>
     </file>
-    <file path="admin/controller/catalog/product.php">
-        <operation>
-            <search><![CDATA[$data['entry_recurring'] = $this->language->get('entry_recurring');]]></search>
-            <add position="after"><![CDATA[
-                if ($this->config->get('attributico_splitter')) {
-                            $data['attributico_splitter'] = $this->config->get('attributico_splitter');
-                } else {
-                            $data['attributico_splitter'] = '/';
-                }                
-            ]]>            </add>
-        </operation>
+    <file path="admin/controller/catalog/product.php">        
         <operation error="skip">
             <search><![CDATA[if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {]]></search>
             <add position="before"><![CDATA[
@@ -424,10 +433,9 @@
         <operation error="skip">
             <search><![CDATA[$data['footer'] = $this->load->controller('common/footer');]]></search>
             <add position="after"><![CDATA[
-		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
-                $data['attributico_autoadd'] = $this->config->get('attributico_autoadd');
-            ]]>            </add>
-        </operation>
+		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";                
+            ]]></add>
+        </operation>        
         <operation error="skip">
             <search><![CDATA[$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);]]></search>
             <add position="replace"><![CDATA[

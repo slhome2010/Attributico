@@ -590,7 +590,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
-    public function getMethod()
+   /*  public function getMethod()
     {
         $method = $this->config->get('attributico_product_text');
         $this->response->addHeader('Content-Type: application/json');
@@ -618,7 +618,19 @@ class ControllerModuleAttributico extends Controller
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($options));
-    }
+    } */
+
+    /* public function getSettings()
+    {
+        $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
+        $attributico_autoadd = $this->config->get('attributico_autoadd') ? $this->config->get('attributico_autoadd') : 0;
+        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
+        $json = ['splitter'=>$splitter, 'attributico_autoadd'=>$attributico_autoadd, 'extension'=>$extension];
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+
+    } */
 
     public function getServPanel(){
 
@@ -654,8 +666,13 @@ class ControllerModuleAttributico extends Controller
         $select .= $options;
         $select .= "</select>";
 
+        $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
+        $attributico_autoadd = $this->config->get('attributico_autoadd') ? $this->config->get('attributico_autoadd') : 0;
+
+        $json = ['serv_panel' => $labels . $buttons . $select, 'splitter'=>quotemeta($splitter), 'attributico_autoadd'=>$attributico_autoadd, 'extension'=>$extension];
+
         $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput(json_encode($labels . $buttons . $select));
+        $this->response->setOutput(json_encode($json));
     }
 
 
