@@ -11,9 +11,9 @@ $_['text_edit'] = 'Редактирование модуля';
 $_['text_rewrite'] = 'Перезаписывать';
 $_['text_insert'] = 'Вставлять';
 $_['text_clear'] = 'Очищать';
-$_['text_keep'] = 'Оставлять';
+$_['text_keep'] = 'Не менять';
 $_['text_duty'] = 'Заменять дежурным';
-$_['text_duty_only'] = 'Дежурный только в пустые';
+$_['text_duty_only'] = 'Только в пустые';
 
 // Filter
 $_['text_autoCollapse'] = 'Автоматически сворачивать';
@@ -127,6 +127,9 @@ $_['help_clone_options'] = 'Можно отменить клонирование
 $_['entry_attribute_groups'] = 'Группы атрибутов';
 $_['entry_attribute_template'] = 'Шаблоны';
 $_['entry_attribute_values'] = 'Значения';
+$_['entry_flter_all'] = 'Все';
+$_['entry_flter_category'] = 'Категории';
+$_['entry_flter_duty'] = 'Дежурные';
 $_['entry_splitter'] = 'Разделитель атрибутов';
 $_['entry_autoattribute'] = 'Добавлять атрибут категории в товары';
 $_['entry_autodel'] = 'Удалять атрибут категории из товаров';

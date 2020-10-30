@@ -13,7 +13,7 @@ $_['text_insert'] = 'Insert';
 $_['text_clear'] = 'Clear';
 $_['text_keep'] = 'Keep';
 $_['text_duty'] = 'Replace with duty';
-$_['text_duty_only'] = 'Duty only in empty';
+$_['text_duty_only'] = 'Only in empty';
 
 // Filter
 $_['text_autoCollapse'] = 'autoCollapse';
@@ -126,6 +126,9 @@ $_['help_clone_options'] = 'You can undo the clone of Groups, Attributes or Attr
 $_['entry_attribute_groups'] = 'Attribute Groups';
 $_['entry_attribute_template'] = 'Templates';
 $_['entry_attribute_values'] = 'Values';
+$_['entry_flter_all'] = 'All';
+$_['entry_flter_category'] = 'Categories';
+$_['entry_flter_duty'] = 'Duties';
 $_['entry_splitter'] = 'The splitter attributes';
 $_['entry_autoattribute'] = 'Add categories attribute to Products';
 $_['entry_autodel'] = 'Remove attribute category of products';
