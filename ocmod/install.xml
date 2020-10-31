@@ -108,74 +108,98 @@
         </operation>
         <operation error="skip">
             <search><![CDATA[function addAttribute() {]]></search>
-            <add position="before"><![CDATA[
-		var product_attribute_id = new Array();
-        var extension = '{{extension}}';
-        var add_category_attribute = '{{attributico_autoadd}}';		
-		var method;
-                var getMethod = $.ajax({
-                    url: 'index.php?route=' + extension + 'module/attributico/getMethod&user_token={{ user_token }}',
-                    dataType: "text",
-                    success: function (txt) {
-                      method = txt;
-                    }
-                });
+            <add position="before"><![CDATA[			
+                let product_attribute_id = new Array();
+                const extension = '{{extension}}';                 
+                const token = '{{user_token}}';
+                const user_token = '{{user_token}}';
+                let add_category_attribute; 
+                let splitter;             
+                let method;
+               
+                const getServPanel = $.ajax({
+                        data: {
+                                'token': token,
+                                'user_token': user_token
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getServPanel',
+                        dataType: "json",
+                        success: function (json) {                            
+                            splitter = json.splitter
+                            add_category_attribute = json.attributico_autoadd                            
 
-                //Category onchange event
-		$('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function(e) {
-                    if($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
-                        newCategory($(this).val())
-                    }
-		});
+                            $('#serv-panel').append(json.serv_panel) 
 
-		function newCategory(category_id) {
-            $.each(product_attribute_id, function (key, attribute_id) { 
-                addAttributeDuty(attribute_id, key);
-            });
-            $.ajax({
-				data: {'user_token':'{{ user_token }}', 'category_id': category_id},
-				url: 'index.php?route=' +extension+ 'module/attributico/getCategoryAttributes',
-				dataType: 'json',
-				success: function(json) {
-                    if (add_category_attribute) {
-                        $.each(json, function(key, attribute) {
-                            if (!in_array(attribute['attribute_id'],product_attribute_id)) {
-                                var row = attribute_row;
-                                addAttribute(); 
-                                $('input[name="product_attribute[' + row + '][name]"]').val(attribute['name']); 
-                                $('input[name="product_attribute[' + row + '][attribute_id]"]').val(attribute['attribute_id']);
-                                makeValuesList(attribute['attribute_id'], row);
-                                addAttributeDuty(attribute['attribute_id'], row);
-                                product_attribute_id.push(attribute['attribute_id']);
+                            method = $('#method-view option:selected').val()  
+                        
+                            // Set attribute values display mode when start
+                            if (localStorage.getItem('display_attribute') == 'template') {
+                                $('#values-view').removeClass('btn-info');
+                                $('#template-view').addClass('btn-info');
+                            } else {
+                                $('#values-view').addClass('btn-info');
+                                $('#template-view').removeClass('btn-info');
                             }
-                        });
-                    }        
-				}
-           });
-		}        
 
-		function in_array(value, array) {
-                    for(var i = 0; i< array.length; i++) {
-                        if(array[i] == value) return true;
+                            // Set filter values display mode when start
+                            $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click(); 
+
+                            // Load values for all attributes and lang
+                            loadValues()
+                        }
+                    });  
+
+                function newCategory(category_id) {
+                    $.each(product_attribute_id, function (key, attribute_id) { 
+                        addAttributeDuty(attribute_id, key);
+                    });
+                    $.ajax({
+                      data: {
+                            'token': token,
+                            'user_token': user_token,
+                            'category_id': category_id
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes',
+                        dataType: 'json',
+                        success: function (json) {
+                            if (add_category_attribute) {
+                                $.each(json, (key, attribute) => {
+                                    if (!in_array(attribute['attribute_id'], product_attribute_id)) {
+                                        var row = attribute_row;
+                                        addAttribute(); 
+                                        $('input[name="product_attribute[' + row + '][name]"]').val(attribute['name']); 
+                                        $('input[name="product_attribute[' + row + '][attribute_id]"]').val(attribute['attribute_id']);
+                                        makeValuesList(attribute['attribute_id'], row);
+                                        addAttributeDuty(attribute['attribute_id'], row);
+                                        product_attribute_id.push(attribute['attribute_id']);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+
+                function in_array(value, array) {
+                    for (var i = 0; i < array.length; i++) {
+                        if (array[i] == value) return true;
                     }
                     return false;
-		}
+                }
 
-        function getSelectedCategories() {
-                    var selKeys = [];
-                    $('input[name=\'product_category[]\']').each(function (indx, element) {
-                        if($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
-                         //   console.log($(this).val());
+                function getSelectedCategories() {
+                    var selKeys = []; $('input[name=\'product_category[]\']').each(function (indx, element) {
+                        if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {                            
                             selKeys.push($(this).val());
                         }
                     });
                     return selKeys;
-        }
+                }
 
-        function makeValuesList(attribute_id, attribute_row) {
+                function makeValuesList(attribute_id, attribute_row) {
                     $.ajax({
                         data: {
-                            'user_token':'{{ user_token }}',
+                            'token': token,
+                            'user_token': user_token,
                             'attribute_id': attribute_id,
                             'view_mode': localStorage.getItem('display_attribute'),
                             'categories': $('input[id=\'filter-category\']').is(":checked") ? getSelectedCategories() : [],
@@ -193,32 +217,92 @@
                         }
                     });
                 }
-		
-		function addAttributeDuty(attribute_id, attribute_row) {
-			$.ajax({
-				data: {'user_token':'{{ user_token }}', 'attribute_id':attribute_id},
-				url: 'index.php?route=extension/module/attributico/getAttributeDuty',
-				dataType: 'json',
-				success: function (json) {
-                    $.each(json, function (language_id, duty) {
-                        var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]');
-                        if (method=='4') {                                 
-                            if(textarea.val()=='')                                   
-                                textarea.val(duty);
-                        } else 
-                            if (method=='3' && duty != '')
-                                textarea.val(duty); 
+
+                function addAttributeDuty(attribute_id, attribute_row) {
+                    $.ajax({
+                      data: {
+                            'token': token,
+                            'user_token': user_token,
+                            'attribute_id': attribute_id,
+                            'method': method
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeDuty',
+                        dataType: 'json',
+                        success: function (json) {
+                            $.each(json, function (language_id, duty) {
+                                var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]');
+                                switch (method) {
+                                    case "1":                                    
+                                        textarea.val('');
+                                        break;
+                                    case "2":                                        
+                                        break;
+                                    case "3":
+                                        if (duty != '')
+                                             textarea.val(duty); 
+                                        break;
+                                    case "4":
+                                        if(textarea.val()=='')                                   
+                                            textarea.val(duty);
+                                        break;                                   
+                                    default:
+                                        break;
+                                }                                
+                            });
+                        }
                     });
                 }
-			});
-		}
-        
-                // Set selected value or template in textarea
+
+                function loadValues() {
+                    $('#attribute tbody tr').each(function(index, element) {
+                            var attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
+                            makeValuesList(attribute_id, index);
+                            product_attribute_id.push(attribute_id);
+                    });                   
+                }
+
+                function getAttributeInfo(attribute_id, row) {
+                    $.ajax({
+                      data: {
+                            'token': token,
+                            'user_token': user_token,
+                            'attribute_id': attribute_id
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getAttributeInfo',
+                        dataType: 'json',
+                        success: function (json) {
+                          let baseSelector = $('input[name="product_attribute[' + row + '][name]"]').parent()
+                          let outputInfo = $('<textarea>', {
+                              class: 'form-control',
+                              id: 'attribute-info' + row,
+                              disabled: 'disabled',
+                              style: 'resize:vertical; overflow:auto;',
+                              wrap:"off",
+                              cols:"30",
+                              rows:"6",
+                          });
+                          $('#attribute-info' + row).remove()
+                          $.each(json, function (language_id) {
+                            outputInfo.val($.trim(outputInfo.val() + '\n' + json[language_id].group_name));
+                            outputInfo.val($.trim(outputInfo.val() + '\n' + json[language_id].name))                            
+                            });
+                            baseSelector.append(outputInfo)
+                        }
+                    });
+                }
+
+                // Event Category onchange
+                $('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function (e) {  
+                    if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
+                        newCategory($(this).val())
+                    }
+                });
+
+                // Event apply value or template and set selected in textarea
                 $('#attribute tbody').on('change', 'select', function() {
                     var select = $(this);
                     var textarea_val = select.next('textarea').val();
-                    textarea_val = (textarea_val == '') ? textarea_val : textarea_val +
-                        '<?php echo quotemeta($attributico_splitter); ?>';
+                    textarea_val = (textarea_val == '') ? textarea_val : textarea_val + splitter;                        
                     if (localStorage.getItem('display_attribute') == 'template') {
                         if (this.selectedIndex != 0) {
                             select.next('textarea').val(select.val());            
@@ -235,54 +319,36 @@
                             this.selectedIndex = 0
                         }
                     }
+                });                              
+
+                // Event change filter mode for attribute values
+                $('#serv-panel').on('change', 'input[type=\'radio\']', function () {
+                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());                     
+                    loadValues()
                 });
 
-                // Set attribute values display mode when start
-        if (localStorage.getItem('display_attribute') == 'template') {
-                    $('#values-view').removeClass('btn-info');
-                    $('#template-view').addClass('btn-info');
-		} else {
-                    $('#values-view').addClass('btn-info');
-                    $('#template-view').removeClass('btn-info');
-		}
-
-                // Set filter values display mode when start
-        $("input[value=\""+localStorage.getItem('filter-values')+"\"]").click();
-
-                // Set template mode
-		$('#template-view').click(function() {
+                // Event set template mode
+                $('#serv-panel').on('click', '#template-view', function () {
                     localStorage.setItem('display_attribute', 'template');
                     $(this).addClass('btn-info');
-                    $('#values-view').removeClass('btn-info');
-                    $('#attribute tbody tr').each(function(index, element) {
-                    });
-		});
+                    $('#values-view').removeClass('btn-info');                    
+                    loadValues()
+                });
 
-		// Set values mode
-		$('#values-view').click(function() {
-                    localStorage.setItem('display_attribute', 'values');
+                // Event set values mode
+                $('#serv-panel').on('click', '#values-view', function () {
+                    localStorage.setItem('display_attribute', 'values');                    
                     $(this).addClass('btn-info');
-                    $('#template-view').removeClass('btn-info');
-                    $('#attribute tbody tr').each(function(index, element) {
-                    });
-		});
-
-                // Set filter mode for attribute values
-		$('#attribute input[type=\'radio\']').on('change', function(){
-                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());
-                    $('#attribute tbody tr').each(function(index, element) {
-                    });
-		});
+                    $('#template-view').removeClass('btn-info');                                    
+                    loadValues()
+                });                
+                
+                // Event override method 
+                $('#serv-panel').on('change', '#method-view', () => {
+                  method = $('#method-view option:selected').val()                  
+                });
             ]]></add>
-        </operation>
-        <operation>
-            <search><![CDATA[$('#attribute tbody tr').each(function(index, element) {]]></search>
-            <add position="after"><![CDATA[
-				var attribute_id = $('[name="product_attribute\[' + index + '\]\[attribute_id\]"]').val();
-				makeValuesList(attribute_id, index);
-				product_attribute_id.push(attribute_id);
-            ]]></add>
-        </operation>
+        </operation>        
         <operation>
             <search><![CDATA[html += '  <td class="text-left">';]]></search>
             <add position="before"><![CDATA[
@@ -292,8 +358,10 @@
         <operation>
             <search><![CDATA[$('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(item['value']);]]></search>
             <add position="after"><![CDATA[
-				makeValuesList($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
-                addAttributeDuty($('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(), attribute_row);
+				makeValuesList(item.value, attribute_row);
+                addAttributeDuty(item.value, attribute_row);
+                $('#group-name' + attribute_row).remove()
+                $('input[name=\'product_attribute[' + attribute_row + '][name]\']').parent().prepend('<label id=group-name' + attribute_row + '>' + item.category + '</label>')
             ]]></add>
         </operation>
         <operation>
@@ -313,25 +381,12 @@
         <operation>
             <search><![CDATA[<td class="text-left">{{ entry_text }}</td>]]></search>
             <add position="replace"><![CDATA[
-		<td class="text-left">{{ entry_text }}
-                    <div class="pull-right">
-                        <label class="radio-inline">
-                            <input type="radio" name="filter-values" id="filter-nofilter" value="all" checked> {{entry_flter_all}}
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="filter-values" id="filter-category" value="categories"> {{entry_flter_category}}
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="filter-values" id="filter-duty" value="duty"> {{entry_flter_duty}}
-                        </label>
-                        <label class="radio-inline"></label>
-                        <div class="btn-group">
-                            <button type="button" id="template-view" class="btn btn-default" ><i class="fa fa-th-list"></i> {{entry_attribute_template}}</button>
-                            <button type="button" id="values-view" class="btn btn-default" ><i class="fa fa-th"></i> {{ entry_attribute_values }}</button>
-						</div>
+                <td class="text-left">
+                    {{ entry_text }}
+                    <div id="serv-panel" class="pull-right form-inline">                        
                     </div>
-		</td>
-            ]]></add>
+                </td>
+            ]]>            </add>
         </operation>
     </file>
     <file path="admin/view/template/catalog/product_form.twig">
@@ -339,44 +394,8 @@
             <search><![CDATA[+ item['label'] + '<input type="hidden" name="product_category[]" value="' + item['value'] + '" /></div>');]]></search>
             <add position="after"><![CDATA[newCategory(item['value']);]]></add>
 	</operation>
-    </file>
-    <file path="admin/language/ru*/catalog/product.php">
-        <operation>
-            <search><![CDATA[// Entry]]></search>
-            <add position="after"><![CDATA[
-		$_['entry_attribute_template'] = 'Шаблоны';
-		$_['entry_attribute_values'] = 'Значения';
-                $_['entry_flter_all'] = 'Все';
-                $_['entry_flter_category'] = 'Категории';
-                $_['entry_flter_duty'] = 'Дежурные';
-            ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/language/en*/catalog/product.php">
-        <operation>
-            <search><![CDATA[// Entry]]></search>
-            <add position="after"><![CDATA[
-		$_['entry_attribute_template'] = 'Templates';
-		$_['entry_attribute_values'] = 'Values';
-                $_['entry_flter_all'] = 'All';
-                $_['entry_flter_category'] = 'Categories';
-                $_['entry_flter_duty'] = 'Duties';
-            ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/controller/catalog/product.php">
-        <operation error="skip">
-            <search><![CDATA[$this->load->model('design/layout');]]></search>
-            <add position="after"><![CDATA[		
-				if ($this->config->get('attributico_splitter')) {
-							$data['attributico_splitter'] = $this->config->get('attributico_splitter');
-				} else {
-							$data['attributico_splitter'] = '/';
-				}               
-            ]]></add>
-        </operation>
+    </file>    
+    <file path="admin/controller/catalog/product.php">        
         <operation error="skip">
             <search><![CDATA[if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {]]></search>
             <add position="before"><![CDATA[
@@ -393,8 +412,7 @@
         <operation error="skip">
             <search><![CDATA[$data['footer'] = $this->load->controller('common/footer');]]></search>
             <add position="after"><![CDATA[
-		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
-                $data['attributico_autoadd'] = $this->config->get('attributico_autoadd');
+		        $data['extension'] = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";                
             ]]></add>
         </operation>
         <operation error="skip">
