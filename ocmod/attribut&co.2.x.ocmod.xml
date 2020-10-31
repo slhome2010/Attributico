@@ -152,23 +152,7 @@
                 let add_category_attribute; 
                 let splitter;             
                 let method;
-
-                //const getSettings = $.ajax({
-                //    data: {
-                //            'token': token,
-                //            'user_token': user_token
-                //        },
-                //    url: 'index.php?route=' + extension + 'module/attributico/getSettings',
-                //    dataType: "json",
-                //    success: function (json) {
-                //       console.log(json.splitter, json.attributico_autoadd, json.extension)                       
-                //       splitter = quotemeta(json.splitter)
-                //       add_category_attribute = json.attributico_autoadd
-//
-                //       getServPanel()
-               //    }
-               // });               
-
+               
                 const getServPanel = $.ajax({
                         data: {
                                 'token': token,
@@ -178,7 +162,7 @@
                         dataType: "json",
                         success: function (json) {                            
                             splitter = json.splitter
-                            add_category_attribute = json.attributico_autoadd 
+                            add_category_attribute = json.attributico_autoadd                            
 
                             $('#serv-panel').append(json.serv_panel) 
 
@@ -313,7 +297,7 @@
                     });                   
                 }
 
-                function getAttributeInfo(attribute_id) {
+                function getAttributeInfo(attribute_id, row) {
                     $.ajax({
                       data: {
                             'token': token,
@@ -323,7 +307,22 @@
                         url: 'index.php?route=' + extension + 'module/attributico/getAttributeInfo',
                         dataType: 'json',
                         success: function (json) {
-                            console.log(json)
+                          let baseSelector = $('input[name="product_attribute[' + row + '][name]"]').parent()
+                          let outputInfo = $('<textarea>', {
+                              class: 'form-control',
+                              id: 'attribute-info' + row,
+                              disabled: 'disabled',
+                              style: 'resize:vertical; overflow:auto;',
+                              wrap:"off",
+                              cols:"30",
+                              rows:"6",
+                          });
+                          $('#attribute-info' + row).remove()
+                          $.each(json, function (language_id) {
+                            outputInfo.val($.trim(outputInfo.val() + '\n' + json[language_id].group_name));
+                            outputInfo.val($.trim(outputInfo.val() + '\n' + json[language_id].name))                            
+                            });
+                            baseSelector.append(outputInfo)
                         }
                     });
                 }
@@ -397,7 +396,8 @@
             <add position="after"><![CDATA[
 		        makeValuesList(item.value, attribute_row);
                 addAttributeDuty(item.value, attribute_row);
-                getAttributeInfo(item.value);
+                $('#group-name' + attribute_row).remove()
+                $('input[name=\'product_attribute[' + attribute_row + '][name]\']').parent().prepend('<label id=group-name' + attribute_row + '>' + item.category + '</label>')
             ]]>            </add>
         </operation>
         <operation>

@@ -595,41 +595,6 @@ class ControllerModuleAttributico extends Controller
         $method = $this->config->get('attributico_product_text');
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput($method);
-    }
-
-    public function getMethods()
-    {
-        $method = $this->config->get('attributico_product_text');
-
-        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
-
-        if (version_compare(VERSION, '2.2.0', '>=')) {
-            $this->load->language($extension . 'module/attributico');
-            $ssl = true;
-        } else {
-            $this->language->load('module/attributico');
-            $ssl = 'SSL';
-        }
-        
-        $options  = "<option ". ($method =='1' ? "selected ":"") . "value='1'>" . $this->language->get('text_clear') . "</option>";
-        $options .= "<option ". ($method =='2' ? "selected ":"") . "value='2'>" . $this->language->get('text_keep') . "</option>";
-        $options .= "<option ". ($method =='3' ? "selected ":"") . "value='3'>" . $this->language->get('text_duty') . "</option>";
-        $options .= "<option ". ($method =='4' ? "selected ":"") . "value='4'>" . $this->language->get('text_duty_only') . "</option>";
-
-        $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput(json_encode($options));
-    } */
-
-    /* public function getSettings()
-    {
-        $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
-        $attributico_autoadd = $this->config->get('attributico_autoadd') ? $this->config->get('attributico_autoadd') : 0;
-        $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
-        $json = ['splitter'=>$splitter, 'attributico_autoadd'=>$attributico_autoadd, 'extension'=>$extension];
-
-        $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput(json_encode($json));
-
     } */
 
     public function getServPanel(){
@@ -655,7 +620,7 @@ class ControllerModuleAttributico extends Controller
         $buttons .= "<button type='button' id='values-view' class='btn btn-default'><i class='fa fa-th'></i>" . $this->language->get('entry_attribute_values') . "</button>"; 
         $buttons .= "</div>";
 
-        $select = "<select class='form-control' id='method-view'>";
+        $select = "<select class='form-control' id='method-view' style='margin-left:2px; font-weight:normal;'>";
 
         $method = $this->config->get('attributico_product_text');
         $options  = "<option ". ($method =='1' ? "selected ":"") . "value='1'>" . $this->language->get('text_clear') . "</option>";
@@ -675,17 +640,32 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
-    public function getAttributeInfo()    
+    /* public function getAttributeInfo()    // На будущее
     {
         $json = array();
         $attribute_id = isset($this->request->get['attribute_id']) ? (int) $this->request->get['attribute_id'] : 0;
         
+        $this->load->model('localisation/language');
+        $languages = $this->model_localisation_language->getLanguages();        
+        
+        foreach ($languages as $language) {   
+            if ($this->config->get('config_admin_language') == $language['code']) {
+                $language_id = $language['language_id'];
+            }
+
+            if (version_compare(VERSION, '2.2.0', '>=')) {
+                $image_src = 'language/' . $language['code'] . '/' . $language['code'] . '.png';
+            } else {
+                $image_src = 'view/image/flags/' . $language['image'];
+            }
+        }
+
         $this->load->model('catalog/attributico');
         $attribute_info = $this->model_catalog_attributico->getAttributeInfo($attribute_id);
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($attribute_info));
-    }
+    } */
 
     public function getAttributeGroupTree()
     {
