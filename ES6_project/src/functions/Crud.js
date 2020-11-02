@@ -15,16 +15,17 @@ export function addNewAttribute(activeNode, activeKey, lng_id) {
             'user_token': user_token,
             'token': token,
             'key': node.key,
+            'language_id': lng_id,
             name: activeKey === 'attribute' ? textNewAttribute : textNewGroup
         },
         url: 'index.php?route=' + extension + 'module/attributico/addAttribute',
-        success: function (new_id) {
+        success: function (newNode) {
             // Здесь dispatch не нужен, т.к. сработает SaveAfterEdit
-            node.editCreateNode("child", {
+            node.editCreateNode("child", newNode/* {
                 title: activeKey === 'attribute' ? textNewAttribute[lng_id] + "_" + new_id : textNewGroup[lng_id] + "_" + new_id,
                 key: activeKey + "_" + new_id,
                 folder: (activeKey === 'group') ? true : false
-            });
+            } */);
         }
     });
 }
