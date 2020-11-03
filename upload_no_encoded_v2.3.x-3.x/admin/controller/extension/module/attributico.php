@@ -590,14 +590,15 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
-   /*  public function getMethod()
+    /*  public function getMethod()
     {
         $method = $this->config->get('attributico_product_text');
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput($method);
     } */
 
-    public function getServPanel() {
+    public function getServPanel()
+    {
 
         $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
 
@@ -1221,19 +1222,21 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($acceptedTitle));
     }
     /* Add New attribute or group */
-    public function addAttribute() {
+    public function addAttribute()
+    {
         $data = array();
         $data['new'] = true;
         //$name = isset($this->request->get['name']) ? $this->request->get['name'] : array('0', '0');
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
+        $lazyLoad = isset($this->request->get['lazyLoad']) ? filter_var($this->request->get['lazyLoad'], FILTER_VALIDATE_BOOLEAN) : false;
         $attribute_group_id = '';
 
-        if ($key[0] == 'group') {
-            $attribute_group_id = $key[1];
-        }
         if ($this->session->data['free']) {
             return 0;
+        }
+        if ($key[0] == 'group') {
+            $attribute_group_id = $key[1];
         }
 
         $languages = $this->session->data['languages'];
@@ -1247,7 +1250,46 @@ class ControllerModuleAttributico extends Controller
                 $lng = $this->getLanguage($language['language_id']);
                 $data['attribute_description'][$language['language_id']]['name'] = $lng->get('text_New_attribute');
             }
-            $id = $this->model_catalog_attributico->addAttribute($data);
+            $new_attribute_id = $this->model_catalog_attributico->addAttribute($data);
+
+            $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
+            if ($this->config->get('attributico_children')) {
+                $settings = unserialize($this->config->get('attributico_children'));
+            } else {
+                $settings = $this->settings;
+            }
+            $children = array(
+                "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
+                "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
+                "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
+            );
+
+            $templateNode = new Node(array(
+                "title" => $this->getLanguage($language_id)->get('entry_attribute_template'), "unselectable" => true, "key" => "template_" . (string) $new_attribute_id,
+                "children" => $lazyLoad ? '' : $this->getAttributeValuesNodes($new_attribute_id, $language_id, 'template'), "lazy" => $lazyLoad ? true : false,
+            ));
+            $valueNode = new Node(array(
+                "title" => $this->getLanguage($language_id)->get('entry_attribute_values'), "unselectable" => true, "key" => "value_" . (string) $new_attribute_id,
+                "children" => $lazyLoad ? '' : $this->getAttributeValuesNodes($new_attribute_id, $language_id, 'values'), "lazy" => $lazyLoad ? true : false,
+            ));
+            $dutyNode = new Node(array("title" => "", "key" => "duty_" . (string) $new_attribute_id, "extraClasses" => "custom1",));
+
+            $childNode = new Node();
+            if ($children['duty']) {
+                $childNode->addSibling($dutyNode);
+            }
+            if ($children['template']) {
+                $childNode->addSibling($templateNode);
+            }
+            if ($children['value']) {
+                $childNode->addSibling($valueNode);
+            }
+            $node_data = array(
+                "title" => $this->getLanguage($language_id)->get('text_New_attribute') . "_" . (string) $new_attribute_id,
+                "key" => "attribute_" . (string) $new_attribute_id,
+                "folder" => false,
+                "children" => $childNode->render()
+            );
         } else {
             foreach ($languages as $language) {
                 $lng = $this->getLanguage($language['language_id']);
@@ -1255,12 +1297,11 @@ class ControllerModuleAttributico extends Controller
             }
             $new_group_id = $this->model_catalog_attributico->addAttributeGroup($data);
             $node_data = array(
-                            "title" => $this->getLanguage($language_id)->get('text_New_group') . "_" . (string) $new_group_id,
-                            "key" => "group_" . (string) $new_group_id,
-                            "folder" => true,
-                            "extraClasses" => $new_group_id == 1 ? "custom3" : ''
-                );
-
+                "title" => $this->getLanguage($language_id)->get('text_New_group') . "_" . (string) $new_group_id,
+                "key" => "group_" . (string) $new_group_id,
+                "folder" => true,
+                "extraClasses" => $new_group_id == 1 ? "custom3" : ''
+            );
         }
 
         $this->response->addHeader('Content-Type: application/json');
