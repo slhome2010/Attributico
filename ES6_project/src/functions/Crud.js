@@ -17,18 +17,13 @@ export function addNewAttribute(activeNode, activeKey, lng_id) {
             'token': token,
             'key': node.key,
             'language_id': lng_id,
-            'tree': '1' // TODO  уточнить смысл передачи параметра
-            //name: activeKey === 'attribute' ? textNewAttribute : textNewGroup
+            'tree': '1' // TODO  уточнить смысл передачи параметра            
         },
         url: 'index.php?route=' + extension + 'module/attributico/addAttribute',
         success: function (newNode) {
             // Здесь dispatch не нужен, т.к. сработает SaveAfterEdit
             console.log(newNode)
-            node.editCreateNode("child", newNode/* {
-                title: activeKey === 'attribute' ? textNewAttribute[lng_id] + "_" + new_id : textNewGroup[lng_id] + "_" + new_id,
-                key: activeKey + "_" + new_id,
-                folder: (activeKey === 'group') ? true : false
-            } */);
+            node.editCreateNode("child", newNode);
         }
     });
 }
