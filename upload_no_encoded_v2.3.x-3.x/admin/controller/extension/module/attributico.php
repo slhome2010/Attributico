@@ -252,16 +252,19 @@ class ControllerModuleAttributico extends Controller
         $this->load->model('localisation/language');
         $this->data['languages'] = $this->model_localisation_language->getLanguages();
         $this->session->data['languages'] = $this->data['languages'];
+        // Защита от OCTEMPLATES
+        $language_code = array_keys($this->data['languages']);        
+        if (isset($this->data['languages'][$this->config->get('config_admin_language')])) {
+          $this->data['config_language'] = $this->data['languages'][$this->config->get('config_admin_language')]['language_id'];
+        } else {
+            $this->data['config_language'] = $this->data['languages'][array_shift($language_code)]['language_id'];
+        }
 
         $default_settings = array();
 
         foreach ($this->data['languages'] as $language) {
             $lng = $this->getLanguage($language['language_id']);
-
-            if ($this->config->get('config_admin_language') == $language['code']) {
-                $this->data['config_language'] = $language['language_id'];
-            }
-
+           
             if (version_compare(VERSION, '2.2.0', '>=')) {
                 $this->data['languages'][$language['code']]['src'] = 'language/' . $language['code'] . '/' . $language['code'] . '.png';
             } else {
