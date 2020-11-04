@@ -71,16 +71,19 @@ $_['text_support'] = '<fieldset>
                     </fieldset>	';
 
 $_['text_help1'] = '<h3>Управление мышкой и клавиатурой</h3>
-                                <table class="table table-bordered list">
-                                    <thead><tr><th>Сочетание клавиш</th><th>Действие</th><th>Примечание</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Двойной клик</td><td>Раскрыть/Свернуть узел</td><td></td></tr>
-                                        <tr><td>Ctrl + клик</td><td>Выделить узел</td><td>Можно выделить несколько узлов</td></tr>
-                                        <tr><td>Правая кнопка</td><td>Контекстное меню</td><td>Есть подсказки горячих клавиш</td></tr>
-                                        <tr><td>Перемещение с нажатой левой кнопкой</td><td>Перетаскивание узлов</td><td>Технология drag&drop</td></tr>
-                                        <tr><td>Ctrl + Drag&Drop</td><td>Слияние узлов</td><td>Слияние атрибутов или групп без потери связей с товаром</td></tr>
-                                    </tbody>
-                                </table>';
+<table class="table table-bordered list">
+<thead><tr><th>Операция</th><th>Мышь/Drag&Drop</th><th>Меню</th><th>Клавиатура</th><th>Примечание</th></tr></thead>
+<tbody>
+    <tr><td>Раскрыть/Свернуть узел</td><td>Двойной клик</td><td></td><td></td><td></td></tr>
+    <tr><td>Выделить узел</td><td>Ctrl + клик</td><td></td><td></td><td>Можно выделить несколько узлов</td></tr>
+    <tr><td>Контекстное меню</td><td>Правая кнопка</td><td></td><td></td><td>Есть подсказки горячих клавиш</td></tr>
+    <tr><td>Перетаскивание узлов</td><td>Перемещение с нажатой левой кнопкой</td><td></td><td></td><td></td></tr>
+    <tr><td>Добавить группу</td><td></td><td>Новая группа</td><td><kbd>[ctrl+M]</kbd></td><td></td></tr>
+    <tr><td>Добавить атрибут</td><td></td><td>Новый атрибут</td><td><kbd>[ctrl+Q]</kbd></td><td></td></tr>
+    <tr><td>Редактировать</td><td></td><td>Редактировать</td><td><kbd>[shift+Enter]</kbd></td><td>Подтверждение - <kbd>[Enter]</kbd>, отмена - <kbd>[Esc]</kbd></kbd></td></tr>
+    <tr><td>Слияние атрибутов или групп</td><td>Ctrl + Drag&Drop</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>';
 $_['text_help2'] = '<h3>Полезная информация</h3>
                                 <table class="table table-bordered list">
                                     <thead><tr><th>Информация</th><th>Описание</th><th>Примечание</th></tr></thead>

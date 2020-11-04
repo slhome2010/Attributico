@@ -1404,7 +1404,7 @@ class ControllerModuleAttributico extends Controller
         $attribute_group_id = '';
         $target = isset($this->request->post['target']) ? explode("_", $this->request->post['target']) : array('0', '0');
         $subjects = isset($this->request->post['subjects']) ? $this->request->post['subjects'] : array();
-        $group = isset($this->request->products['group']) ? explode("_", $this->request->post['group']) : array();
+        $group = isset($this->request->post['group']) ? explode("_", $this->request->post['group']) : array('0', '0');
 
         $this->load->model('catalog/attributico');
 
