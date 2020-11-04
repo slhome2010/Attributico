@@ -77,7 +77,7 @@ export default class DutyTree {
             keydown: (e, data) => {
                 let command = new KeydownCommandDuty(e, data, this.store);
                 command.permissions = {
-                    remove: data.node.isOneOf(['duty']),
+                    remove: data.node?.isOneOf(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,

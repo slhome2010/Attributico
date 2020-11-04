@@ -136,13 +136,13 @@ export default class AttributeGroupTree {
             keydown: (e, data) => {
                 let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
-                    remove: data.node.isOneOf(['group', 'attribute', 'template', 'value']),
-                    addChild: !data.node.isTopLevel() ? true : false,
+                    remove: data.node?.isOneOf(['group', 'attribute', 'template', 'value']),
+                    addChild: !data.node?.isTopLevel() ? true : false,
                     addSibling: true,
-                    copy: data.node.isAttribute(),
-                    cut: data.node.isOneOf(['group', 'attribute']),
-                    paste: !data.node.isTopLevel() ? true : false,
-                    merge: data.node.isOneOf(['group', 'attribute'])
+                    copy: data.node?.isAttribute(),
+                    cut: data.node?.isOneOf(['group', 'attribute']),
+                    paste: !data.node?.isTopLevel() ? true : false,
+                    merge: data.node?.isOneOf(['group', 'attribute'])
                 };
                 command.execute();
             },

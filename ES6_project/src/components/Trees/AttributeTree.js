@@ -118,10 +118,10 @@ export default class AttributeTree {
                 let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: false,
-                    rename: data.node.isDuty(),
+                    rename: data.node?.isDuty(),
                     addChild: false,
                     addSibling: false,
-                    copy: data.node.isAttribute(),
+                    copy: data.node?.isAttribute(),
                     paste: false
                 };
                 command.execute();

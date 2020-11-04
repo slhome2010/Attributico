@@ -151,11 +151,11 @@ export default class CategoryAttributeTree {
             keydown: (e, data) => {
                 let command = new KeydownCommandCategory(e, data, this.store);
                 command.permissions = {
-                    remove: data.node.isAttribute(),
+                    remove: data.node?.isAttribute(),
                     addChild: true,
                     addSibling: false,
-                    copy: data.node.isAttribute(),
-                    cut: data.node.isAttribute(),
+                    copy: data.node?.isAttribute(),
+                    cut: data.node?.isAttribute(),
                     paste: true,
                     refresh: false
                 };

@@ -16,7 +16,7 @@ export class ContextmenuCommand {
         this.ui = ui;
         this.node = $.ui.fancytree.getNode(ui.target);
         this.tree = $.ui.fancytree.getTree(ui.target);
-        this.selector = this.tree.$div[0].id;
+        this.selector = this.tree?.$div[0].id;
         this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
         this.store = store;
     }

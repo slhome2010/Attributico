@@ -13,7 +13,7 @@ export class KeydownCommand {
         this.e = event;
         this.node = data.node;
         this.tree = data.tree;
-        this.selector = this.tree.$div[0].id;
+        this.selector = this.tree?.$div[0].id;
         this.lng_id = parseInt(this.selector.replace(/\D+/ig, ''));
         this.access = {
             remove: true,
