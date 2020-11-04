@@ -252,7 +252,7 @@ class ControllerModuleAttributico extends Controller
         $this->load->model('localisation/language');
         $this->data['languages'] = $this->model_localisation_language->getLanguages();
         $this->session->data['languages'] = $this->data['languages'];
-        // Защита от OCTEMPLATES
+        // Защита от тупого мода "Скрыть отключенные языки"
         $language_code = array_keys($this->data['languages']);        
         if (isset($this->data['languages'][$this->config->get('config_admin_language')])) {
           $this->data['config_language'] = $this->data['languages'][$this->config->get('config_admin_language')]['language_id'];
