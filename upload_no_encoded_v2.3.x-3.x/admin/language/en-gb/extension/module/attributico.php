@@ -69,17 +69,130 @@ $_['text_support'] = '<fieldset>
                                 <strong>Forum:</strong> <a href="https://opencartforum.com/topic/62060-attributco-opencart-atributy-eto-legko/">opencartforum.com</a>
                             </address>
                     </fieldset>	';
-$_['text_help1'] = '<legend>Mouse and keyboard control</legend>
-                                <table class="table table-bordered">
-                                    <thead><tr><th>The combination of mouse and keyboard</th><th>Action</th><th>Note</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Double click</td><td>Expand / Collapse node</td><td></td></tr>
-                                        <tr><td>Ctrl + click</td><td>Select node</td><td>You can select multiple nodes</td></tr>
-                                        <tr><td>Right button</td><td>Context menu</td><td>There are hints of hot keys</td></tr>
-                                        <tr><td>Down mouse left button and move</td><td>Dragging nodes</td><td>The technology drag&drop</td></tr>
-                                        <tr><td>Ctrl + Drag&Drop</td><td>Merge nodes</td><td>Merge attributes or groups without losing links to the product</td></tr>
-                                    </tbody>
-                                </table>';
+$_['text_help1'] = '<h3 id="using-summary">Summary table.</h3>
+                    <div class="alert alert-light" role="alert">
+                        <p>The abbreviation Drag&Drop means dragging nodes with the left mouse button pressed <sup><span class="label label-danger">***</span></sup></p>
+                        <p>Source - the node or nodes to move. Target - node to move to <sup><span class="label label-danger">**</span></sup></p>
+                        <p>Level - depth of the node location in the tree hierarchy <sup><span class="label label-danger">*</span></sup></p>
+                    </div>
+                    <table class="table table-bordered list">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Mouse/Drag&Drop</th>
+                                <th>Menu</th>
+                                <th>Shortcuts</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Expand/Collapse a node</td>
+                                <td>Double click</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Select a node</td>
+                                <td><kbd>[Ctrl]</kbd> + click</td>
+                                <td></td>
+                                <td></td>
+                                <td>You can select multiple nodes</td>
+                            </tr>
+                            <tr>
+                                <td>Context menu</td>
+                                <td>Right button</td>
+                                <td></td>
+                                <td></td>
+                                <td>There are hotkey suggestions</td>
+                            </tr>
+                            <tr>
+                                <td>Add group</td>
+                                <td></td>
+                                <td>New group</td>
+                                <td><kbd>[Ctrl+M]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Add attribute</td>
+                                <td></td>
+                                <td>New attribute</td>
+                                <td><kbd>[Ctrl+Q]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Edit</td>
+                                <td></td>
+                                <td>Edit</td>
+                                <td><kbd>[Shift+Enter]</kbd></td>
+                                <td>Confirm - <kbd>[Enter]</kbd> Cancel - <kbd>[Esc]</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Delete</td>
+                                <td></td>
+                                <td>Delete</td>
+                                <td><kbd>[Del]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Sort</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source and target levels must match. You can sort groups or attributes within a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Copy</td>
+                                <td></td>
+                                <td>Copy > Paste</td>
+                                <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Only attributes can be copied. Insert only in a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Change group</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is an attribute. Target is a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Merge attributes or groups</td>
+                                <td>Ctrl + Drag&Drop</td>
+                                <td>Cut > Merge</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Alt+V]</kbd></td>
+                                <td>The source and target levels must match. If the source is an attribute, then the target must be an attribute.</td>
+                            </tr>
+                            <tr>
+                                <td>Add an attribute to a category</td>
+                                <td>Drag&Drop</td>
+                                <td>Copy > Paste</td>
+                                <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is an attribute. Target is a category.</td>
+                            </tr>
+                            <tr>
+                                <td>Change the category</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is the attribute in the "Category Attributes" tree. The target is a category in the "Categories" tree.</td>
+                            </tr>
+                            <tr>
+                                <td>Remove from category</td>
+                                <td></td>
+                                <td>Delete</td>
+                                <td><kbd>[Del]</kbd></td>
+                                <td>The attribute from "Category attributes" tree.</td>
+                            </tr>
+                            <tr>
+                                <td>Select a duty template from the list</td>
+                                <td></td>
+                                <td>Edit</td>
+                                <td><kbd>[Shift+Enter]</kbd> + <kbd>[Alt+Shift+Click]</kbd></td>
+                                <td>Press <kbd>[Alt+Shift+Click]</kbd> in edit mode.</td>
+                            </tr>
+                        </tbody>
+                    </table>';
 $_['text_help2'] = '<legend>Helpful information</legend>
                                 <table class="table table-bordered">
                                     <thead><tr><th>Information</th><th>Description</th><th>Note</th></tr></thead>

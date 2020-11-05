@@ -70,19 +70,129 @@ $_['text_support'] = '<fieldset>
                             </address>
                     </fieldset>	';
 
-$_['text_help1'] = '<h3>Управление мышкой и клавиатурой</h3>
+$_['text_help1'] = '<h3 id="using-summary">Сводная таблица.</h3>
+<div class="alert alert-light" role="alert">
+    <p>Сокращение Drag&Drop означает перетаскивание узлов с нажатой левой кнопкой мыши <sup><span class="label label-danger">***</span></sup></p>
+    <p>Источник - узел или узлы, которые надо переместить. Цель - узел, куда надо перместить <sup><span class="label label-danger">**</span></sup></p>
+    <p>Уровень - глубина расположения узла в иерархии дерева <sup><span class="label label-danger">*</span></sup></p>
+</div>
 <table class="table table-bordered list">
-<thead><tr><th>Операция</th><th>Мышь/Drag&Drop</th><th>Меню</th><th>Клавиатура</th><th>Примечание</th></tr></thead>
-<tbody>
-    <tr><td>Раскрыть/Свернуть узел</td><td>Двойной клик</td><td></td><td></td><td></td></tr>
-    <tr><td>Выделить узел</td><td>Ctrl + клик</td><td></td><td></td><td>Можно выделить несколько узлов</td></tr>
-    <tr><td>Контекстное меню</td><td>Правая кнопка</td><td></td><td></td><td>Есть подсказки горячих клавиш</td></tr>
-    <tr><td>Перетаскивание узлов</td><td>Перемещение с нажатой левой кнопкой</td><td></td><td></td><td></td></tr>
-    <tr><td>Добавить группу</td><td></td><td>Новая группа</td><td><kbd>[ctrl+M]</kbd></td><td></td></tr>
-    <tr><td>Добавить атрибут</td><td></td><td>Новый атрибут</td><td><kbd>[ctrl+Q]</kbd></td><td></td></tr>
-    <tr><td>Редактировать</td><td></td><td>Редактировать</td><td><kbd>[shift+Enter]</kbd></td><td>Подтверждение - <kbd>[Enter]</kbd>, отмена - <kbd>[Esc]</kbd></kbd></td></tr>
-    <tr><td>Слияние атрибутов или групп</td><td>Ctrl + Drag&Drop</td><td></td><td></td><td></td></tr>
-</tbody>
+    <thead>
+        <tr>
+            <th>Операция</th>
+            <th>Мышь/Drag&Drop</th>
+            <th>Меню</th>
+            <th>Клавиатура</th>
+            <th>Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Раскрыть/Свернуть узел</td>
+            <td>Двойной клик</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Выделить узел</td>
+            <td>Ctrl + клик</td>
+            <td></td>
+            <td></td>
+            <td>Можно выделить несколько узлов</td>
+        </tr>
+        <tr>
+            <td>Контекстное меню</td>
+            <td>Правая кнопка</td>
+            <td></td>
+            <td></td>
+            <td>Есть подсказки горячих клавиш</td>
+        </tr>
+        <tr>
+            <td>Добавить группу</td>
+            <td></td>
+            <td>Новая группа</td>
+            <td><kbd>[Ctrl+M]</kbd></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Добавить атрибут</td>
+            <td></td>
+            <td>Новый атрибут</td>
+            <td><kbd>[Ctrl+Q]</kbd></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Редактировать</td>
+            <td></td>
+            <td>Редактировать</td>
+            <td><kbd>[Shift+Enter]</kbd></td>
+            <td>Подтверждение - <kbd>[Enter]</kbd> Отмена - <kbd>[Esc]</kbd></td>
+        </tr>
+        <tr>
+            <td>Удалить</td>
+            <td></td>
+            <td>Удалить</td>
+            <td><kbd>[Del]</kbd></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Сортировать</td>
+            <td>Drag&Drop</td>
+            <td>Вырезать > Вставить</td>
+            <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+            <td>Уровни источника и цели должны совпадать. Сортировать можно группы или атрибуты внутри группы</td>
+        </tr>
+        <tr>
+            <td>Копировать</td>
+            <td></td>
+            <td>Копировать > Вставить</td>
+            <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+            <td>Копировать можно только атрибуты. Вставить только в группу</td>
+        </tr>
+        <tr>
+            <td>Сменить группу</td>
+            <td>Drag&Drop</td>
+            <td>Вырезать > Вставить</td>
+            <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+            <td>Источник - атрибут. Цель -группа</td>
+        </tr>
+        <tr>
+            <td>Слияние атрибутов или групп</td>
+            <td>Ctrl + Drag&Drop</td>
+            <td>Вырезать > Объединить</td>
+            <td><kbd>[Ctrl+X]</kbd> > <kbd>[Alt+V]</kbd></td>
+            <td>Уровни источника и цели должны совпадать. Если источник атрибут, то цель должна быть атрибутом.</td>
+        </tr>
+        <tr>
+            <td>Добавить атрибут в категорию</td>
+            <td>Drag&Drop</td>
+            <td>Копировать > Вставить</td>
+            <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+            <td>Источник - атрибут. Цель - категория.</td>
+        </tr>
+        <tr>
+            <td>Сменить категорию</td>
+            <td>Drag&Drop</td>
+            <td>Вырезать > Вставить</td>
+            <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+            <td>Источник - атрибут в дереве "Атрибуты категорий". Цель - категория в дереве "Категории".</td>
+        </tr>
+        <tr>
+            <td>Удалить из категории</td>
+            <td></td>
+            <td>Удалить</td>
+            <td><kbd>[Del]</kbd></td>
+            <td>Атрибут из дерева "Атрибуты категорий".</td>
+        </tr>
+        <tr>
+            <td>Выбрать из списка дежурный шаблон</td>
+            <td></td>
+            <td>Редактировать</td>
+            <td><kbd>[Shift+Enter]</kbd> + <kbd>[Alt+Shift+Click]</kbd></td>
+            <td>Войти в режим редактирования затем нажать <kbd>[Alt+Shift+Click]</kbd>.</td>
+        </tr>
+    </tbody>
 </table>';
 $_['text_help2'] = '<h3>Полезная информация</h3>
                                 <table class="table table-bordered list">
