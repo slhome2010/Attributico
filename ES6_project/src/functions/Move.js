@@ -16,6 +16,7 @@
 **/
 import { dndMergeNode, dndSortNode, dndReplaceParent } from '../actions'
 import { deSelectNodes, getSelectedKeys } from './Select';
+import { reactivateCategory } from './Syncronisation';
 
 export async function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direct, store) {
 
@@ -79,6 +80,7 @@ export async function moveNode(sourceNode, targetNode, clipboard, ctrlKey, direc
         type: 'POST',
         success: () => {
             store.dispatch(dispatchAction(sourceNode, targetNode, affectedNodes));
+            if (merge || replace) reactivateCategory()
             deSelectNodes();
         }
     });
