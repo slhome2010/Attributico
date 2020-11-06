@@ -406,7 +406,7 @@
         </operation>
         <operation>
             <search><![CDATA[<td class="text-left" style="width: 40%;">]]></search>
-            <add position="replace"><![CDATA[<td class="text-left" style="width: 40%;"><label><?php echo $product_attribute['group_name']; ?></label>                        
+            <add position="replace"><![CDATA[<td class="text-left" style="width: 40%;"><label id="group-name<?php echo $attribute_row; ?>"><?php echo $product_attribute['group_name']; ?></label>                        
             ]]>            </add>
         </operation>
         <operation>
