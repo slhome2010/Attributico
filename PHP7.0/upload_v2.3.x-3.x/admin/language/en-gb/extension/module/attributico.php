@@ -12,8 +12,8 @@ $_['text_rewrite'] = 'Rewrite';
 $_['text_insert'] = 'Insert';
 $_['text_clear'] = 'Clear';
 $_['text_keep'] = 'Keep';
-$_['text_duty'] = 'Take duty template';
-$_['text_duty_only'] = 'Take duty only if values is empty';
+$_['text_duty'] = 'Replace with duty';
+$_['text_duty_only'] = 'Only in empty';
 
 // Filter
 $_['text_autoCollapse'] = 'autoCollapse';
@@ -44,7 +44,9 @@ $_['text_Refresh'] = 'Refresh';
 $_['text_Edit'] = 'Edit';
 $_['text_Delete'] = 'Delete';
 $_['text_Copy'] = 'Copy';
+$_['text_Cut'] = 'Cut';
 $_['text_Paste'] = 'Paste';
+$_['text_Merge'] = 'Merge';
 $_['text_Options'] = 'Options';
 $_['text_Sort'] = 'Sort (ASC)';
 $_['text_sortOrder'] = 'Sort order';
@@ -67,38 +69,131 @@ $_['text_support'] = '<fieldset>
                                 <strong>Forum:</strong> <a href="https://opencartforum.com/topic/62060-attributco-opencart-atributy-eto-legko/">opencartforum.com</a>
                             </address>
                     </fieldset>	';
-$_['text_help1'] = '<legend>Mouse and keyboard control</legend>
-                                <table class="table table-bordered">
-                                    <thead><tr><th>The combination of mouse and keyboard</th><th>Action</th><th>Note</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Double click</td><td>Expand / Collapse node</td><td></td></tr>
-                                        <tr><td>Ctrl + click</td><td>Select node</td><td>You can select multiple nodes</td></tr>
-                                        <tr><td>Right button</td><td>Context menu</td><td>There are hints of hot keys</td></tr>
-                                        <tr><td>Down mouse left button and move</td><td>Dragging nodes</td><td>The technology drag&drop</td></tr>
-                                        <tr><td>Ctrl + Drag&Drop</td><td>Merge nodes</td><td>Merge attributes or groups without losing links to the product</td></tr>
-                                    </tbody>
-                                </table>';
-$_['text_help2'] = '<legend>Helpful information</legend>
-                                <table class="table table-bordered">
-                                    <thead><tr><th>Information</th><th>Description</th><th>Note</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Expanded tree</td>
-                                            <td>By default, when expanding the node, all siblings are collapsed. To enable full expansion mode, it is necessary in the context menu,
-                                            go to "Settings" and disable the checkbox with "autoCollapse"</td>
-                                            <td>For each tree its own settings.</td></tr>
-                                        <tr><td>Legend trees</td>
-                                            <td>On the tab "Attributes" only one tree - "Attribute Groups". On the tab "Attributes category" three trees:
-                                            "Categories" - on the left, "Categories Attributes" - to the right, "Attributes" - below. On the tab "Duty templates" - the same name tree.</td><td></td></tr>
-                                        <tr><td>Adding attribute to the category</td>
-                                            <td>The first way - to move the selected attributes from the bottom  tree ("Attributes") to the target category ( tree "Categories")
-                                            or to the right tree ("Categories Attributes"). The second way - to go to the context menu of the tree "Categories Attributes"
-                                            and select "New attribute". Click on the input box for the autocomplete..</td>
-                                            <td>Target tree nodes are opened automatically after a short delay</td></tr>
-                                        <tr><td>Change groups or categories</td>
-                                            <td>Select  attributes for which you want to change the category (tree "Attributes category") and drag it to the target category
-                                            (tree "Categories")</td><td>Note, that in the source tree, selected nodes are removed.</td></tr>
-                                    </tbody>
-                                </table>';
+$_['text_help1'] = '<h3 id="using-summary">Summary table.</h3>
+                    <div class="alert alert-light" role="alert">
+                        <p>The abbreviation Drag&Drop means dragging nodes with the left mouse button pressed <sup><span class="label label-danger">***</span></sup></p>
+                        <p>Source - the node or nodes to move. Target - node to move to <sup><span class="label label-danger">**</span></sup></p>
+                        <p>Level - depth of the node location in the tree hierarchy <sup><span class="label label-danger">*</span></sup></p>
+                    </div>
+                    <table class="table table-bordered list">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Mouse/Drag&Drop</th>
+                                <th>Menu</th>
+                                <th>Shortcuts</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Expand/Collapse a node</td>
+                                <td>Double click</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Select a node</td>
+                                <td><kbd>[Ctrl]</kbd> + click</td>
+                                <td></td>
+                                <td></td>
+                                <td>You can select multiple nodes</td>
+                            </tr>
+                            <tr>
+                                <td>Context menu</td>
+                                <td>Right button</td>
+                                <td></td>
+                                <td></td>
+                                <td>There are hotkey suggestions</td>
+                            </tr>
+                            <tr>
+                                <td>Add group</td>
+                                <td></td>
+                                <td>New group</td>
+                                <td><kbd>[Ctrl+M]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Add attribute</td>
+                                <td></td>
+                                <td>New attribute</td>
+                                <td><kbd>[Ctrl+Q]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Edit</td>
+                                <td></td>
+                                <td>Edit</td>
+                                <td><kbd>[Shift+Enter]</kbd></td>
+                                <td>Confirm - <kbd>[Enter]</kbd> Cancel - <kbd>[Esc]</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Delete</td>
+                                <td></td>
+                                <td>Delete</td>
+                                <td><kbd>[Del]</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Sort</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source and target levels must match. You can sort groups or attributes within a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Copy</td>
+                                <td></td>
+                                <td>Copy > Paste</td>
+                                <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Only attributes can be copied. Insert only in a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Change group</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is an attribute. Target is a group.</td>
+                            </tr>
+                            <tr>
+                                <td>Merge attributes or groups</td>
+                                <td>Ctrl + Drag&Drop</td>
+                                <td>Cut > Merge</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Alt+V]</kbd></td>
+                                <td>The source and target levels must match. If the source is an attribute, then the target must be an attribute.</td>
+                            </tr>
+                            <tr>
+                                <td>Add an attribute to a category</td>
+                                <td>Drag&Drop</td>
+                                <td>Copy > Paste</td>
+                                <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is an attribute. Target is a category.</td>
+                            </tr>
+                            <tr>
+                                <td>Change the category</td>
+                                <td>Drag&Drop</td>
+                                <td>Cut > Paste</td>
+                                <td><kbd>[Ctrl+X]</kbd> > <kbd>[Ctrl+V]</kbd></td>
+                                <td>Source is the attribute in the "Category Attributes" tree. The target is a category in the "Categories" tree.</td>
+                            </tr>
+                            <tr>
+                                <td>Remove from category</td>
+                                <td></td>
+                                <td>Delete</td>
+                                <td><kbd>[Del]</kbd></td>
+                                <td>The attribute from "Category attributes" tree.</td>
+                            </tr>
+                            <tr>
+                                <td>Select a duty template from the list</td>
+                                <td></td>
+                                <td>Edit</td>
+                                <td><kbd>[Shift+Enter]</kbd> + <kbd>[Alt+Shift+Click]</kbd></td>
+                                <td>Press <kbd>[Alt+Shift+Click]</kbd> in edit mode.</td>
+                            </tr>
+                        </tbody>
+                    </table>';
+$_['text_help2'] = '';
 $_['help_sortorder'] = 'The sort order will be taken into account when constructing the tree, otherwise it will be done by sorting alphabetically';
 $_['help_smart_scroll'] = 'Scroll nodes into fixed visible area';
 $_['help_empty'] = 'Show or hide empty attribute values or blank templates';
@@ -107,7 +202,7 @@ $_['help_autoattribute'] = 'When adding a new attribute to the category, it will
 $_['help_autodel'] = 'When you delete an attribute of a category, it will automatically be removed from all products in this category';
 $_['help_autoadd_inherit'] = 'Adding attributes to all the sub-categories, and the attribute values or templates to all products of these subcategories.';
 $_['help_autodel_inherit'] = 'Remove the attributes from all the sub-categories, and the attribute values or patterns of all the products of these subcategories.';
-$_['help_product_text'] = 'When you add an attribute to the product, the value of an attribute can be Cleared, Keeping (save that which is already there) or Taken from duty template, overwriting the attribute values, or Taken from duty template only if the attribute values is empty.';
+$_['help_product_text'] = 'When you add an attribute to the product, the value of an attribute can be Cleared, Keeping (save that which is already there) or Replace with duty template, overwriting the attribute values, or Replace with duty template only if the product attribute values is empty.';
 $_['help_upgrade'] = 'The database structure does not match the version of the module. Click the button below to conform.';
 $_['help_children'] = 'It enables or disables the display of Templates, Values or Duty Template as a child nodes of attribute in this tree.';
 $_['help_nosettings'] = 'Settings are not necessary.';
@@ -124,6 +219,9 @@ $_['help_clone_options'] = 'You can undo the clone of Groups, Attributes or Attr
 $_['entry_attribute_groups'] = 'Attribute Groups';
 $_['entry_attribute_template'] = 'Templates';
 $_['entry_attribute_values'] = 'Values';
+$_['entry_flter_all'] = 'All';
+$_['entry_flter_category'] = 'Categories';
+$_['entry_flter_duty'] = 'Duties';
 $_['entry_splitter'] = 'The splitter attributes';
 $_['entry_autoattribute'] = 'Add categories attribute to Products';
 $_['entry_autodel'] = 'Remove attribute category of products';

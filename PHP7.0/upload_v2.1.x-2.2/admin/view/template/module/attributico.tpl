@@ -894,11 +894,9 @@
     const token = '<?php echo $token; ?>';
     const user_token = '<?php echo $user_token; ?>';
     const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов
-    const edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар
-    const textNewAttribute = <?php echo json_encode($text_New_attribute) ?>;
-    const textNewGroup = <?php echo json_encode($text_New_group) ?>;
+    const edit = '<?php echo $edit; ?>'; // для v1.5 другая функция входа в товар    
     const textConfirm = <?php echo json_encode($text_confirm) ?>;
-    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>; 
+    const FILTERSETTINGS = <?php echo json_encode($filter_settings) ?>;
 
     let filterLabels = [];
     let contextmenuConfig = [];
@@ -917,6 +915,12 @@
                 uiIcon: "ui-icon-trash"
             },
             {
+                title: <?php echo json_encode($text_Cut) ?>[lng_id] + "<kbd>[Ctrl+X]</kbd>",
+                cmd: "cut",
+                uiIcon: "ui-icon-scissors",
+                disabled: true
+            },
+            {
                 title: <?php echo json_encode($text_Copy) ?>[lng_id] + "<kbd>[Ctrl+C]</kbd>",
                 cmd: "copy",
                 uiIcon: "ui-icon-copy",
@@ -926,6 +930,12 @@
                 title: <?php echo json_encode($text_Paste) ?>[lng_id] + "<kbd>[Ctrl+V]</kbd>",
                 cmd: "paste",
                 uiIcon: "ui-icon-clipboard",
+                disabled: true
+            },
+            {
+                title: <?php echo json_encode($text_Merge) ?>[lng_id] + "<kbd>[Alt+V]</kbd>",
+                cmd: "merge",
+                uiIcon: "ui-icon-link",
                 disabled: true
             },
             {

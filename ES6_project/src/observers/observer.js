@@ -91,7 +91,7 @@ export default class Observer {
     /* Асинхронная функция. Деревья и узлы грузятся параллельно, но установка активного узла только после загрузки. */
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
-        this.printState(state)
+        //this.printState(state)
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });

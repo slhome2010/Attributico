@@ -787,7 +787,7 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="col-sm-6">
-                                                                                <label class="control-label" for="clone-language-target">{{entry_from}}</label>
+                                                                                <label class="control-label" for="clone-language-target">{{entry_to}}</label>
                                                                                 <select name="clone-language-target" id="clone-language-target" class="form-control">
                                                                                     {% for language in languages %}
                                                                                     {% if language['language_id'] == config_language %}
@@ -839,17 +839,15 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">    
-    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');    
+<script type="text/javascript">
+    const ATTRIBUTE_GROUP_TREE = $('[name ^= "attribute_group_tree"]');
     const config_language = '{{config_language}}';
     const token = '{{token}}';
     const user_token = '{{user_token}}';
     const extension = '{{extension}}'; // для v2.3 другая структура каталогов
-    const edit = '{{edit}}'; // для v1.5 другая функция входа в товар
-    const textNewAttribute = {{ text_New_attribute| json_encode()}};
-    const textNewGroup = {{ text_New_group| json_encode()}};
-    const textConfirm = {{ text_confirm| json_encode()}};
-    const FILTERSETTINGS = {{ filter_settings| json_encode()}};
+    const edit = '{{edit}}'; // для v1.5 другая функция входа в товар    
+    const textConfirm = {{text_confirm | json_encode()}};
+    const FILTERSETTINGS = {{filter_settings | json_encode()}};
 
     let filterLabels = [];
     let contextmenuConfig = [];
@@ -858,16 +856,18 @@
     ATTRIBUTE_GROUP_TREE.each(function (indx, element) {
         let lng_id = parseInt(element.id.replace(/\D+/ig, ''));
         contextmenuConfig[lng_id] = [
-            { title: {{ text_Edit| json_encode()}}[lng_id] + "<kbd>[Shift+Click]</kbd>", cmd: "rename", uiIcon: "ui-icon-pencil"},
-            { title: {{ text_Delete| json_encode()}}[lng_id] + "<kbd>[Del]</kbd>", cmd: "remove", uiIcon: "ui-icon-trash"},
-            { title: {{ text_Copy| json_encode()}}[lng_id] + "<kbd>[Ctrl+C]</kbd>", cmd: "copy", uiIcon: "ui-icon-copy", disabled: true},
-            { title: {{ text_Paste| json_encode()}}[lng_id] + "<kbd>[Ctrl+V]</kbd>", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: true},
-            { title: "----" },
-            { title: {{ text_Expande| json_encode()}}[lng_id] + "<kbd>[Ctrl+B]</kbd>", cmd: "expande", uiIcon: "ui-icon-folder-open"},
-            { title: {{ text_Refresh| json_encode()}}[lng_id] + "<kbd>[Shift+R]</kbd>", cmd: "refresh", uiIcon: "ui-icon-refresh"},
-            { title: "----" },
-            { title: {{ text_Options| json_encode()}}[lng_id], cmd: "options", uiIcon: "ui-icon-gear"},
-            { title: "----" },
+            {title: {{text_Edit | json_encode()}} [lng_id] + "<kbd>[Shift+Click]</kbd>",cmd: "rename",uiIcon: "ui-icon-pencil"},
+            {title: {{text_Delete | json_encode()}} [lng_id] + "<kbd>[Del]</kbd>",cmd: "remove",uiIcon: "ui-icon-trash"},
+            {title: {{text_Cut | json_encode()}} [lng_id] + "<kbd>[Ctrl+C]</kbd>",cmd: "cut",uiIcon: "ui-icon-scissors",disabled: true},
+            {title: {{text_Copy | json_encode()}} [lng_id] + "<kbd>[Ctrl+C]</kbd>",cmd: "copy",uiIcon: "ui-icon-copy",disabled: true},
+            {title: {{text_Paste | json_encode()}} [lng_id] + "<kbd>[Ctrl+V]</kbd>",cmd: "paste",uiIcon: "ui-icon-clipboard",disabled: true},
+            {title: {{text_Merge | json_encode()}} [lng_id] + "<kbd>[Alt+V]</kbd>",cmd: "merge",uiIcon: "ui-icon-link",disabled: true},
+            {title: "----"},
+            {title: {{text_Expande | json_encode()}} [lng_id] + "<kbd>[Ctrl+B]</kbd>",cmd: "expande",uiIcon: "ui-icon-folder-open"},
+            {title: {{text_Refresh | json_encode()}} [lng_id] + "<kbd>[Shift+R]</kbd>",cmd: "refresh",uiIcon: "ui-icon-refresh"},
+            {title: "----"},
+            {title: {{text_Options | json_encode()}} [lng_id],cmd: "options",uiIcon: "ui-icon-gear"},
+            {title: "----"},
             { title: {{ text_New_group| json_encode()}}[lng_id] + "<kbd>[Ctrl+M]</kbd>", cmd: "addSibling", uiIcon: "ui-icon-plusthick"},
             { title: {{ text_New_attribute| json_encode()}}[lng_id] + "<kbd>[Ctrl+Q]</kbd>", cmd: "addChild", uiIcon: "ui-icon-plus"}
         ];
