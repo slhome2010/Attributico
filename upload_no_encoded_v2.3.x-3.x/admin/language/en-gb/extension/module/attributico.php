@@ -292,6 +292,7 @@ $_['alert_warning']  = '<strong>Warning!</strong> Do not leave this page until t
 $_['alert_success']  = '<strong>Success!</strong> Operation has been completed.';
 $_['alert_info']  = 'More features will be implemented in future versions.';
 $_['alert_reload']  = '<strong>Warning!</strong> Necessarily to refresh this page to get the actual data!';
+$_['alert_backup']  = '<strong>Warning!</strong> Back up your database before using tools.';
 $_['alert_warning']  = '<strong>Warning!</strong> Make a backup of the database before using the tools.';
 $_['message_duplicate'] = 'Processed duplicates: ';
 $_['message_detached'] = 'Deleted attributes: ';
