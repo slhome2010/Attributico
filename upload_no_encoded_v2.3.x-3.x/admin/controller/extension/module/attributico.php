@@ -123,7 +123,8 @@ class ControllerModuleAttributico extends Controller
         $this->data['text_support'] = $this->language->get('text_support');
         $this->data['text_help1'] = $this->language->get('text_help1');
         $this->data['text_help2'] = $this->language->get('text_help2');
-        $this->data['text_rewrite'] = $this->language->get('text_rewrite');
+        $this->data['text_overwrite'] = $this->language->get('text_overwrite');
+        $this->data['text_overwrite_if_empty'] = $this->language->get('text_overwrite_if_empty');
         $this->data['text_clear'] = $this->language->get('text_clear');
         $this->data['text_insert'] = $this->language->get('text_insert');
         $this->data['text_keep'] = $this->language->get('text_keep');
@@ -1872,7 +1873,7 @@ class ControllerModuleAttributico extends Controller
             case 'clone':
                 $source_lng = isset($options['clone-language-source']) ? $options['clone-language-source'] : $this->config->get('config_language_id');
                 $target_lng = isset($options['clone-language-target']) ? $options['clone-language-target'] : $this->config->get('config_language_id');
-                $method = isset($options['clone-language-method']) ? $options['clone-language-method'] : 0;
+                $method = isset($options['clone-language-method']) ? $options['clone-language-method'] : 'insert';
                 $node = [
                     isset($options['clone-language-attribute']) ? $options['clone-language-attribute'] : 'none',
                     isset($options['clone-language-group']) ? $options['clone-language-group'] : 'none',

@@ -764,12 +764,16 @@
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="0" checked="checked" />
+                                                                                    <input type="radio" name="clone-language-method" value="insert" checked="checked" />
                                                                                     {{text_insert}}
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="1" />
-                                                                                    {{text_rewrite}}
+                                                                                    <input type="radio" name="clone-language-method" value="overwrite" />
+                                                                                    {{text_overwrite}}
+                                                                                </label>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="clone-language-method" value="overifempty" />
+                                                                                    {{text_overwrite_if_empty}}
                                                                                 </label>
                                                                             </div>
                                                                         </div>

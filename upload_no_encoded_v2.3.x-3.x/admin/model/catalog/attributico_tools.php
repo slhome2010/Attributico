@@ -2,15 +2,18 @@
 
 require_once(DIR_SYSTEM . 'library/attributico/array_column.php');
 
-class ModelCatalogAttributicoTools extends Model {
+class ModelCatalogAttributicoTools extends Model
+{
 
-    public function deleteEmptyValues() {
+    public function deleteEmptyValues()
+    {
         $this->cache->delete('attributico');
         $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE TRIM(text) LIKE ''");
         return $this->db->countAffected();
     }
 
-    public function defragmentation($basetable, $field) {
+    public function defragmentation($basetable, $field)
+    {
         $this->cache->delete('attributico');
         $schema = array();
         $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . $basetable . "_relation");
@@ -23,7 +26,7 @@ class ModelCatalogAttributicoTools extends Model {
         }
 
         $this->db->query("CREATE TABLE " . DB_PREFIX . $basetable . "_relation (`new_id` INTEGER(11) NOT NULL AUTO_INCREMENT, " . $field .
-                " INTEGER NOT NULL, PRIMARY KEY (`new_id`))");
+            " INTEGER NOT NULL, PRIMARY KEY (`new_id`))");
         $this->db->query("INSERT INTO " . DB_PREFIX . $basetable . "_relation (" . $field . ") SELECT " . $field . " FROM " . DB_PREFIX . $basetable);
         $count_of_defrag = $this->db->countAffected();
 
@@ -41,7 +44,8 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_of_defrag;
     }
 
-    public function scavengery() {
+    public function scavengery()
+    {
 
         $categoryAttributes = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_attribute");
         $count_of_scavengery = 0;
@@ -55,7 +59,8 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_of_scavengery;
     }
 
-    public function detached($attribute_group_id = 0, $attributes = array()) {
+    public function detached($attribute_group_id = 0, $attributes = array())
+    {
         set_time_limit(600);
         $this->cache->delete('attributico');
         $sql_group = $attribute_group_id !== 0 ? " WHERE attribute_group_id =" . (int) $attribute_group_id : "";
@@ -75,7 +80,8 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_of_detached;
     }
 
-    private function createHoldkeys($attribute_group_id) {
+    private function createHoldkeys($attribute_group_id)
+    {
         // Create holdkeys of duplicates of attributes names (создается таблица образцов дубликатов имен в данной группе, id-шники берутся от первого по ходу атрибута)
         $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "holdkeys");
         $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "holdkeys
@@ -85,7 +91,8 @@ class ModelCatalogAttributicoTools extends Model {
         return;
     }
 
-    private function getLostkeys($attribute_group_id) {
+    private function getLostkeys($attribute_group_id)
+    {
         // Create lostkeys of duplicates
         $lostkeys = $this->db->query("SELECT  `ad1`.`attribute_id` FROM  " . DB_PREFIX . "attribute_description ad1
                                         LEFT JOIN  " . DB_PREFIX . "attribute a1 ON (a1.attribute_id = ad1.attribute_id)
@@ -96,7 +103,8 @@ class ModelCatalogAttributicoTools extends Model {
         return $lostkeys->rows;
     }
 
-    private function getLostdups($attribute_group_id, $lostkeys = array()) {
+    private function getLostdups($attribute_group_id, $lostkeys = array())
+    {
         $sql_lost = $lostkeys ? " (" . implode(",", $lostkeys) . ")" : "(SELECT `ad1`.`attribute_id` FROM  " . DB_PREFIX . "attribute_description ad1
 									LEFT JOIN " . DB_PREFIX . "attribute a1 ON (a1.attribute_id = ad1.attribute_id) WHERE `ad1`.`name` IN
 									(SELECT `hk`.`name` FROM " . DB_PREFIX . "holdkeys hk) AND a1.`attribute_group_id` = '" . (int) $attribute_group_id . "')
@@ -104,11 +112,12 @@ class ModelCatalogAttributicoTools extends Model {
         // Get lost of duplicates
         $lostdups = $this->db->query("SELECT product_id, pa.attribute_id, pa.language_id, pa.text, ad2.name FROM  " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute_description ad2
                                             ON (pa.attribute_id = ad2.attribute_id AND `pa`.`language_id`= `ad2`.`language_id`) WHERE `pa`.`attribute_id` IN " . $sql_lost .
-                " ORDER BY `pa`.product_id, `pa`.`attribute_id`, `pa`.`language_id`, `ad2`.`name`");
+            " ORDER BY `pa`.product_id, `pa`.`attribute_id`, `pa`.`language_id`, `ad2`.`name`");
         return $lostdups->rows;
     }
 
-    public function deduplicate($attribute_group_id) {
+    public function deduplicate($attribute_group_id)
+    {
         set_time_limit(600);
         $this->cache->delete('attributico');
         //  $start_time = microtime(true);
@@ -123,7 +132,7 @@ class ModelCatalogAttributicoTools extends Model {
             foreach ($lostdups as $lostdup) {
                 if ($lostdup['attribute_id'] !== $holdkey['attribute_id'] && $lostdup['language_id'] == $holdkey['language_id'] && $lostdup['name'] == $holdkey['name']) {
                     $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE product_id = '" . (int) $lostdup['product_id'] .
-                            "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
+                        "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
                     $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostdup['attribute_id'] . "'");
                 }
             }
@@ -151,10 +160,10 @@ class ModelCatalogAttributicoTools extends Model {
                     $text = implode($splitter, $values);
                     //update remining
                     $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $holddup['product_id'] .
-                            "' AND attribute_id = '" . (int) $holddup['attribute_id'] . "' AND language_id = '" . (int) $holddup['language_id'] . "'");
+                        "' AND attribute_id = '" . (int) $holddup['attribute_id'] . "' AND language_id = '" . (int) $holddup['language_id'] . "'");
                     // delete lost
                     $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $lostdup['product_id'] .
-                            "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
+                        "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
                     $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holddup['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostdup['attribute_id'] . "'");
                 }
             }
@@ -168,14 +177,15 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_of_duplicates;
     }
 
-    public function mergeAttribute($target_id, $subject_id) {
+    public function mergeAttribute($target_id, $subject_id)
+    {
         // in foreach
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
 
         $subjects = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = '" . (int) $subject_id . "'");
         foreach ($subjects->rows as $subject) {
             $dups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $subject['product_id'] . "' AND attribute_id = '" . (int) $target_id .
-                    "' AND language_id = '" . (int) $subject['language_id'] . "'");
+                "' AND language_id = '" . (int) $subject['language_id'] . "'");
             $dup = $dups->row; // perfect potentional dublicate - to-be error of keys sql, change attribute_id impossible
             if ($dup) {
                 $text = trim($dup['text']); // it is the target text
@@ -187,15 +197,15 @@ class ModelCatalogAttributicoTools extends Model {
                 $text = implode($splitter, $values);
                 //update remining
                 $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $dup['product_id'] .
-                        "' AND attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $dup['language_id'] . "'");
+                    "' AND attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $dup['language_id'] . "'");
             } else { // this product not have in this attribute, then only change attribute_id
                 $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $target_id . "' WHERE product_id = '" . (int) $subject['product_id'] .
-                        "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+                    "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
             }
 
             // delete old product references to subject_id
             $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $subject['product_id'] .
-                    "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+                "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
         }
         // kill subject references in category
         $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $target_id . "' WHERE attribute_id = '" . (int) $subject_id . "'");
@@ -206,18 +216,20 @@ class ModelCatalogAttributicoTools extends Model {
         return;
     }
 
-    public function createCategoryAttributes($categories = array()) {
+    public function createCategoryAttributes($categories = array())
+    {
         // $this->cache->delete('attributico');
         if ($categories) {
             // pull out category attribute from products
             $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "category_attribute(category_id, attribute_id) (SELECT DISTINCT hptc.category_id, hpa.attribute_id FROM "
-                    . DB_PREFIX . "product_attribute hpa LEFT JOIN "
-                    . DB_PREFIX . "product_to_category hptc ON (hpa.product_id = hptc.product_id) WHERE hptc.category_id IN (" . implode(",", $categories) . ") AND hpa.attribute_id !='0' ORDER BY hptc.category_id) ");
+                . DB_PREFIX . "product_attribute hpa LEFT JOIN "
+                . DB_PREFIX . "product_to_category hptc ON (hpa.product_id = hptc.product_id) WHERE hptc.category_id IN (" . implode(",", $categories) . ") AND hpa.attribute_id !='0' ORDER BY hptc.category_id) ");
         }
         return $this->db->countAffected();
     }
 
-    public function addCategoryAttributesToProducts($category_id) {
+    public function addCategoryAttributesToProducts($category_id)
+    {
         // in foreach
         set_time_limit(600);
         $method = $this->config->get('attributico_product_text');
@@ -231,7 +243,7 @@ class ModelCatalogAttributicoTools extends Model {
                       , " . DB_PREFIX . "language hl
                       WHERE p2c.category_id = '" . (int) $category_id . "'
                       ORDER BY p.product_id, hca.attribute_id";
-        
+
         switch ($method) {
             case '1':    // text = ''
                 $sql = "INSERT INTO " . DB_PREFIX . "product_attribute(product_id, attribute_id, language_id, text)
@@ -283,8 +295,9 @@ class ModelCatalogAttributicoTools extends Model {
         return $count_affected ? $count_affected : $this->db->countAffected();
     }
 
-    public function cloneLanguage($source_lng, $target_lng, $method, $node = []) {
-        
+    public function cloneLanguage($source_lng, $target_lng, $method, $node = [])
+    {
+
         set_time_limit(600);
         $count_affected = new stdClass();
         $count_affected->attribute = 0;
@@ -295,19 +308,33 @@ class ModelCatalogAttributicoTools extends Model {
 
         // Attribute
         if (in_array('attribute', $node)) {
-            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $source_lng . "'");
+            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $source_lng . "' AND attribute_id = '2'");
 
             foreach ($query->rows as $attribute) {
-                if (!$method) {
-                    $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
-                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'");
-                } else {
-                    $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
+                $insert_query = "INSERT IGNORE INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
+                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
+                $overwrite_query = "INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
                              language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'
                              ON DUPLICATE KEY UPDATE attribute_id = '" . (int) $attribute['attribute_id'] . "',
-                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'");
+                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
+
+                switch ($method) {
+                    case 'insert':
+                        $this->db->query($insert_query);
+                        break;
+                    case 'overwrite':
+                        $this->db->query($overwrite_query);
+                        break;
+                    case 'overifempty':
+                        $has_already = $this->db->query("SELECT name FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $target_lng . "' AND attribute_id = '" . (int) $attribute['attribute_id'] . "'");
+                        if (empty($has_already->row['name']) || trim($has_already->row['name']) === "") {
+                            $this->db->query($overwrite_query);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                $count_affected->attribute += round($this->db->countAffected()/2);
+                $count_affected->attribute += round($this->db->countAffected() / 2);
             }
         }
 
@@ -316,16 +343,29 @@ class ModelCatalogAttributicoTools extends Model {
             $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_group_description WHERE language_id = '" . (int) $source_lng . "'");
 
             foreach ($query->rows as $attribute_group) {
-                if (!$method) {
-                    $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "',
-                                       language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'");
-                } else {
-                    $this->db->query("INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "',
+                $insert_query = "INSERT IGNORE INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "',
+                                       language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'";
+                $overwrite_query = "INSERT INTO " . DB_PREFIX . "attribute_group_description SET attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "',
                                        language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'
                                        ON DUPLICATE KEY UPDATE attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "',
-                                       language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'");
+                                       language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute_group['name']) . "'";
+                switch ($method) {
+                    case 'insert':
+                        $this->db->query($insert_query);
+                        break;
+                    case 'overwrite':
+                        $this->db->query($overwrite_query);
+                        break;
+                    case 'overifempty':
+                        $has_already = $this->db->query("SELECT name FROM " . DB_PREFIX . "attribute_group_description WHERE language_id = '" . (int) $target_lng . "' AND attribute_group_id = '" . (int) $attribute_group['attribute_group_id'] . "'");
+                        if (empty($has_already->row['name']) || trim($has_already->row['name']) === "") {
+                            $this->db->query($overwrite_query);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                $count_affected->group += round($this->db->countAffected()/2);
+                $count_affected->group += round($this->db->countAffected() / 2);
             }
         }
 
@@ -334,20 +374,32 @@ class ModelCatalogAttributicoTools extends Model {
             $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE language_id = '" . (int) $source_lng . "'");
 
             foreach ($query->rows as $product_attribute) {
-                if (!$method) {
-                    $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int) $product_attribute['product_id'] . "', attribute_id = '" . (int) $product_attribute['attribute_id'] . "',
-                                       language_id = '" . (int) $target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'");
-                } else {
-                    $this->db->query("INSERT INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int) $product_attribute['product_id'] . "', attribute_id = '" . (int) $product_attribute['attribute_id'] . "',
+                $insert_query = "INSERT IGNORE INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int) $product_attribute['product_id'] . "', attribute_id = '" . (int) $product_attribute['attribute_id'] . "',
+                        language_id = '" . (int) $target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'";
+                $overwrite_query = "INSERT INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int) $product_attribute['product_id'] . "', attribute_id = '" . (int) $product_attribute['attribute_id'] . "',
                                        language_id = '" . (int) $target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'
                                        ON DUPLICATE KEY UPDATE product_id = '" . (int) $product_attribute['product_id'] . "', attribute_id = '" . (int) $product_attribute['attribute_id'] . "',
-                                       language_id = '" . (int) $target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'");
+                                       language_id = '" . (int) $target_lng . "', text = '" . $this->db->escape($product_attribute['text']) . "'";
+                switch ($method) {
+                    case 'insert':
+                        $this->db->query($insert_query);
+                        break;
+                    case 'overwrite':
+                        $this->db->query($overwrite_query);
+                        break;
+                    case 'overifempty':
+                        $has_already = $this->db->query("SELECT text FROM " . DB_PREFIX . "product_attribute WHERE language_id = '" . (int) $target_lng . "' AND attribute_id = '" . (int) $product_attribute['attribute_id'] . "' AND product_id = '" . (int) $product_attribute['product_id'] . "'");
+                        if (empty($has_already->row['text']) || trim($has_already->row['text']) === "") {
+                            $this->db->query($overwrite_query);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                $count_affected->value += round($this->db->countAffected()/2);
+                $count_affected->value += round($this->db->countAffected() / 2);
             }
         }
 
         return $count_affected;
     }
-
 }

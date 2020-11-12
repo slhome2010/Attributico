@@ -811,12 +811,16 @@
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="0" checked="checked" />
+                                                                                    <input type="radio" name="clone-language-method" value="insert" checked="checked" />
                                                                                     <?php echo $text_insert; ?>
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="1" />
-                                                                                    <?php echo $text_rewrite; ?>
+                                                                                    <input type="radio" name="clone-language-method" value="overwrite" />
+                                                                                    <?php echo $text_overwrite; ?>
+                                                                                </label>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="clone-language-method" value="overifempty" />
+                                                                                    <?php echo $text_overwrite_if_empty; ?>
                                                                                 </label>
                                                                             </div>
                                                                         </div>
