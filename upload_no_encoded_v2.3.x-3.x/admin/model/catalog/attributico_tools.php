@@ -303,43 +303,12 @@ class ModelCatalogAttributicoTools extends Model
         $count_affected->attribute = 0;
         $count_affected->group = 0;
         $count_affected->value = 0;
+        $count_affected->duty = 0;
 
         $this->cache->delete('attributico');
 
-        // Attribute
-        if (in_array('attribute', $node)) {
-            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $source_lng . "' AND attribute_id = '2'");
-
-            foreach ($query->rows as $attribute) {
-                $insert_query = "INSERT IGNORE INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
-                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
-                $overwrite_query = "INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
-                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'
-                             ON DUPLICATE KEY UPDATE attribute_id = '" . (int) $attribute['attribute_id'] . "',
-                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
-
-                switch ($method) {
-                    case 'insert':
-                        $this->db->query($insert_query);
-                        break;
-                    case 'overwrite':
-                        $this->db->query($overwrite_query);
-                        break;
-                    case 'overifempty':
-                        $has_already = $this->db->query("SELECT name FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $target_lng . "' AND attribute_id = '" . (int) $attribute['attribute_id'] . "'");
-                        if (empty($has_already->row['name']) || trim($has_already->row['name']) === "") {
-                            $this->db->query($overwrite_query);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                $count_affected->attribute += round($this->db->countAffected() / 2);
-            }
-        }
-
         // Attribute Group
-        if (in_array('group', $node)) {
+        if ($node['group']) {
             $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_group_description WHERE language_id = '" . (int) $source_lng . "'");
 
             foreach ($query->rows as $attribute_group) {
@@ -369,8 +338,40 @@ class ModelCatalogAttributicoTools extends Model
             }
         }
 
-        // Product Attribute
-        if (in_array('value', $node)) {
+        // Attribute
+        if ($node['attribute']) {
+            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $source_lng . "'");
+
+            foreach ($query->rows as $attribute) {
+                $insert_query = "INSERT IGNORE INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
+                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
+                $overwrite_query = "INSERT INTO " . DB_PREFIX . "attribute_description SET attribute_id = '" . (int) $attribute['attribute_id'] . "',
+                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'
+                             ON DUPLICATE KEY UPDATE attribute_id = '" . (int) $attribute['attribute_id'] . "',
+                             language_id = '" . (int) $target_lng . "', name = '" . $this->db->escape($attribute['name']) . "', duty = '" . $this->db->escape($attribute['duty']) . "'";
+
+                switch ($method) {
+                    case 'insert':
+                        $this->db->query($insert_query);
+                        break;
+                    case 'overwrite':
+                        $this->db->query($overwrite_query);
+                        break;
+                    case 'overifempty':
+                        $has_already = $this->db->query("SELECT name FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $target_lng . "' AND attribute_id = '" . (int) $attribute['attribute_id'] . "'");
+                        if (empty($has_already->row['name']) || trim($has_already->row['name']) === "") {
+                            $this->db->query($overwrite_query);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                $count_affected->attribute += round($this->db->countAffected() / 2);
+            }
+        }        
+
+        // Product Attribute = value
+        if ($node['value']) {
             $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE language_id = '" . (int) $source_lng . "'");
 
             foreach ($query->rows as $product_attribute) {
@@ -399,6 +400,34 @@ class ModelCatalogAttributicoTools extends Model
                 $count_affected->value += round($this->db->countAffected() / 2);
             }
         }
+
+        // Duty
+        if ($node['duty']) {
+            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $source_lng . "'");
+
+            foreach ($query->rows as $attribute) {
+                $insert_query = "";
+                $overwrite_query = "UPDATE " . DB_PREFIX . "attribute_description SET duty = '" . $this->db->escape($attribute['duty']) . "'
+                WHERE attribute_id = '" . (int) $attribute['attribute_id'] . "' AND language_id = '" . (int) $target_lng . "'";
+
+                switch ($method) {
+                    case 'insert':                        
+                        break;
+                    case 'overwrite':
+                        $this->db->query($overwrite_query);
+                        break;
+                    case 'overifempty':
+                        $has_already = $this->db->query("SELECT duty FROM " . DB_PREFIX . "attribute_description WHERE language_id = '" . (int) $target_lng . "' AND attribute_id = '" . (int) $attribute['attribute_id'] . "'");
+                        if (empty($has_already->row['duty']) || trim($has_already->row['duty']) === "") {
+                            $this->db->query($overwrite_query);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                $count_affected->duty += round($this->db->countAffected() / 2);
+            }
+        }        
 
         return $count_affected;
     }

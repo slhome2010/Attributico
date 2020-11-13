@@ -318,7 +318,7 @@
                                         <div class="tab-pane" id="tab-algorithm">
                                             <legend><?php echo $legend_algorithm ?></legend>
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_product_text; ?></span></label>
+                                                <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_attribute_values; ?></span></label>
                                                 <div class="col-sm-9">
                                                     <div class="radio">
                                                         <label>
@@ -798,7 +798,7 @@
                                                                             <div class="col-sm-6">
                                                                                 <label class="checkbox-inline" for="clone-language-group">
                                                                                     <input type="checkbox" name="clone-language-group" id="clone-language-group" value="group" checked="checked">
-                                                                                    <?php echo $entry_attribute_groups; ?>
+                                                                                    <?php echo $entry_groups; ?>
                                                                                 </label>
                                                                                 <label class="checkbox-inline" for="clone-language-attribute">
                                                                                     <input type="checkbox" name="clone-language-attribute" id="clone-language-attribute" value="attribute" checked="checked">
@@ -806,7 +806,11 @@
                                                                                 </label>
                                                                                 <label class="checkbox-inline" for="clone-language-value">
                                                                                     <input type="checkbox" name="clone-language-value" id="clone-language-value" value="value" checked="checked">
-                                                                                    <?php echo $entry_product_text; ?>
+                                                                                    <?php echo $entry_values; ?>
+                                                                                </label>
+                                                                                <label class="checkbox-inline" for="clone-language-duty">
+                                                                                    <input type="checkbox" name="clone-language-duty" id="clone-language-duty" value="duty" checked="checked">
+                                                                                    <?php echo $entry_duties; ?>
                                                                                 </label>
                                                                             </div>
                                                                             <div class="col-sm-6">
