@@ -93,6 +93,7 @@ export function deleteDuty(node, store) {
 }
 
 export function cloneDuty(node, store) {
+    if (node.title === '' && !confirm('Warning! This node is empty. All cloned nodes will become empty. Are you sure?')) return
     $.ajax({
         data: {
             'user_token': user_token,
