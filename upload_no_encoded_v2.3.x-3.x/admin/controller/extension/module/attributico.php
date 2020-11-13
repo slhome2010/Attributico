@@ -507,12 +507,13 @@ class ControllerModuleAttributico extends Controller
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
         $language_id = isset($this->request->get['language_id']) ? (int) $this->request->get['language_id'] : '';
 
-        if (isset($this->session->data['languages'])) {
+        $languages = $this->getLanguages();
+        /* if (isset($this->session->data['languages'])) {
             $languages = $this->session->data['languages'];
         } else {
             $this->load->model('localisation/language');
             $languages = $this->model_localisation_language->getLanguages();
-        }
+        } */
 
         $this->load->model('catalog/attributico');
         $results = $duty ? $this->model_catalog_attributico->getDutyValues($attribute_id) : $this->model_catalog_attributico->getAttributeValues($attribute_id, $categories);
@@ -574,12 +575,14 @@ class ControllerModuleAttributico extends Controller
 
         if ($this->config->get('attributico_autoadd')) {
 
-            if (isset($this->session->data['languages'])) {
+            $languages = $this->getLanguages();
+
+          /*   if (isset($this->session->data['languages'])) {
                 $languages = $this->session->data['languages'];
             } else {
                 $this->load->model('localisation/language');
                 $languages = $this->model_localisation_language->getLanguages();
-            }
+            } */
 
             $this->load->model('catalog/attributico');
 
@@ -1180,6 +1183,7 @@ class ControllerModuleAttributico extends Controller
         $name = isset($this->request->get['name']) ? htmlspecialchars_decode($this->request->get['name']) : '';
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
+        $clone = isset($this->request->get['clone']) ? filter_var($this->request->get['clone'], FILTER_VALIDATE_BOOLEAN) : false;
 
         $this->load->model('catalog/attributico');
 
@@ -1220,7 +1224,14 @@ class ControllerModuleAttributico extends Controller
 
         if ($key[0] == 'duty') {
             $attribute_id = $key[1];
-            $data['attribute_description'][$language_id]['duty'] = $name;
+            if ($clone) {
+                $languages = $this->getLanguages();
+                foreach($languages as $language) {
+                    $data['attribute_description'][$language['language_id']]['duty'] = $name;
+                }
+            } else {
+                $data['attribute_description'][$language_id]['duty'] = $name;
+            }            
             $this->model_catalog_attributico->editDuty($attribute_id, $data);
         }
 
@@ -1246,7 +1257,8 @@ class ControllerModuleAttributico extends Controller
             $attribute_group_id = $key[1];
         }
 
-        $languages = $this->session->data['languages'];
+        $languages = $this->getLanguages();
+        /* $languages = $this->session->data['languages']; */
         $data['sort_order'] = '';
         $this->load->model('catalog/attributico');
         $this->cache->delete('attributico');
@@ -1270,7 +1282,7 @@ class ControllerModuleAttributico extends Controller
                 "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
                 "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
             );
-
+//TODO проверить на скорость такую конструцию $this->getLanguage($language_id)->get('entry_templates') т.к. постоянно идет загрузка языкового файла
             $templateNode = new Node(array(
                 "title" => $this->getLanguage($language_id)->get('entry_templates'), "unselectable" => true, "key" => "template_" . (string) $new_attribute_id,
                 "children" => $lazyLoad ? '' : $this->getAttributeValuesNodes($new_attribute_id, $language_id, 'template'), "lazy" => $lazyLoad ? true : false,
@@ -1340,7 +1352,8 @@ class ControllerModuleAttributico extends Controller
             $attributes_id[] = explode("_", $attribute)[1];
         }
 
-        $languages = $this->session->data['languages'];
+        /* $languages = $this->session->data['languages']; */
+        $languages = $this->getLanguages();
         // Transform arr.id [123, 124 ... 129] and arr.titles [[],[тайтл123,тайтл124... ],[],[title123,title124,...]
         // to arr [123 => [тайтл123,title123], 124 => [тайтл123,title123], ...]
         $new_titles = [];
@@ -1534,8 +1547,8 @@ class ControllerModuleAttributico extends Controller
             }
 
             $this->cache->delete('attributico');
-
-            $languages = $this->session->data['languages'];
+            $languages = $this->getLanguages();
+            /* $languages = $this->session->data['languages']; */
             foreach ($categories as $CategoryId) {
                 if ($this->config->get('attributico_autoadd')) {
                     $category_products = $this->model_catalog_attributico->getProductsByCategoryId($CategoryId);
@@ -1632,6 +1645,17 @@ class ControllerModuleAttributico extends Controller
             }
         }
         return "english";
+    }
+
+    private function getLanguages()
+    {
+        if (isset($this->session->data['languages'])) {
+            $languages = $this->session->data['languages'];
+        } else {
+            $this->load->model('localisation/language');
+            $languages = $this->model_localisation_language->getLanguages();
+        }
+        return $languages;
     }
 
     public function autocomplete()
