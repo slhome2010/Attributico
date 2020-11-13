@@ -5,7 +5,7 @@
  **/
 
 /* import  'jquery.fancytree'; */
-import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute, cloneDuty } from '../functions/Crud'
 import { deSelectNodes } from '../functions/Select';
 import CollapseExpande from './Events/CollapseExpande';
 //import { isCategory } from '../functions/Plugin/NodeMethod';
@@ -62,6 +62,10 @@ export class ContextmenuCommand {
                 copyPaste(this.ui.cmd, this.node, this.store);
                 deSelectNodes(this.node);
                 break;
+            case 'clone':
+                cloneDuty(this.node, this.store)
+                deSelectNodes(this.node)
+                break
             default:
                 alert("Todo: appply action '" + this.ui.cmd + "' to node " + this.node);
         }

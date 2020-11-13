@@ -285,7 +285,7 @@ class ControllerModuleAttributico extends Controller
             $this->session->data['error_not_attribute'][$language['language_id']] = $lng->get('error_not_attribute');
             $this->session->data['entry_products'][$language['language_id']] = $lng->get('entry_products');
             $this->session->data['entry_attribute'][$language['language_id']] = $lng->get('entry_attribute');
-            $this->session->data['entry_attributes'][$language['language_id']] = $lng->get('entry_attributes');
+            $this->session->data['entry_attributes'][$language['language_id']] = $lng->get('entry_attributes');            
             // menu
             $this->data['text_New_attribute'][$language['language_id']] = $lng->get('text_New_attribute');
             $this->data['text_New_group'][$language['language_id']] = $lng->get('text_New_group');
@@ -301,6 +301,7 @@ class ControllerModuleAttributico extends Controller
             $this->data['text_Paste'][$language['language_id']] = $lng->get('text_Paste');
             $this->data['text_Merge'][$language['language_id']] = $lng->get('text_Merge');
             $this->data['text_lazyLoad'][$language['language_id']] = $lng->get('text_lazyLoad');
+            $this->data['entry_clone'][$language['language_id']] = $lng->get('entry_clone');
             // options
             $this->data['text_Options'][$language['language_id']] = $lng->get('text_Options');
             $this->data['text_Sort'][$language['language_id']] = $lng->get('text_Sort');

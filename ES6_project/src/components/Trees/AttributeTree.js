@@ -122,7 +122,8 @@ export default class AttributeTree {
                     addChild: false,
                     addSibling: false,
                     copy: data.node?.isAttribute(),
-                    paste: false
+                    paste: false,
+                    clone: data.node?.isDuty()
                 };
                 command.execute();
             },
@@ -150,6 +151,7 @@ export default class AttributeTree {
                         });
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "rename", node.isDuty());
+                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty());
                         node.setActive();
                     },
                     select: (event, ui) => {

@@ -22,28 +22,24 @@ export default class CategoryAttributeTree {
             selectMode: 2,
             extensions: ["edit", "dnd"],
             source: {
-                data: {
-                    'user_token': user_token,
-                    'token': token,
+                data: {                    
                     'language_id': this.lng_id,
                     'category_id': currentCategory,
                     'sortOrder': this.sortOrder,
                     'tree': "4"
-                },
-                url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributeTree'
+                },                
+                url: `index.php?route=${extension}module/attributico/getCategoryAttributeTree&user_token=${user_token}&token=${token}`,
             },
             loadError: (e, data) => loadError(e, data),
             lazyLoad: (event, data) => {
                 data.result = {
-                    data: {
-                        'user_token': user_token,
-                        'token': token,
+                    data: {                        
                         'key': data.node.key,
                         'language_id': this.lng_id,
                         'sortOrder': this.sortOrder,
                         'tree': "4"
-                    }, // cache:true,
-                    url: 'index.php?route=' + extension + 'module/attributico/getLazyAttributeValues'
+                    }, // cache:true,                   
+                    url: `index.php?route=${extension}module/attributico/getLazyAttributeValues&user_token=${user_token}&token=${token}`,
                 };
             },
             edit: {
@@ -95,8 +91,8 @@ export default class CategoryAttributeTree {
                             'attributes': [data.node.key],
                             'category_id': data.node.getParent().key,
                             'categories': selCategories ? getSelectedKeys(selCategories) : [data.node.getParent().key]
-                        },
-                        url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
+                        },                        
+                        url: `index.php?route=${extension}module/attributico/addCategoryAttributes&user_token=${user_token}&token=${token}`,
                         type: 'POST'
                     }).done(function () {
                         $(data.node.span).removeClass("pending");

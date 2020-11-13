@@ -4,7 +4,7 @@
  *
  **/
 import { deSelectNodes } from '../functions/Select'
-import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute } from '../functions/Crud'
+import { copyPaste, deleteDuty, deleteAttributesFromCategory, deleteAttribute, addNewAttribute, cloneDuty } from '../functions/Crud'
 import CollapseExpande from './Events/CollapseExpande';
 import RefreshTree from './Events/RefreshTree';
 
@@ -85,7 +85,14 @@ export class KeydownCommand {
                     copyPaste("copy", this.node, this.store);
                     return false;
                 }
-                break;
+
+                // Alt-C clone
+                if (this.access.clone && this.e.altKey) {
+                    cloneDuty(this.node, this.store)
+                    deSelectNodes(this.node)
+                    return false;
+                }
+                break;                
             case 86:
                 // Ctrl-V paste
                 if (this.access.paste && this.e.ctrlKey) {

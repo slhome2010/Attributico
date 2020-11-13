@@ -253,6 +253,7 @@ $_['entry_inject_to_products'] = 'Расставить атрибуты кате
 $_['entry_multistore'] = 'Все магазины';
 $_['entry_from'] = 'Откуда:';
 $_['entry_to'] = 'Куда:';
+$_['entry_clone'] = 'Клонировать';
 
 // Error
 $_['error_permission'] = 'У Вас нет прав для изменения Attribut<b style="color: #2199C7;">&</b>co!';

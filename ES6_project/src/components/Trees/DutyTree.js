@@ -81,7 +81,8 @@ export default class DutyTree {
                     addChild: false,
                     addSibling: false,
                     copy: false,
-                    paste: false
+                    paste: false,
+                    clone: data.node?.isDuty()
                 };
                 command.execute();
             },
@@ -109,6 +110,7 @@ export default class DutyTree {
                         data.tree.$div.contextmenu("enableEntry", "rename", node.isOneOf(['group', 'attribute', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
+                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty());
                         node.setActive();
                     },
                     select: (event, ui) => {

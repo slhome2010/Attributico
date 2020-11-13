@@ -947,6 +947,12 @@
                 disabled: true
             },
             {
+                title: <?php echo json_encode($entry_clone) ?>[lng_id] + "<kbd>[Alt+C]</kbd>",
+                cmd: "clone",
+                uiIcon: "ui-icon-seek-next",
+                disabled: true
+            },
+            {
                 title: "----"
             },
             {

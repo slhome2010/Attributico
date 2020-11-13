@@ -1,6 +1,6 @@
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
 import { reactivateCategory } from './Syncronisation'
-import { copyNode, deleteNode, dndAddNode, dndReplaceCategory } from '../actions';
+import { copyNode, deleteNode, dndAddNode, dndReplaceCategory, updateNode } from '../actions';
 import { moveNode } from './Move';
 
 export function addNewAttribute(activeNode, activeKey, lng_id) {
@@ -37,7 +37,7 @@ export function deleteAttribute(node, store) {
                 'titles': selNodes ? getSelectedTitles(selNodes) : [node.title],
                 'language_id': node.getLanguageId()
             },
-            url: 'index.php?route=' + extension + 'module/attributico/deleteAttributes' + '&user_token=' + user_token + '&token=' + token,
+            url: `index.php?route=${extension}module/attributico/deleteAttributes&user_token=${user_token}&token=${token}`,
             type: 'POST',
             success: function () {
                 let affectedNodes = []
@@ -92,6 +92,24 @@ export function deleteDuty(node, store) {
     });
 }
 
+export function cloneDuty(node, store) {
+    $.ajax({
+        data: {
+            'user_token': user_token,
+            'token': token,
+            'key': node.key,
+            'language_id': node.getLanguageId(),
+            'name': node.title,
+            'clone': true
+        },
+        url: 'index.php?route=' + extension + 'module/attributico/editAttribute',
+        success: function () {
+            // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
+            store.dispatch(updateNode(node, [node.getParentGroup()]));
+        }
+    });
+}
+
 // sourceNode = data.otherNode это узел источника
 // Синхронизировать деревья атрибутов надо, т.к. могли добавиться или удалиться значения после add/delete
 export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove, store) {
@@ -100,8 +118,8 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
             'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
             'category_id': targetNode.key,
             'categories': selCategories ? getSelectedKeys(selCategories) : []
-        },
-        url: 'index.php?route=' + extension + 'module/attributico/addCategoryAttributes' + '&user_token=' + user_token + '&token=' + token,
+        },        
+        url: `index.php?route=${extension}module/attributico/addCategoryAttributes&user_token=${user_token}&token=${token}`,
         type: 'POST'
     }).done(function () {
         // Это либо смена категории либо копипаст из CategoryAttributeTree
@@ -126,8 +144,8 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
             'attributes': clipboard ? getSelectedKeys(clipboard) : [sourceNode.key],
             'category_id': category_id,
             'categories': selCategories ? getSelectedKeys(selCategories) : []
-        },
-        url: 'index.php?route=' + extension + 'module/attributico/deleteAttributesFromCategory' + '&user_token=' + user_token + '&token=' + token,
+        },       
+        url: `index.php?route=${extension}module/attributico/deleteAttributesFromCategory&user_token=${user_token}&token=${token}`,
         type: 'POST',
         success: function () {
             reactivateCategory(targetNode);
@@ -267,8 +285,8 @@ export function pasteNodes(targetNode, lng_id, store) {
                 'target': parentNode.key,
                 'titles': clipboardTitles,
                 'attributes': getSelectedKeys(clipboardNodes[lng_id]),
-            },
-            url: 'index.php?route=' + extension + 'module/attributico/addAttributes' + '&user_token=' + user_token + '&token=' + token,
+            },           
+            url: `index.php?route=${extension}module/attributico/addAttributes&user_token=${user_token}&token=${token}`,
             type: 'POST',
             success: function () {
                 store.dispatch(copyNode(sourceNode, parentNode));

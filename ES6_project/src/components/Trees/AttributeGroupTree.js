@@ -142,7 +142,8 @@ export default class AttributeGroupTree {
                     copy: data.node?.isAttribute(),
                     cut: data.node?.isOneOf(['group', 'attribute']),
                     paste: !data.node?.isTopLevel() ? true : false,
-                    merge: data.node?.isOneOf(['group', 'attribute'])
+                    merge: data.node?.isOneOf(['group', 'attribute']),
+                    clone: data.node?.isDuty()
                 };
                 command.execute();
             },
@@ -172,6 +173,7 @@ export default class AttributeGroupTree {
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.isTopLevel());
                         data.tree.$div.contextmenu("enableEntry", "merge", !(clipboardNodes.length == 0) && node.isOneOf(['group', 'attribute']) && pasteMode == "cut");
                         data.tree.$div.contextmenu("enableEntry", "addChild", !node.isTopLevel());
+                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty());
                         node.setActive();
                     },
                     select: (event, ui) => {

@@ -252,6 +252,7 @@ $_['entry_inject_to_products'] = 'Inject the category attributes into products';
 $_['entry_multistore'] = 'All stories';
 $_['entry_from'] = 'From:';
 $_['entry_to'] = 'To:';
+$_['entry_clone'] = 'Clone';
 
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify Attribut<b style="color: #003F62;">&</b>co!';
