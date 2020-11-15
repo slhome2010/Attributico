@@ -1773,20 +1773,21 @@ class ControllerModuleAttributico extends Controller
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '';
 
-        // $language = $this->getLanguage($language_id);
+        $children = $this->childrenSettings($tree);
 
-        if ($this->config->get('attributico_children')) {
+       /*  if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
             $settings = $this->settings;
-        }
+        } */
 
         $rootData = array(
             "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "checkbox" => false,
             "children" => array(
-                array("title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false,),
-                array("title" => $this->session->data['entry_templates'][$language_id], "key" => "template", "selected" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,),
-                array("title" => $this->session->data['entry_values'][$language_id], "key" => "value", "selected" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,),
+                array("title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => $tree === '2' ? true : $children['duty'],
+                "unselectable" => $tree === '2' ? true : false),
+                array("title" => $this->session->data['entry_templates'][$language_id], "key" => "template", "selected" => $children['template']),
+                array("title" => $this->session->data['entry_values'][$language_id], "key" => "value", "selected" => $children['value']),
             ),
         );
 

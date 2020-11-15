@@ -1,5 +1,5 @@
-import { ContextmenuCommandDuty } from '../ContextMenuCommand';
-import { KeydownCommandDuty } from '../KeyDownCommand';
+import { ContextmenuCommand } from '../ContextMenuCommand';
+import { KeydownCommand } from '../KeyDownCommand';
 import Filter from '../FancyFilter';
 import { loadError } from '../Events/LoadError';
 //import { isOneOf, isDuty, isAttribute, isTemplate, isValue } from '../../functions/Plugin/NodeMethod';
@@ -75,14 +75,14 @@ export default class DutyTree {
                 return false;
             },
             keydown: (e, data) => {
-                let command = new KeydownCommandDuty(e, data, this.store);
+                let command = new KeydownCommand(e, data, this.store);
                 command.permissions = {
                     remove: data.node?.isOneOf(['duty']),
                     addChild: false,
                     addSibling: false,
                     copy: false,
                     paste: false,
-                    clone: data.node?.isDuty()
+                    clone: data.node?.isDuty() && data.node?.title !== ''
                 };
                 command.execute();
             },
@@ -110,11 +110,11 @@ export default class DutyTree {
                         data.tree.$div.contextmenu("enableEntry", "rename", node.isOneOf(['group', 'attribute', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "addSibling", false);
                         data.tree.$div.contextmenu("enableEntry", "addChild", false);
-                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty());
+                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty() && node.title !== '');
                         node.setActive();
                     },
                     select: (event, ui) => {
-                        let command = new ContextmenuCommandDuty(ui, this.store);
+                        let command = new ContextmenuCommand(ui, this.store);
                         command.execute();
                     }
                 });

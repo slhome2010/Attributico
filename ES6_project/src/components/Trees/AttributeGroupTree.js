@@ -142,8 +142,8 @@ export default class AttributeGroupTree {
                     copy: data.node?.isAttribute(),
                     cut: data.node?.isOneOf(['group', 'attribute']),
                     paste: !data.node?.isTopLevel() ? true : false,
-                    merge: data.node?.isOneOf(['group', 'attribute']),
-                    clone: data.node?.isDuty()
+                    merge: this.mergePermission(data.node),
+                    clone: data.node?.isDuty() && data.node?.title !== ''
                 };
                 command.execute();
             },
@@ -164,16 +164,16 @@ export default class AttributeGroupTree {
                 data.tree.$div.contextmenu({
                     delegate: "span.fancytree-title",
                     menu: contextmenuConfig[this.lng_id],
-                    beforeOpen: function (event, ui) {
+                    beforeOpen: (event, ui) => {
                         let node = $.ui.fancytree.getNode(ui.target);
-                        data.tree.$div.contextmenu("enableEntry", "remove", node.isOneOf(['group', 'attribute', 'template', 'value']));
+                        data.tree.$div.contextmenu("enableEntry", "remove", node.isOneOf(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "rename", node.isOneOf(['group', 'attribute', 'template', 'value', 'duty']));
                         data.tree.$div.contextmenu("enableEntry", "copy", node.isAttribute());
                         data.tree.$div.contextmenu("enableEntry", "cut", node.isOneOf(['group', 'attribute']));
                         data.tree.$div.contextmenu("enableEntry", "paste", !(clipboardNodes.length == 0) && !node.isTopLevel());
-                        data.tree.$div.contextmenu("enableEntry", "merge", !(clipboardNodes.length == 0) && node.isOneOf(['group', 'attribute']) && pasteMode == "cut");
+                        data.tree.$div.contextmenu("enableEntry", "merge", this.mergePermission(node));
                         data.tree.$div.contextmenu("enableEntry", "addChild", !node.isTopLevel());
-                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty());
+                        data.tree.$div.contextmenu("enableEntry", "clone", node.isDuty() && node.title !== '');
                         node.setActive();
                     },
                     select: (event, ui) => {
@@ -183,6 +183,14 @@ export default class AttributeGroupTree {
                 });
             }
         }
+    }
+
+    mergePermission(node){
+        if (clipboardNodes.length === 0) return false
+
+        let clipboardFirstNode = clipboardNodes.find(item => typeof item === 'object').find(item => 'key' in item)
+                    
+        return (node?.isOneOf(['group', 'attribute']) && pasteMode == "cut" && (clipboardFirstNode.getLevel() === node?.getLevel()))
     }
 
     render() {

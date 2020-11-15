@@ -88,6 +88,7 @@ export class KeydownCommand {
 
                 // Alt-C clone
                 if (this.access.clone && this.e.altKey) {
+                    $(this.node.span).addClass("pending");
                     cloneDuty(this.node, this.store)
                     deSelectNodes(this.node)
                     return false;
@@ -119,7 +120,11 @@ export class KeydownCommand {
     }
 
     remove() {
-        deleteAttribute(this.node, this.store);
+        if (this.node.isDuty()) {
+            deleteDuty(this.node, this.store);
+        } else {
+            deleteAttribute(this.node, this.store);
+        }        
     }
 
     addChild() {
@@ -142,9 +147,9 @@ export class KeydownCommandCategory extends KeydownCommand {
     }
 }
 
-export class KeydownCommandDuty extends KeydownCommand {
+/* export class KeydownCommandDuty extends KeydownCommand {
 
     remove() {
         deleteDuty(this.node, this.store);
     }
-}
+} */

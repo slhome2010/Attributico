@@ -63,6 +63,7 @@ export class ContextmenuCommand {
                 deSelectNodes(this.node);
                 break;
             case 'clone':
+                $(this.node.span).addClass("pending");
                 cloneDuty(this.node, this.store)
                 deSelectNodes(this.node)
                 break
@@ -72,7 +73,11 @@ export class ContextmenuCommand {
     }
 
     remove() {
-        deleteAttribute(this.node, this.store);
+        if (this.node.isDuty()) {
+            deleteDuty(this.node, this.store);
+        } else {
+            deleteAttribute(this.node, this.store);
+        }        
     }
 
     addChild() {
@@ -98,9 +103,9 @@ export class ContextmenuCommandCategory extends ContextmenuCommand {
     }
 }
 
-export class ContextmenuCommandDuty extends ContextmenuCommand {
+/* export class ContextmenuCommandDuty extends ContextmenuCommand {
 
     remove() {
         deleteDuty(this.node, this.store);
     }
-}
+} */

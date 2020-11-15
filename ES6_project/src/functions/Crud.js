@@ -107,6 +107,7 @@ export function cloneDuty(node, store) {
         success: function () {
             // при удалении надо перезагрузить дерево т.к. поле не удаестя сделать пустым при edit
             store.dispatch(updateNode(node, [node.getParentGroup()]));
+            $(node.span).removeClass("pending");
         }
     });
 }
