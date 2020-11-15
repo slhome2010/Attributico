@@ -8,7 +8,8 @@ $_['button_check_for_updates'] = 'Проверить обновления';
 $_['text_success'] = 'Настройки модуля обновлены!';
 $_['text_module'] = 'Модули';
 $_['text_edit'] = 'Редактирование модуля';
-$_['text_rewrite'] = 'Перезаписывать';
+$_['text_overwrite'] = 'Перезаписывать';
+$_['text_overwrite_if_empty'] = 'Перезаписывать только пустые';
 $_['text_insert'] = 'Вставлять';
 $_['text_clear'] = 'Очищать';
 $_['text_keep'] = 'Не менять';
@@ -218,8 +219,10 @@ $_['help_clone_options'] = 'Можно отменить клонирование
 
 // Entry
 $_['entry_attribute_groups'] = 'Группы атрибутов';
-$_['entry_attribute_template'] = 'Шаблоны';
-$_['entry_attribute_values'] = 'Значения';
+$_['entry_groups'] = 'Группы';
+$_['entry_templates'] = 'Шаблоны';
+$_['entry_attribute_values'] = 'Значения атрибутов';
+$_['entry_values'] = 'Значения';
 $_['entry_flter_all'] = 'Все';
 $_['entry_flter_category'] = 'Категории';
 $_['entry_flter_duty'] = 'Дежурные';
@@ -232,7 +235,6 @@ $_['entry_sortorder'] = 'Учитывать порядок сортировки'
 $_['entry_empty'] = 'Показывать пустые значения';
 $_['entry_smart_scroll'] = 'Смарт скроллинг';
 $_['entry_multiselect'] = 'Автовыбор подкатегорий с учетом иерархии';
-$_['entry_product_text'] = 'Значения атрибутов';
 $_['entry_categories'] = 'Категории';
 $_['entry_sub_categories'] = 'Подкатегории';
 $_['entry_attributes'] = 'Атрибуты';
@@ -240,6 +242,7 @@ $_['entry_attribute'] = 'Атрибут';
 $_['entry_upgrade'] = 'Обновить базу данных';
 $_['entry_attribute_category'] = 'Атрибуты категории';
 $_['entry_duty'] = 'Дежурный';
+$_['entry_duties'] = 'Дежурные';
 $_['entry_products'] = 'Товары';
 $_['entry_about_blank'] = 'Товар в новом окне';
 $_['entry_lazyload'] = 'Ленивая загрузка';
@@ -250,6 +253,7 @@ $_['entry_inject_to_products'] = 'Расставить атрибуты кате
 $_['entry_multistore'] = 'Все магазины';
 $_['entry_from'] = 'Откуда:';
 $_['entry_to'] = 'Куда:';
+$_['entry_clone'] = 'Клонировать';
 
 // Error
 $_['error_permission'] = 'У Вас нет прав для изменения Attribut<b style="color: #2199C7;">&</b>co!';
@@ -306,3 +310,4 @@ $_['message_clone_attribute'] = 'Клонировано атрибутов: ';
 $_['message_clone_group'] = 'Клонировано групп: ';
 $_['message_clone_value'] = 'Клонировано значений: ';
 $_['message_clone_error'] = 'Клонировано невозможно! ';
+$_['message_clone_duty'] = 'Клонировано дежурных: ';

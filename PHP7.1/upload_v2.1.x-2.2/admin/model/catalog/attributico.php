@@ -315,6 +315,7 @@ class ModelCatalogAttributico extends Model
 
         foreach ($products as $product) {
             $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($data['newtext']) . "' WHERE attribute_id = '" . (int)$attribute_id . "' AND language_id = '" . (int)$data['language_id'] . "' AND product_id = '" . (int)$product['product_id'] . "'");
+            $this->productDateModified($product['product_id']);
         }
     }
 
@@ -329,6 +330,7 @@ class ModelCatalogAttributico extends Model
             $newtext = str_replace(htmlspecialchars_decode($data['oldtext']), htmlspecialchars_decode($data['newtext']), $product['text']);
             // $newtext = preg_replace('#\b(' . $data['oldtext'] . ')\b#u', $data['newtext'], $product['text']);
             $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($newtext) . "' WHERE attribute_id = '" . (int)$attribute_id . "' AND language_id = '" . (int)$data['language_id'] . "' AND product_id = '" . (int)$product['product_id'] . "'");
+            $this->productDateModified($product['product_id']);
         }
     }
 
@@ -525,6 +527,7 @@ class ModelCatalogAttributico extends Model
                         }
                         $this->db->query("INSERT INTO " . DB_PREFIX . "product_attribute SET product_id = '" . (int)$product['product_id'] . "', attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language['language_id'] . $text
                             . "ON DUPLICATE KEY UPDATE  product_id = '" . (int)$product['product_id'] . "', attribute_id = '" . (int)$attribute_id . "', language_id = '" . (int)$language['language_id'] . $text);
+                        $this->productDateModified($product['product_id']);
 
                         $count_affected += $this->db->countAffected();
                     }
@@ -541,6 +544,7 @@ class ModelCatalogAttributico extends Model
             if (isset($data['category_attribute'])) {
                 foreach ($data['category_attribute'] as $attribute_id) {
                     $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int)$product['product_id'] . "' AND attribute_id = '" . (int)$attribute_id . "'");
+                    $this->productDateModified($product['product_id']);
                 }
             }
         }
@@ -620,4 +624,9 @@ class ModelCatalogAttributico extends Model
                           SET i.sort_order = xxx.nrec WHERE i.attribute_id = xxx.attribute_id");
         return;
     }
+
+    private function productDateModified($product_id) {
+        $this->db->query("UPDATE " . DB_PREFIX . "product SET date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+    }    
+
 }
