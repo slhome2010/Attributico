@@ -1,6 +1,6 @@
 /* import  'jquery.fancytree'; */
-import 'jquery-ui';
-import 'ui-contextmenu';
+/* import 'jquery-ui';
+import 'ui-contextmenu'; */
 
 import 'jquery.fancytree/dist/modules/jquery.fancytree.edit';
 import 'jquery.fancytree/dist/modules/jquery.fancytree.filter';

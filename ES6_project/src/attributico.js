@@ -1,6 +1,10 @@
 /** http://servenus.com © 2015-2019 All Rights Reserved **/
-/** For Attribut&co v.3.0.9  **/
-
+/** For Attribut&co v.4.0.0
+ *   **/
+import * as $ from 'jquery';
+/* require('jquery.fancytree'); */
+import 'jquery-ui';
+import 'ui-contextmenu';
 import 'jquery-ui/ui/widgets/dialog';
 import 'jquery.fancytree';
 

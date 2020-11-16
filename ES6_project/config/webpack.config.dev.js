@@ -9,21 +9,23 @@ const PATHS = {
 };
 
 let optimization = {}
-if(process.env.npm_lifecycle_event === 'dev:chunk') { optimization = {
-    /* runtimeChunk: 'single', */
-    splitChunks: {
-        cacheGroups: {
-            vendor: {
-                chunks: 'all',
-                name: 'vendor',
-                /* test: 'vendor', */
-                test: /[\\/]node_modules[\\/]/,
-                filename: 'vendors.js',
-                enforce: true,
-            },
+if (process.env.npm_lifecycle_event === 'dev:chunk') {
+    optimization = {
+        /* runtimeChunk: 'single', */
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    chunks: 'all',
+                    name: 'vendor',
+                    /* test: 'vendor', */
+                    test: /[\\/]node_modules[\\/]/,
+                    filename: 'vendors.js',
+                    enforce: true,
+                },
+            }
         }
     }
-}}
+}
 
 module.exports = {
     context: __dirname,
@@ -39,12 +41,12 @@ module.exports = {
     devtool: 'source-map',
     optimization: optimization,
     resolve: {
-        extensions: ['.js', '.jsx', '.jsm'],
+        extensions: ['.js', '.jsx', '.jsm', ".ts", ".tsx"],
         alias: {
             styles: path.resolve(__dirname, '../src/styles'),
             'react-dom': '@hot-loader/react-dom'
         }
-    },    
+    },
     module: {
         rules: [
             {
@@ -83,10 +85,15 @@ module.exports = {
             {
                 test: /\.(jpg|png)$/,
                 use: 'file-loader'
-            }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ]
     },
-    plugins: [        
+    plugins: [
         new webpack.DefinePlugin({
             PRODUCTION: JSON.stringify(false),
             VERSION: JSON.stringify('1.2.0'),
@@ -114,7 +121,7 @@ module.exports = {
             warnings: true,
             errors: true
         },
-       port: 0,
+        port: 0,
         publicPath: 'http://hozmag/admin/index.php?route=module/attributico&token=YStWHt087IqtCIPUF2EbcCSgYaMfQWaZ',
         hot: true
     },
