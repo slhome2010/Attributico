@@ -1,16 +1,16 @@
 /**
  * @class Observer
  */
+import { Store, StoreCreator } from 'redux';
 import { getSelectedTitles } from '../functions/Select'
 export default class Observer {
-    constructor(store) {
-        this.store = store;
-        // this.clearFilter = this.clearFilter.bind(this);
-        // this.treeReload = this.treeReload.bind(this)
+    store: Store
+    constructor(store: Store) {
+        this.store = store;       
     }
 
     /* Clear Filter if tree reload */
-    clearFilter(tree) {
+    clearFilter(tree: Fancytree.Fancytree) {
         if (tree.isFilterActive()) {
 
             tree.clearFilter();
@@ -34,14 +34,14 @@ export default class Observer {
         console.log('stateInfo', stateInfo)
     }
 
-    async expandeAllParents(node) {
+    async expandeAllParents(node: Fancytree.FancytreeNode) {
         let parentList = node.getParentList()
         for (let parent of parentList) {
             await parent.setExpanded(true)
         }
     }
 
-    async setActiveNode(tree, estimatedAactiveNode, possibleActiveNode) {
+    async setActiveNode(tree: Fancytree.Fancytree, estimatedAactiveNode: Fancytree.FancytreeNode, possibleActiveNode: Fancytree.FancytreeNode) {
         let currentActiveNode = tree.getActiveNode();
         let activeNode = estimatedAactiveNode !== null ? tree.getNodeByKey(estimatedAactiveNode.key) : currentActiveNode !== null ? tree.getNodeByKey(currentActiveNode.key) : null;
         let altActiveNode = possibleActiveNode != null ? tree.getNodeByKey(possibleActiveNode.key) : null;
@@ -56,7 +56,7 @@ export default class Observer {
         }
     }
 
-    async loadAllChildren(node) {
+    async loadAllChildren(node: Fancytree.FancytreeNode) {
         let childrens = node.getChildren()
 
         for (let child of childrens) {
@@ -68,14 +68,14 @@ export default class Observer {
         }
     }
 
-    async loadParent(node) {
+    async loadParent(node: Fancytree.FancytreeNode) {
         node.resetLazy();
         await node.load(true)
     }
 
-    async loadAllLazyNodes(tree, nodeList) {
+    async loadAllLazyNodes(tree: Fancytree.Fancytree, nodeList: Fancytree.FancytreeNode[]) {
         for (let node of nodeList) {
-            let findedNode = tree.getNodeByKey(node.key);
+            let findedNode: Fancytree.FancytreeNode = tree.getNodeByKey(node.key);
             if (findedNode.isGroup()) {
                 await this.loadParent(findedNode)
             } else {
@@ -84,7 +84,7 @@ export default class Observer {
         }
     }
 
-    async smartReload(tree, nodeList) {
+    async smartReload(tree: Fancytree.Fancytree, nodeList: Fancytree.FancytreeNode[]) {
         await this.loadAllLazyNodes(tree, nodeList)
     }
 
@@ -97,7 +97,7 @@ export default class Observer {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });
         }
 
-        $(state.boundTrees).each(async function (indx, treeSelector) {
+        $(state.boundTrees).each(async function (indx: number, treeSelector: HTMLUListElement) {
             let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
             if (state.affectedNodes !== null) {
