@@ -1,11 +1,10 @@
 import { deSelectNodes, getSelectedKeys, selectControl } from '../../functions/Select';
-import { reactivateCategory } from '../../functions/Syncronisation';
 import { addAttributeToCategory } from '../../functions/Crud';
 import { KeydownCommandCategory } from '../KeyDownCommand';
 import { ContextmenuCommandCategory } from '../ContextMenuCommand';
 import { loadError } from '../Events/LoadError';
 import { smartScroll } from '../../constants/global';
-//import { isAttribute } from '../../functions/Plugin/NodeMethod';
+import { dndAddNode } from '../../actions';
 
 // --------------------------------------- category attribute tree -------------------------------------
 export default class CategoryAttributeTree {
@@ -96,8 +95,8 @@ export default class CategoryAttributeTree {
                         type: 'POST'
                     }).done(function () {
                         $(data.node.span).removeClass("pending");
-                        data.node.setTitle(data.node.title);
-                        reactivateCategory(data.node.getParent());
+                        data.node.setTitle(data.node.title);                       
+                        store.dispatch(dndAddNode(data.node, data.node.getParent(), [data.node]));
                     });
                     return true;
                 },

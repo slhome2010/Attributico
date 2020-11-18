@@ -1,5 +1,4 @@
 import { getSelectedKeys, getSelectedTitles, deSelectNodes, deSelectCategories } from './Select'
-import { reactivateCategory } from './Syncronisation'
 import { copyNode, deleteNode, dndAddNode, dndReplaceCategory, updateNode } from '../actions';
 import { moveNode } from './Move';
 
@@ -126,9 +125,8 @@ export function addAttributeToCategory(sourceNode, targetNode, clipboard, remove
     }).done(function () {
         // Это либо смена категории либо копипаст из CategoryAttributeTree
         if (!remove) {
-            deSelectCategories();
-            reactivateCategory(targetNode);
-            // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны (попробовать перенести в смарт)            
+            deSelectCategories();            
+            // Надо перезагружать остальные деревья, чтоб подхватить новые значения и шаблоны            
             store.dispatch(dndAddNode(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
             deSelectNodes();
         } else {
@@ -150,8 +148,6 @@ export function deleteAttributesFromCategory(sourceNode, targetNode, clipboard, 
         url: `index.php?route=${extension}module/attributico/deleteAttributesFromCategory&user_token=${user_token}&token=${token}`,
         type: 'POST',
         success: function () {
-            reactivateCategory(targetNode);
-            // при удалении надо засинхронизировать все деревья где были lazy вдруг это были последние
             // Если targetNode == null, то это просто операция удаления
             store.dispatch(dndReplaceCategory(sourceNode, targetNode, clipboard ? clipboard : [sourceNode]));
         }

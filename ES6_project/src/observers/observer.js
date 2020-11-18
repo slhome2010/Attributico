@@ -1,12 +1,30 @@
 /**
  * @class Observer
  */
+import { CATEGORY_TREE } from '../constants/global';
 import { getSelectedTitles } from '../functions/Select'
 export default class Observer {
     constructor(store) {
         this.store = store;
         // this.clearFilter = this.clearFilter.bind(this);
         // this.treeReload = this.treeReload.bind(this)
+    }
+
+    /** Надо перезагрузить дерево атрибутов категории, т.к. назания или узлы могли измениться 
+    * в результате действий над ними в других деревьях
+    */
+    reactivateCategory(targetNode) {
+        // let node = arguments.length !== 0 ? arguments[0] : null;
+
+        $(CATEGORY_TREE).each(function (indx, element) {
+            const tree = $.ui.fancytree.getTree("#" + element.id);
+            let activeNode = targetNode?.isCategory() ? targetNode : tree.getActiveNode();
+
+            if (activeNode) {
+                tree.getNodeByKey(activeNode.key).setActive(false);
+                tree.getNodeByKey(activeNode.key).setActive(true);
+            }
+        });
     }
 
     /* Clear Filter if tree reload */
@@ -91,12 +109,14 @@ export default class Observer {
     /* Асинхронная функция. Деревья и узлы грузятся параллельно, но установка активного узла только после загрузки. */
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
-        //this.printState(state)
+        this.printState(state)
         /* Если активное дерево не перезагружалось, то надо установить активный узел принудительно */
         if (!state.selfReload && state.activeNode !== null) {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });
         }
 
+        this.reactivateCategory(state.targetNode)
+        
         $(state.boundTrees).each(async function (indx, treeSelector) {
             let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
             tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
