@@ -148,7 +148,7 @@ $_['text_help1'] = '<h3 id="using-summary">Summary table.</h3>
                                 <td></td>
                                 <td>Copy > Paste</td>
                                 <td><kbd>[Ctrl+C]</kbd> > <kbd>[Ctrl+V]</kbd></td>
-                                <td>Only attributes can be copied. Insert only in a group.</td>
+                                <td>Only attributes can be copied. Insert only in a group or category.</td>
                             </tr>
                             <tr>
                                 <td>Change group</td>
@@ -191,6 +191,13 @@ $_['text_help1'] = '<h3 id="using-summary">Summary table.</h3>
                                 <td>Edit</td>
                                 <td><kbd>[Shift+Enter]</kbd> + <kbd>[Alt+Shift+Click]</kbd></td>
                                 <td>Press <kbd>[Alt+Shift+Click]</kbd> in edit mode.</td>
+                            </tr>
+                            <tr>
+                                <td>Clone a duty template to other language</td>
+                                <td></td>
+                                <td>Clone</td>
+                                <td><kbd>[Alt+C]</kbd></td>
+                                <td>Empty templates are not cloned.</td>
                             </tr>
                         </tbody>
                     </table>';

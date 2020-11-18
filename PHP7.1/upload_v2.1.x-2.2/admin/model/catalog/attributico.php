@@ -420,7 +420,7 @@ class ModelCatalogAttributico extends Model
         if (isset($data['value'])) {
             foreach ($data['value'] as $instance) {
                 if ($instance['value'] != '') {
-                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(text, '" . $instance['value'] . "') != '0'
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE INSTR(BINARY text, '" . $instance['value'] . "') != '0'
                  AND attribute_id = '" . (int) $instance['attribute_id'] . "'
                  AND language_id = '" . (int) $language_id . "'");
                     //");
@@ -434,7 +434,7 @@ class ModelCatalogAttributico extends Model
 
         if (isset($data['template'])) {
             foreach ($data['template'] as $instance) {
-                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE TRIM(text) LIKE '" . $instance['value'] . "'
+                $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE TRIM(text) LIKE BINARY '" . $instance['value'] . "'
                  AND attribute_id = '" . (int) $instance['attribute_id'] . "'
                  AND language_id = '" . (int) $language_id . "'");
                 //");

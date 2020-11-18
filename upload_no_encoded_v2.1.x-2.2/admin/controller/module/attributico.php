@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.1.3');
+define('MODULE_VERSION', 'v3.1.4');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -1124,7 +1124,7 @@ class ControllerModuleAttributico extends Controller
                                 }
                                 break;
                             case 'value':
-                                if (stripos($product['text'], $title) !== false) {
+                                if (strpos($product['text'], $title) !== false) {
                                     $productNode->addSibling($product_item);
                                 }
                                 break;
@@ -1140,7 +1140,7 @@ class ControllerModuleAttributico extends Controller
                                 }
                                 break;
                             case 'value':
-                                if (stripos($product['text'], $title) === false) {
+                                if (strpos($product['text'], $title) === false) {
                                     $productNode->addSibling($product_item);
                                 }
                                 break;
