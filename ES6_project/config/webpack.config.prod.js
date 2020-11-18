@@ -43,7 +43,7 @@ module.exports = {
     },
     optimization: optimization,
     resolve: {
-        extensions: ['.js', '.jsx', '.jsm'],
+        extensions: ['.js', '.jsx', '.jsm', ".ts", ".tsx"],
         alias: {
             styles: path.resolve(__dirname, '../src/styles')
         }
@@ -86,7 +86,17 @@ module.exports = {
             {
                 test: /\.(jpg|png)$/,
                 use: 'file-loader'
-            }
+            },
+            ,
+        {
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            use: [
+                {
+                    loader: 'typescript-loader'
+                }
+            ]
+        },
         ]
     },
     plugins: [
