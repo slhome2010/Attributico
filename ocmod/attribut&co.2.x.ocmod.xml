@@ -149,8 +149,9 @@
                 const extension = '<?php echo $extension; ?>'; // для v2.3 другая структура каталогов                  
                 const token = '<?php echo $token;?>';
                 const user_token = '<?php echo $token;?>';
-                let add_category_attribute; 
-                let splitter;             
+                let add_category_attribute = false;
+                let remove_category_attribute = false; 
+                let splitter = '/';             
                 let method;
                
                 const getServPanel = $.ajax({
@@ -214,6 +215,30 @@
                         }
                     });
                 }
+
+                function removeCategoryAttribute(category_id) {                    
+                    $.ajax({
+                      data: {
+                            'token': token,
+                            'user_token': user_token,
+                            'category_id': category_id
+                        },
+                        url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes',
+                        dataType: 'json',
+                        success: function (json) {
+                            if (remove_category_attribute) {
+                                json.forEach( attribute => {                                  
+                                  $('[id ^= attribute-row]').each((row, tr) => {                                                                       
+                                    if ($(tr).find('[name *= attribute_id]').val() === attribute['attribute_id']) {                                      
+                                      $(tr).remove()                                      
+                                      product_attribute_id = product_attribute_id.filter( item => item !== attribute['attribute_id']);
+                                    }                                    
+                                  })                                   
+                                });
+                            }
+                        }
+                    });
+                }                
 
                 function in_array(value, array) {
                     for (var i = 0; i < array.length; i++) {
@@ -331,6 +356,8 @@
                 $('body').on('change', 'input[name=\'product_category[]\'], select[name=\'main_category_id\']', function (e) {  
                     if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {
                         newCategory($(this).val())
+                    } else {
+                      removeCategoryAttribute($(this).val())
                     }
                 });
 
