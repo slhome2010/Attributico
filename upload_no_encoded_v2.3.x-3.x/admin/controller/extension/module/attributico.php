@@ -1124,7 +1124,7 @@ class ControllerModuleAttributico extends Controller
                                 }
                                 break;
                             case 'value':
-                                if (stripos($product['text'], $title) !== false) {
+                                if (strpos($product['text'], $title) !== false) {
                                     $productNode->addSibling($product_item);
                                 }
                                 break;
@@ -1140,7 +1140,7 @@ class ControllerModuleAttributico extends Controller
                                 }
                                 break;
                             case 'value':
-                                if (stripos($product['text'], $title) === false) {
+                                if (strpos($product['text'], $title) === false) {
                                     $productNode->addSibling($product_item);
                                 }
                                 break;
