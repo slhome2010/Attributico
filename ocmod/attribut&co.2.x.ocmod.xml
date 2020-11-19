@@ -150,7 +150,7 @@
                 const token = '<?php echo $token;?>';
                 const user_token = '<?php echo $token;?>';
                 let add_category_attribute = false;
-                let remove_category_attribute = false; 
+                let remove_category_attribute = 'Remove attributes for this category?'; 
                 let splitter = '/';             
                 let method;
                
@@ -164,6 +164,7 @@
                         success: function (json) {                            
                             splitter = json.splitter
                             add_category_attribute = json.attributico_autoadd                            
+                            remove_category_attribute = json.remove_category_attribute
 
                             $('#serv-panel').append(json.serv_panel) 
 
@@ -226,7 +227,7 @@
                         url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes',
                         dataType: 'json',
                         success: function (json) {
-                            if (remove_category_attribute) {
+                            if (confirm(remove_category_attribute)) {
                                 json.forEach( attribute => {                                  
                                   $('[id ^= attribute-row]').each((row, tr) => {                                                                       
                                     if ($(tr).find('[name *= attribute_id]').val() === attribute['attribute_id']) {                                      
