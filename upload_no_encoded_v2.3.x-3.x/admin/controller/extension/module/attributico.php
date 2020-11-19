@@ -987,8 +987,7 @@ class ControllerModuleAttributico extends Controller
         if (is_numeric($category_id) && $category_id !== '0') {
             $categoryAttributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
             $category_description = $this->model_catalog_attributico->getCategoryDescriptions($category_id);
-            foreach ($categoryAttributes as $attribute) {
-                $attribute_group = $this->model_catalog_attributico->getAttributeGroup($attribute['attribute_id'], $language_id); // TODO group name уже есть в запросе getCategoryAttributes
+            foreach ($categoryAttributes as $attribute) {               
                 $dutyNode = new Node(array("title" => $attribute['duty'], "key" => "duty_" . (string) $attribute['attribute_id'], "extraClasses" => "custom1",));
                 $templateNode = new Node(array(
                     "title" => $this->session->data['entry_templates'][$language_id], "unselectable" => true,
@@ -1012,7 +1011,7 @@ class ControllerModuleAttributico extends Controller
 
                 $debug_attribute = $this->debug_mode ? " (id=" . $attribute['attribute_id'] . ")" : '';
                 $attributeNode->addSibling(new Node(array(
-                    "title" => $attribute['attribute_description'] . ' (' . $attribute_group['name'] . ')' . $debug_attribute,
+                    "title" => $attribute['attribute_description'] . ' (' . $attribute['group_name'] . ')' . $debug_attribute,
                     "key" => "attribute_" . (string) $attribute['attribute_id'], "children" => $childNode->render()
                 )));
             }
