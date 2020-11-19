@@ -1,9 +1,8 @@
-import { copyNode, renameNode, updateNode, deleteNode, cutNode, pasteNode } from './crudActions'
+import { copyNode, updateNode, deleteNode, cutNode, pasteNode } from './crudActions'
 import { dndMergeNode, dndReplaceParent, dndReplaceCategory, dndSortNode, dndAddNode } from './dndActions'
 import { checkOptions } from './checkActions'
 export {
-    copyNode,
-    renameNode,
+    copyNode,    
     updateNode, 
     deleteNode,
     cutNode,

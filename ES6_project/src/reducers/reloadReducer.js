@@ -1,5 +1,5 @@
-import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, DND_ADD_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, RENAME_NODE, ADD_NODE, PASTE_NODE, CUT_NODE, CHECK_OPTIONS, DND_REPLACE_CATEGORY } from '../constants/actions'
-import { GROUP_SYNCRO_TREES, ATTRIBUTE_SYNCRO_TREES, VALUE_SYNCRO_TREES } from "../constants/global";
+import { DND_MERGE_NODE, DND_REPLACE_PARENT, DND_SORT_NODE, DND_ADD_NODE, UPDATE_NODE, COPY_NODE, DELETE_NODE, PASTE_NODE, CHECK_OPTIONS, DND_REPLACE_CATEGORY } from '../constants/actions'
+import { GROUP_SYNCRO_TREES, ATTRIBUTE_SYNCRO_TREES } from "../constants/global";
 
 export default function reload(state = {}, action) {
     //console.log('Reduced action', action.type)
@@ -64,8 +64,7 @@ export default function reload(state = {}, action) {
                 activeNode: action.sourceNode,
                 altActiveNode: action.sourceNode.getParent(),
                 selfReload: true
-            }
-        case RENAME_NODE:
+            }        
         case UPDATE_NODE:
             return {
                 ...state,
