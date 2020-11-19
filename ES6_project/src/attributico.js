@@ -1,8 +1,14 @@
-/** http://servenus.com © 2015-2019 All Rights Reserved **/
-/** For Attribut&co v.3.0.9  **/
+/** http://servenus.com © 2015-2021 All Rights Reserved **/
+/** For Attribut&co v.3.1.5  **/
 
-import 'jquery-ui/ui/widgets/dialog';
 import 'jquery.fancytree';
+import 'jquery-ui';
+import 'ui-contextmenu';
+import 'jquery-ui/ui/widgets/dialog';
+
+import 'jquery.fancytree/dist/modules/jquery.fancytree.edit';
+import 'jquery.fancytree/dist/modules/jquery.fancytree.filter';
+import 'jquery.fancytree/dist/modules/jquery.fancytree.dnd';
 
 import './functions/Plugin/Dropmenu.js';
 import './functions/Plugin/NodeMethod.js';
