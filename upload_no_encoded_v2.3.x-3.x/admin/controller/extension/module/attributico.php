@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.1.4');
+define('MODULE_VERSION', 'v3.1.5');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -485,6 +485,7 @@ class ControllerModuleAttributico extends Controller
             $json[] = array(
                 'attribute_id' => $attribute['attribute_id'],
                 'name' => $attribute['attribute_description'],
+                'group_name' => $attribute['group_name']
             );
         }
 
@@ -962,16 +963,7 @@ class ControllerModuleAttributico extends Controller
         }
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+        
         $children = $this->childrenSettings($tree);
 
         if ($key[0] == 'category') {
@@ -996,7 +988,7 @@ class ControllerModuleAttributico extends Controller
             $categoryAttributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
             $category_description = $this->model_catalog_attributico->getCategoryDescriptions($category_id);
             foreach ($categoryAttributes as $attribute) {
-                $attribute_group = $this->model_catalog_attributico->getAttributeGroup($attribute['attribute_id'], $language_id);
+                $attribute_group = $this->model_catalog_attributico->getAttributeGroup($attribute['attribute_id'], $language_id); // TODO group name уже есть в запросе getCategoryAttributes
                 $dutyNode = new Node(array("title" => $attribute['duty'], "key" => "duty_" . (string) $attribute['attribute_id'], "extraClasses" => "custom1",));
                 $templateNode = new Node(array(
                     "title" => $this->session->data['entry_templates'][$language_id], "unselectable" => true,
