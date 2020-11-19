@@ -1,14 +1,11 @@
 import { ATTRIBUTE_SYNCRO_TREES, CATEGORY_TREE } from '../constants/global'
 
 /* Functions for trees handling logic */
-export function reactivateCategory() {
-    let node = arguments.length !== 0 ? arguments[0] : null;
-
+export function reactivateCategory() { 
     $(CATEGORY_TREE).each(function (indx, element) {
         const tree = $.ui.fancytree.getTree("#" + element.id);
-        let activeNode = node !== null ? node : tree.getActiveNode();
-
-        if (activeNode !== null && activeNode !== undefined) {
+        let activeNode = tree.getActiveNode();
+        if (activeNode) {
             tree.getNodeByKey(activeNode.key).setActive(false);
             tree.getNodeByKey(activeNode.key).setActive(true);
         }
@@ -16,15 +13,10 @@ export function reactivateCategory() {
 }
 
 export function reloadAttribute() {
+    // Активный узел выставлять бессмысленно, т.к. после инструментов его уже может не быть
     $(ATTRIBUTE_SYNCRO_TREES).each(function (indx, element) {
-        const tree = $.ui.fancytree.getTree("#" + element.id);
-        let activeNode = tree.getActiveNode();
-
+        const tree = $.ui.fancytree.getTree("#" + element.id); 
         tree.options.source.data.cache = $('input[name = "attributico_cache"]:checkbox').is(":checked");
-        tree.reload().done(function () {
-            if (activeNode !== null) {
-                tree.getNodeByKey(activeNode.key).setActive(true);
-            }
-        });
+        tree.reload()
     });
 }
