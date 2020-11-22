@@ -115,6 +115,8 @@ export default class Observer {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });
         }
 
+        this.reactivateCategory(state.targetNode)
+
         $(state.boundTrees).each( (index: number, treeSelector: HTMLUListElement) => { treeSelectors.push(treeSelector)})
         treeSelectors.forEach(async (treeSelector: HTMLUListElement): Promise<void> => {
             let tree = $.ui.fancytree.getTree("#" + treeSelector.id);
