@@ -251,11 +251,14 @@
                 }
 
                 function getSelectedCategories() {
-                    var selKeys = []; $('input[name=\'product_category[]\']').each(function (indx, element) {
-                        if ($(this).is(":checked") || (this.tagName == "SELECT" && $(this).val() != 0)) {                            
+                    var selKeys = [];
+                    $('input[name=\'product_category[]\']').each(function (indx, element) {                      
+                        if ($(this).is(":checked") || ($(this).prev().hasClass('fa-minus-circle') && $(this).val() != 0)) {                            
                             selKeys.push($(this).val());
                         }
-                    });
+                    });                   
+                    selKeys.push($('select[name=\'main_category_id\']').val())
+                    selKeys = [...new Set(selKeys)]
                     return selKeys;
                 }
 
