@@ -46,7 +46,6 @@ class ModelCatalogAttributicoTools extends Model
 
     public function scavengery()
     {
-
         $categoryAttributes = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_attribute");
         $count_of_scavengery = 0;
         foreach ($categoryAttributes->rows as $attribute) {
@@ -177,13 +176,7 @@ class ModelCatalogAttributicoTools extends Model
                 "' AND language_id = '" . (int) $subject['language_id'] . "'");
             $dup = $dups->row; // perfect potentional dublicate - to-be error of keys sql, change attribute_id impossible
             if ($dup) {
-                $text = trim($dup['text']); // it is the target text
-                $splitter_add = $text !== '' && $subject['text'] !== '' ? $splitter : '';
-                $text .= $splitter_add . trim($subject['text']); // add subject text
-                $elements = explode($splitter, $text);
-                $values = array_unique($elements);
-                array_multisort($values);
-                $text = implode($splitter, $values);
+                $text = $this->concateValues($dup['text'], $subject['text'], $splitter);                
                 //update remining
                 $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $dup['product_id'] .
                     "' AND attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $dup['language_id'] . "'");
