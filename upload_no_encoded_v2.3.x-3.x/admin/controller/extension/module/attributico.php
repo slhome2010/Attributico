@@ -465,8 +465,8 @@ class ControllerModuleAttributico extends Controller
         return !$this->error;
     }
 
-     /** Fuction for product form integration */
-     public function getCategoryAttributes() {
+    /** Fuction for product form integration */
+    public function getCategoryAttributes() {
         $json = array();
         $sortOrder = $this->config->get('attributico_sortorder') == '1' ? true : false;
         $category_id = isset($this->request->get['category_id']) ? (int) $this->request->get['category_id'] : 0;
@@ -474,7 +474,7 @@ class ControllerModuleAttributico extends Controller
         $categories_attributes = [];
 
         $this->load->model('catalog/attributico');
-        // Это те, которые удалять нельзя
+        // Это те, которые удалять нельзя. Если не передано, значит просто вернется список для $category_id
         if ($categories) {
             foreach ($categories as $category) {
                 $filter_data = array(
@@ -485,7 +485,7 @@ class ControllerModuleAttributico extends Controller
             }
         }
 
-        // Это те, которые удалять надо
+        // Это те, которые удалять или добавлять если не передано $categories
         $filter_data = array(
             'category_id' => (int) $category_id,
             'sort' => $sortOrder ? 'sort_attribute_group, a.sort_order' : ''
@@ -493,11 +493,7 @@ class ControllerModuleAttributico extends Controller
         $category_attributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
 
         function compare_func($a, $b) {
-            if ($a['attribute_id'] == $b['attribute_id']) {
-                return 0;
-            } else {
-               return 1;
-            }
+            return (int) $a['attribute_id'] - (int) $b['attribute_id'];
         }
 
         $diff_category_attribute = array_udiff($category_attributes, $categories_attributes, "compare_func");
