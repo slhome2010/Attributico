@@ -224,7 +224,8 @@
                       data: {
                             'token': token,
                             'user_token': user_token,
-                            'category_id': category_id
+                            'category_id': category_id,
+                            'categories': getSelectedCategories()
                         },
                         url: 'index.php?route=' + extension + 'module/attributico/getCategoryAttributes',
                         dataType: 'json',

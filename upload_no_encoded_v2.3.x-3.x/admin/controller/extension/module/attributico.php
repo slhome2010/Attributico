@@ -465,23 +465,44 @@ class ControllerModuleAttributico extends Controller
         return !$this->error;
     }
 
-    /** Fuction for product form integration */
-    public function getCategoryAttributes()
-    {
+     /** Fuction for product form integration */
+     public function getCategoryAttributes() {
         $json = array();
         $sortOrder = $this->config->get('attributico_sortorder') == '1' ? true : false;
         $category_id = isset($this->request->get['category_id']) ? (int) $this->request->get['category_id'] : 0;
-        $categoryAttributes = [];
+        $categories = isset($this->request->get['categories']) ? $this->request->get['categories'] : Array();
+        $categories_attributes = [];
 
         $this->load->model('catalog/attributico');
+        // Это те, которые удалять нельзя
+        if ($categories) {
+            foreach ($categories as $category) {
+                $filter_data = array(
+                    'category_id' => (int) $category,
+                    'sort' => $sortOrder ? 'sort_attribute_group, a.sort_order' : ''
+                );
+                $categories_attributes = array_merge ( $categories_attributes, $this->model_catalog_attributico->getCategoryAttributes($filter_data));
+            }
+        }
+
+        // Это те, которые удалять надо
         $filter_data = array(
             'category_id' => (int) $category_id,
             'sort' => $sortOrder ? 'sort_attribute_group, a.sort_order' : ''
         );
+        $category_attributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
 
-        $category_attribute_data = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
+        function compare_func($a, $b) {
+            if ($a['attribute_id'] == $b['attribute_id']) {
+                return 0;
+            } else {
+               return 1;
+            }
+        }
 
-        foreach ($category_attribute_data as $attribute) {
+        $diff_category_attribute = array_udiff($category_attributes, $categories_attributes, "compare_func");
+
+        foreach ($diff_category_attribute as $attribute) {
             $json[] = array(
                 'attribute_id' => $attribute['attribute_id'],
                 'name' => $attribute['attribute_description'],
@@ -500,6 +521,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
+
 /** Fuction for product form integration and Duty select in edit mode */
     public function getValuesList()
     {
