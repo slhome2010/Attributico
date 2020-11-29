@@ -115,13 +115,13 @@ class ModelCatalogAttributicoTools extends Model
             return $lostdups->rows;
         } else {
             return array();
-        }        
-    }   
+        }
+    }
 
     public function deduplicate($attribute_group_id)
     {
         set_time_limit(600);
-        $this->cache->delete('attributico');        
+        $this->cache->delete('attributico');
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
         $holdkeys = $this->getHoldkeys($attribute_group_id);
         $duplicates = $this->getDuplicates($attribute_group_id);
@@ -146,7 +146,7 @@ class ModelCatalogAttributicoTools extends Model
 
                     $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostproduct['attribute_id'] . "'");
                 }
-            }            
+            }
         }
         // Чтоб не потерять дежурные допишем их из удаляемых в образцы
         foreach ($holdkeys as $holdkey) {
@@ -165,36 +165,43 @@ class ModelCatalogAttributicoTools extends Model
         return count($duplicates);
     }
 
-    public function mergeAttribute($target_id, $subject_id)
+    public function mergeAttribute($target_id, $source_id)
     {
         // in foreach
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
 
-        $subjects = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        foreach ($subjects->rows as $subject) {
-            $dups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $subject['product_id'] . "' AND attribute_id = '" . (int) $target_id .
-                "' AND language_id = '" . (int) $subject['language_id'] . "'");
+        $source_products = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        foreach ($source_products->rows as $source_product) {
+            $dups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $source_product['product_id'] . "' AND attribute_id = '" . (int) $target_id .
+                "' AND language_id = '" . (int) $source_product['language_id'] . "'");
             $dup = $dups->row; // perfect potentional dublicate - to-be error of keys sql, change attribute_id impossible
             if ($dup) {
-                $text = $this->concateValues($dup['text'], $subject['text'], $splitter);                
+                $text = $this->concateValues($dup['text'], $source_product['text'], $splitter);
                 //update remining
                 $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $dup['product_id'] .
                     "' AND attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $dup['language_id'] . "'");
-            } else { // this product not have in this attribute, then only change attribute_id
-                $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $target_id . "' WHERE product_id = '" . (int) $subject['product_id'] .
-                    "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+            } else {
+                // this product not have in this attribute, then only change attribute_id
+                $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $target_id . "' WHERE product_id = '" . (int) $source_product['product_id'] .
+                    "' AND attribute_id = '" . (int) $source_id . "' AND language_id = '" . (int) $source_product['language_id'] . "'");
             }
-
-            // delete old product references to subject_id
-            $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $subject['product_id'] .
-                "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+            // delete old product references to source_id
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $source_product['product_id'] .
+                "' AND attribute_id = '" . (int) $source_id . "' AND language_id = '" . (int) $source_product['language_id'] . "'");
         }
-        // kill subject references in category
-        $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $target_id . "' WHERE attribute_id = '" . (int) $subject_id . "'");
-        // delete subject attribute
-        $this->db->query("DELETE FROM " . DB_PREFIX . "category_attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $subject_id . "'");
+        // Concate duty
+        $source_duties = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $source_id . "'");
+        foreach ($source_duties->rows as $source_duty) {
+            $target_duty = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $target_id . "'  AND language_id = '" . (int) $source_duty['language_id'] . "'");
+            $duty = $this->concateValues($target_duty->row['duty'], $source_duty['duty'], $splitter);
+            $this->db->query("UPDATE " . DB_PREFIX . "attribute_description ad SET duty = '" . $duty . "' WHERE attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $source_duty['language_id'] . "'");
+        }
+        // kill source references in category
+        $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $target_id . "' WHERE attribute_id = '" . (int) $source_id . "'");
+        // delete source attribute
+        $this->db->query("DELETE FROM " . DB_PREFIX . "category_attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $source_id . "'");
         return;
     }
 
