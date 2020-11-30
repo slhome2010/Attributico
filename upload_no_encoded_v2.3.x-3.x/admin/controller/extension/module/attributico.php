@@ -688,16 +688,7 @@ class ControllerModuleAttributico extends Controller
         $cachename = '';
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+       
         $children = $this->childrenSettings($tree);
 
         if ($cache) {
@@ -868,16 +859,7 @@ class ControllerModuleAttributico extends Controller
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+        
         $children = $this->childrenSettings($tree);
 
         $this->load->model('catalog/attributico');
