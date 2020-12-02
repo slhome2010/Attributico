@@ -20,9 +20,9 @@ class ModelCatalogAttributicoTools extends Model
 
         $query = $this->db->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='" . DB_DATABASE . "' AND COLUMN_NAME ='" . $field . "'");
         foreach ($query->rows as $row) {
-            if (!in_array(DB_PREFIX . $basetable, $row)) {
+           // if (!in_array(DB_PREFIX . $basetable, $row)) {
                 $schema[] = $row;
-            }
+           // }
         }
 
         $this->db->query("CREATE TABLE " . DB_PREFIX . $basetable . "_relation (`new_id` INTEGER(11) NOT NULL AUTO_INCREMENT, " . $field .
@@ -31,15 +31,15 @@ class ModelCatalogAttributicoTools extends Model
         $count_of_defrag = $this->db->countAffected();
 
         foreach ($schema as $table) {
-            $this->db->query("UPDATE IGNORE " . $table['TABLE_NAME'] . " t, " . DB_PREFIX . $basetable . "_relation tr SET t." . $field . " = tr.new_id
+            $this->db->query("UPDATE " . $table['TABLE_NAME'] . " t, " . DB_PREFIX . $basetable . "_relation tr SET t." . $field . " = tr.new_id
                             WHERE t." . $field . " = tr." . $field);
         }
 
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11)");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " DROP PRIMARY KEY");
-        $this->db->query("UPDATE " . DB_PREFIX . $basetable . " SET " . $field . "='0'");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " AUTO_INCREMENT=0");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11)");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " DROP PRIMARY KEY");
+        //$this->db->query("UPDATE " . DB_PREFIX . $basetable . " SET " . $field . "='0'");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " AUTO_INCREMENT=0");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
 
         return $count_of_defrag;
     }
