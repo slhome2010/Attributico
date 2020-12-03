@@ -7,7 +7,7 @@ $_['button_check_for_updates'] = 'Check for updates';
 // Text
 $_['text_success'] = 'Success: You have modified module!';
 $_['text_module'] = 'Modules';
-$_['text_edit'] = 'Edit Module';
+$_['text_edit'] = 'Attributes, it is easy!';
 $_['text_overwrite'] = 'Overwrite';
 $_['text_overwrite_if_empty'] = 'Overwrite if empty';
 $_['text_insert'] = 'Insert';
@@ -280,7 +280,7 @@ $_['tab_products']          = 'Products';
 $_['tab_empty']             = 'Remove empty values';
 $_['tab_defrag']            = 'Attributes defragmentation';
 $_['tab_detached']          = 'Remove detached from products';
-$_['tab_deduplicate']       = 'Combine duplicates (beta)';
+$_['tab_deduplicate']       = 'Merge duplicates';
 $_['tab_scavengery']        = 'Remove erroneous links';
 $_['tab_category_attributes']  = 'Categories attributes';
 $_['tab_standart']          = 'Attributes standardization';
