@@ -2,7 +2,7 @@
 
 @include_once(DIR_SYSTEM . 'license/sllic.lic');
 require_once(DIR_SYSTEM . 'library/attributico/attributico.php');
-define('MODULE_VERSION', 'v3.1.4');
+define('MODULE_VERSION', 'v3.1.5');
 
 class ControllerModuleAttributico extends Controller
 {
@@ -167,7 +167,7 @@ class ControllerModuleAttributico extends Controller
         $this->data['entry_autoattribute'] = $this->language->get('entry_autoattribute');
         $this->data['entry_autodel'] = $this->language->get('entry_autodel');
         $this->data['entry_autoadd_inherit'] = $this->language->get('entry_autoadd_inherit');
-        $this->data['entry_autodel_inherit'] = $this->language->get('entry_autodel_inherit');        
+        $this->data['entry_autodel_inherit'] = $this->language->get('entry_autodel_inherit');
         $this->data['entry_attribute_values'] = $this->language->get('entry_attribute_values');
         $this->data['entry_values'] = $this->language->get('entry_values');
         $this->data['entry_attribute_category'] = $this->language->get('entry_attribute_category');
@@ -225,6 +225,7 @@ class ControllerModuleAttributico extends Controller
         $this->data['alert_info'] = $this->language->get('alert_info');
         $this->data['alert_reload'] = $this->language->get('alert_reload');
         $this->data['alert_backup'] = $this->language->get('alert_backup');
+        $this->data['alert_remove_ca_confirm'] = $this->language->get('alert_remove_ca_confirm');
         $this->data['head_clone'] = $this->language->get('head_clone');
 
         if (isset($this->error['warning'])) {
@@ -257,9 +258,9 @@ class ControllerModuleAttributico extends Controller
         $this->data['languages'] = $this->model_localisation_language->getLanguages();
         $this->session->data['languages'] = $this->data['languages'];
         // Защита от тупого мода "Скрыть отключенные языки"
-        $language_code = array_keys($this->data['languages']);        
+        $language_code = array_keys($this->data['languages']);
         if (isset($this->data['languages'][$this->config->get('config_admin_language')])) {
-          $this->data['config_language'] = $this->data['languages'][$this->config->get('config_admin_language')]['language_id'];
+            $this->data['config_language'] = $this->data['languages'][$this->config->get('config_admin_language')]['language_id'];
         } else {
             $this->data['config_language'] = $this->data['languages'][array_shift($language_code)]['language_id'];
         }
@@ -268,7 +269,7 @@ class ControllerModuleAttributico extends Controller
 
         foreach ($this->data['languages'] as $language) {
             $lng = $this->getLanguage($language['language_id']);
-           
+
             if (version_compare(VERSION, '2.2.0', '>=')) {
                 $this->data['languages'][$language['code']]['src'] = 'language/' . $language['code'] . '/' . $language['code'] . '.png';
             } else {
@@ -285,7 +286,7 @@ class ControllerModuleAttributico extends Controller
             $this->session->data['error_not_attribute'][$language['language_id']] = $lng->get('error_not_attribute');
             $this->session->data['entry_products'][$language['language_id']] = $lng->get('entry_products');
             $this->session->data['entry_attribute'][$language['language_id']] = $lng->get('entry_attribute');
-            $this->session->data['entry_attributes'][$language['language_id']] = $lng->get('entry_attributes');            
+            $this->session->data['entry_attributes'][$language['language_id']] = $lng->get('entry_attributes');
             // menu
             $this->data['text_New_attribute'][$language['language_id']] = $lng->get('text_New_attribute');
             $this->data['text_New_group'][$language['language_id']] = $lng->get('text_New_group');
@@ -464,25 +465,44 @@ class ControllerModuleAttributico extends Controller
         return !$this->error;
     }
 
-    public function getCategoryAttributes()
-    {
+    /** Fuction for product form integration */
+    public function getCategoryAttributes() {
         $json = array();
         $sortOrder = $this->config->get('attributico_sortorder') == '1' ? true : false;
         $category_id = isset($this->request->get['category_id']) ? (int) $this->request->get['category_id'] : 0;
-        $categoryAttributes = [];
+        $categories = isset($this->request->get['categories']) ? $this->request->get['categories'] : Array();
+        $categories_attributes = [];
 
         $this->load->model('catalog/attributico');
+        // Это те, которые удалять нельзя. Если не передано, значит просто вернется список для $category_id
+        if ($categories) {
+            foreach ($categories as $category) {
+                $filter_data = array(
+                    'category_id' => (int) $category,
+                    'sort' => $sortOrder ? 'sort_attribute_group, a.sort_order' : ''
+                );
+                $categories_attributes = array_merge ( $categories_attributes, $this->model_catalog_attributico->getCategoryAttributes($filter_data));
+            }
+        }
+
+        // Это те, которые удалять или добавлять если не передано $categories
         $filter_data = array(
             'category_id' => (int) $category_id,
             'sort' => $sortOrder ? 'sort_attribute_group, a.sort_order' : ''
         );
+        $category_attributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
 
-        $category_attribute_data = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
+        function compare_func($a, $b) {
+            return (int) $a['attribute_id'] - (int) $b['attribute_id'];
+        }
 
-        foreach ($category_attribute_data as $attribute) {
+        $diff_category_attribute = array_udiff($category_attributes, $categories_attributes, "compare_func");
+
+        foreach ($diff_category_attribute as $attribute) {
             $json[] = array(
                 'attribute_id' => $attribute['attribute_id'],
                 'name' => $attribute['attribute_description'],
+                'group_name' => $attribute['group_name']
             );
         }
 
@@ -498,6 +518,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+/** Fuction for product form integration and Duty select in edit mode */
     public function getValuesList()
     {
         $json = array();
@@ -508,25 +529,19 @@ class ControllerModuleAttributico extends Controller
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
         $language_id = isset($this->request->get['language_id']) ? (int) $this->request->get['language_id'] : '';
 
-        $languages = $this->getLanguages();
-        /* if (isset($this->session->data['languages'])) {
-            $languages = $this->session->data['languages'];
-        } else {
-            $this->load->model('localisation/language');
-            $languages = $this->model_localisation_language->getLanguages();
-        } */
+        $languages = $this->getLanguages();        
 
         $this->load->model('catalog/attributico');
-        $results = $duty ? $this->model_catalog_attributico->getDutyValues($attribute_id) : $this->model_catalog_attributico->getAttributeValues($attribute_id, $categories);
+        $values = $duty ? $this->model_catalog_attributico->getDutyValues($attribute_id) : $this->model_catalog_attributico->getAttributeValues($attribute_id, $categories);
 
-        if ($results && !$language_id) {
+        if ($values && !$language_id) {
             foreach ($languages as $language) {
-                if (isset($results[$language['language_id']])) {
+                if (isset($values[$language['language_id']])) {
                     if ($view_mode == 'template') {
                         $select = "<select name='attribute_select_{$attribute_id}' class='form-control attribute_select' attribute_id='{$attribute_id}' language_id='{$language['language_id']}' style='display:block;'>";
                         $select .= "<option value=''>" . $this->language->get('text_select') . "</option>";
 
-                        foreach ($results[$language['language_id']] as $row) {
+                        foreach ($values[$language['language_id']] as $row) {
                             if ($row['text'] != "") {
                                 $select .= "<option value='{$row['text']}'>{$row['text']}</option>";
                             }
@@ -536,7 +551,7 @@ class ControllerModuleAttributico extends Controller
                         $select = "<select name='attribute_select_{$attribute_id}' class='form-control attribute_select' attribute_id='{$attribute_id}' language_id='{$language['language_id']}' style='display:block;'>";
                         $select .= "<option value=''>" . $this->language->get('text_select') . "</option>";
                         $all_elements = array();
-                        foreach ($results[$language['language_id']] as $row) {
+                        foreach ($values[$language['language_id']] as $row) {
                             $elements = explode($splitter, $row['text']);
                             foreach ($elements as $element) {
                                 if ($element != "") {
@@ -545,9 +560,9 @@ class ControllerModuleAttributico extends Controller
                             }
                         }
 
-                        $values = array_unique($all_elements);
-                        array_multisort($values);
-                        foreach ($values as $value) {
+                        $value_list = array_unique($all_elements);
+                        array_multisort($value_list);
+                        foreach ($value_list as $value) {
                             $select .= "<option value='{$value}'>{$value}</option>";
                         }
                         $select .= "</select>";
@@ -556,9 +571,9 @@ class ControllerModuleAttributico extends Controller
                     $json[$language['language_id']][] = $select;
                 }
             }
-        } else if ($results) {
-            $values = $results[$language_id];
-            $json = array_unique($values, SORT_REGULAR);
+        } else if ($values) {
+            $value_list = $values[$language_id];
+            $json = array_unique($value_list, SORT_REGULAR);
             array_multisort($json, SORT_REGULAR);
         } else if ($language_id) {
             $json[] = ['text' => 'No data...'];
@@ -567,7 +582,7 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
-
+/** Fuction for product form integration */
     public function getAttributeDuty()
     {
         $json = array();
@@ -577,13 +592,6 @@ class ControllerModuleAttributico extends Controller
         if ($this->config->get('attributico_autoadd')) {
 
             $languages = $this->getLanguages();
-
-          /*   if (isset($this->session->data['languages'])) {
-                $languages = $this->session->data['languages'];
-            } else {
-                $this->load->model('localisation/language');
-                $languages = $this->model_localisation_language->getLanguages();
-            } */
 
             $this->load->model('catalog/attributico');
 
@@ -600,13 +608,6 @@ class ControllerModuleAttributico extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
-
-    /*  public function getMethod()
-    {
-        $method = $this->config->get('attributico_product_text');
-        $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput($method);
-    } */
 
     public function getServPanel()
     {
@@ -642,8 +643,9 @@ class ControllerModuleAttributico extends Controller
 
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
         $attributico_autoadd = $this->config->get('attributico_autoadd') ? $this->config->get('attributico_autoadd') : 0;
+        $remove_category_attribute = $this->language->get('alert_remove_ca_confirm');
 
-        $json = ['serv_panel' => $labels . $buttons . $select, 'splitter' => quotemeta($splitter), 'attributico_autoadd' => $attributico_autoadd, 'extension' => $extension];
+        $json = ['serv_panel' => $labels . $buttons . $select, 'splitter' => quotemeta($splitter), 'attributico_autoadd' => $attributico_autoadd, 'extension' => $extension, 'remove_category_attribute' => $remove_category_attribute];
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
@@ -686,16 +688,7 @@ class ControllerModuleAttributico extends Controller
         $cachename = '';
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+       
         $children = $this->childrenSettings($tree);
 
         if ($cache) {
@@ -866,16 +859,7 @@ class ControllerModuleAttributico extends Controller
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+        
         $children = $this->childrenSettings($tree);
 
         $this->load->model('catalog/attributico');
@@ -910,8 +894,7 @@ class ControllerModuleAttributico extends Controller
             $cache_tree_data = false;
         }
 
-        if (!$cache_tree_data) {
-            //  $language = $this->getLanguage($language_id);
+        if (!$cache_tree_data) {            
 
             $this->load->model('catalog/attributico');
             $all_categories = $this->model_catalog_attributico->getAllCategories();
@@ -979,24 +962,14 @@ class ControllerModuleAttributico extends Controller
         }
 
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-        /* if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        }
-        $children = array(
-            "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-            "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-            "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-        ); */
+        
         $children = $this->childrenSettings($tree);
 
         if ($key[0] == 'category') {
             $category_id = $key[1];
         } else {
             $category_id = '0';
-        }
-        //   $language = $this->getLanguage($language_id);
+        }        
 
         $this->load->model('catalog/attributico');
 
@@ -1012,8 +985,7 @@ class ControllerModuleAttributico extends Controller
         if (is_numeric($category_id) && $category_id !== '0') {
             $categoryAttributes = $this->model_catalog_attributico->getCategoryAttributes($filter_data);
             $category_description = $this->model_catalog_attributico->getCategoryDescriptions($category_id);
-            foreach ($categoryAttributes as $attribute) {
-                $attribute_group = $this->model_catalog_attributico->getAttributeGroup($attribute['attribute_id'], $language_id);
+            foreach ($categoryAttributes as $attribute) {               
                 $dutyNode = new Node(array("title" => $attribute['duty'], "key" => "duty_" . (string) $attribute['attribute_id'], "extraClasses" => "custom1",));
                 $templateNode = new Node(array(
                     "title" => $this->session->data['entry_templates'][$language_id], "unselectable" => true,
@@ -1037,7 +1009,7 @@ class ControllerModuleAttributico extends Controller
 
                 $debug_attribute = $this->debug_mode ? " (id=" . $attribute['attribute_id'] . ")" : '';
                 $attributeNode->addSibling(new Node(array(
-                    "title" => $attribute['attribute_description'] . ' (' . $attribute_group['name'] . ')' . $debug_attribute,
+                    "title" => $attribute['attribute_description'] . ' (' . $attribute['group_name'] . ')' . $debug_attribute,
                     "key" => "attribute_" . (string) $attribute['attribute_id'], "children" => $childNode->render()
                 )));
             }
@@ -1229,12 +1201,12 @@ class ControllerModuleAttributico extends Controller
             $attribute_id = $key[1];
             if ($clone) {
                 $languages = $this->getLanguages();
-                foreach($languages as $language) {
+                foreach ($languages as $language) {
                     $data['attribute_description'][$language['language_id']]['duty'] = $name;
                 }
             } else {
                 $data['attribute_description'][$language_id]['duty'] = $name;
-            }            
+            }
             $this->model_catalog_attributico->editDuty($attribute_id, $data);
         }
 
@@ -1247,7 +1219,7 @@ class ControllerModuleAttributico extends Controller
     {
         $data = array();
         $data['new'] = true;
-        //$name = isset($this->request->get['name']) ? $this->request->get['name'] : array('0', '0');
+        $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
         $key = isset($this->request->get['key']) ? explode("_", $this->request->get['key']) : array('0', '0');
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
         $lazyLoad = isset($this->request->get['lazyLoad']) ? filter_var($this->request->get['lazyLoad'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -1261,7 +1233,8 @@ class ControllerModuleAttributico extends Controller
         }
 
         $languages = $this->getLanguages();
-        /* $languages = $this->session->data['languages']; */
+        $current_lng = $this->getLanguage($language_id);
+
         $data['sort_order'] = '';
         $this->load->model('catalog/attributico');
         $this->cache->delete('attributico');
@@ -1269,30 +1242,22 @@ class ControllerModuleAttributico extends Controller
         if ($attribute_group_id) {
             $data['attribute_group_id'] = $attribute_group_id;
             foreach ($languages as $language) {
+                // В lng будет массив из языкового файла
                 $lng = $this->getLanguage($language['language_id']);
+                // Заполняем названия нового атрибута для каждого языка
                 $data['attribute_description'][$language['language_id']]['name'] = $lng->get('text_New_attribute');
             }
+            // Добавляем новую запись в БД
             $new_attribute_id = $this->model_catalog_attributico->addAttribute($data);
-
-            $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '1';
-           /*  if ($this->config->get('attributico_children')) {
-                $settings = unserialize($this->config->get('attributico_children'));
-            } else {
-                $settings = $this->settings;
-            }
-            $children = array(
-                "template" => isset($settings[$tree]) ? in_array("template", $settings[$tree]) : false,
-                "value" => isset($settings[$tree]) ? in_array("value", $settings[$tree]) : false,
-                "duty" => isset($settings[$tree]) ? in_array("duty", $settings[$tree]) : false
-            ); */
-            $children = $this->childrenSettings($tree);
-//TODO проверить на скорость такую конструцию $this->getLanguage($language_id)->get('entry_templates') т.к. постоянно идет загрузка языкового файла
+            
+            $children = $this->childrenSettings($tree);            
+            
             $templateNode = new Node(array(
-                "title" => $this->getLanguage($language_id)->get('entry_templates'), "unselectable" => true, "key" => "template_" . (string) $new_attribute_id,
+                "title" => $current_lng->get('entry_templates'), "unselectable" => true, "key" => "template_" . (string) $new_attribute_id,
                 "children" => $lazyLoad ? '' : $this->getAttributeValuesNodes($new_attribute_id, $language_id, 'template'), "lazy" => $lazyLoad ? true : false,
             ));
             $valueNode = new Node(array(
-                "title" => $this->getLanguage($language_id)->get('entry_values'), "unselectable" => true, "key" => "value_" . (string) $new_attribute_id,
+                "title" => $current_lng->get('entry_values'), "unselectable" => true, "key" => "value_" . (string) $new_attribute_id,
                 "children" => $lazyLoad ? '' : $this->getAttributeValuesNodes($new_attribute_id, $language_id, 'values'), "lazy" => $lazyLoad ? true : false,
             ));
             $dutyNode = new Node(array("title" => "", "key" => "duty_" . (string) $new_attribute_id, "extraClasses" => "custom1",));
@@ -1308,7 +1273,7 @@ class ControllerModuleAttributico extends Controller
                 $childNode->addSibling($valueNode);
             }
             $node_data = array(
-                "title" => $this->getLanguage($language_id)->get('text_New_attribute') . "_" . (string) $new_attribute_id,
+                "title" => $current_lng->get('text_New_attribute') . "_" . (string) $new_attribute_id,
                 "key" => "attribute_" . (string) $new_attribute_id,
                 "folder" => false,
                 "children" => $childNode->render()
@@ -1320,7 +1285,7 @@ class ControllerModuleAttributico extends Controller
             }
             $new_group_id = $this->model_catalog_attributico->addAttributeGroup($data);
             $node_data = array(
-                "title" => $this->getLanguage($language_id)->get('text_New_group') . "_" . (string) $new_group_id,
+                "title" => $current_lng->get('text_New_group') . "_" . (string) $new_group_id,
                 "key" => "group_" . (string) $new_group_id,
                 "folder" => true,
                 "extraClasses" => $new_group_id == 1 ? "custom3" : ''
@@ -1625,7 +1590,8 @@ class ControllerModuleAttributico extends Controller
         return $sub_categories;
     }
 
-    private function childrenSettings($tree){
+    private function childrenSettings($tree)
+    {
         if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
@@ -1775,7 +1741,7 @@ class ControllerModuleAttributico extends Controller
 
         $children = $this->childrenSettings($tree);
 
-       /*  if ($this->config->get('attributico_children')) {
+        /*  if ($this->config->get('attributico_children')) {
             $settings = unserialize($this->config->get('attributico_children'));
         } else {
             $settings = $this->settings;
@@ -1784,8 +1750,10 @@ class ControllerModuleAttributico extends Controller
         $rootData = array(
             "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "checkbox" => false,
             "children" => array(
-                array("title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => $tree === '2' ? true : $children['duty'],
-                "unselectable" => $tree === '2' ? true : false),
+                array(
+                    "title" => $this->session->data['entry_duty'][$language_id], "key" => "duty", "extraClasses" => "custom1", "selected" => $tree === '2' ? true : $children['duty'],
+                    "unselectable" => $tree === '2' ? true : false
+                ),
                 array("title" => $this->session->data['entry_templates'][$language_id], "key" => "template", "selected" => $children['template']),
                 array("title" => $this->session->data['entry_values'][$language_id], "key" => "value", "selected" => $children['value']),
             ),
@@ -1923,7 +1891,7 @@ class ControllerModuleAttributico extends Controller
                     'group' => isset($options['clone-language-group']),
                     'attribute' => isset($options['clone-language-attribute']),
                     'value' => isset($options['clone-language-value']),
-                    'duty' => isset($options['clone-language-duty'])                    
+                    'duty' => isset($options['clone-language-duty'])
                 ];
 
                 if ($source_lng !== $target_lng) {

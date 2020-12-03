@@ -109,7 +109,7 @@ export default class Observer {
     treeReload() {
         let state = { ...this.store.getState().reloadReducer, ...this.store.getState().smartReducer };
         let treeSelectors: Array<HTMLUListElement> = [];
-        this.printState(state)
+        //this.printState(state)
         // Если активное дерево не перезагружалось, то надо установить активный узел принудительно 
         if (!state.selfReload && state.activeNode !== null) {
             state.activeNode.getParent().setExpanded(true).done(() => { state.activeNode.setActive(true) });

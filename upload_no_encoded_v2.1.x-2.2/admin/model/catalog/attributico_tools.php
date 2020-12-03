@@ -20,9 +20,9 @@ class ModelCatalogAttributicoTools extends Model
 
         $query = $this->db->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='" . DB_DATABASE . "' AND COLUMN_NAME ='" . $field . "'");
         foreach ($query->rows as $row) {
-            if (!in_array(DB_PREFIX . $basetable, $row)) {
+           // if (!in_array(DB_PREFIX . $basetable, $row)) {
                 $schema[] = $row;
-            }
+           // }
         }
 
         $this->db->query("CREATE TABLE " . DB_PREFIX . $basetable . "_relation (`new_id` INTEGER(11) NOT NULL AUTO_INCREMENT, " . $field .
@@ -31,22 +31,21 @@ class ModelCatalogAttributicoTools extends Model
         $count_of_defrag = $this->db->countAffected();
 
         foreach ($schema as $table) {
-            $this->db->query("UPDATE IGNORE " . $table['TABLE_NAME'] . " t, " . DB_PREFIX . $basetable . "_relation tr SET t." . $field . " = tr.new_id
+            $this->db->query("UPDATE " . $table['TABLE_NAME'] . " t, " . DB_PREFIX . $basetable . "_relation tr SET t." . $field . " = tr.new_id
                             WHERE t." . $field . " = tr." . $field);
         }
 
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11)");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " DROP PRIMARY KEY");
-        $this->db->query("UPDATE " . DB_PREFIX . $basetable . " SET " . $field . "='0'");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " AUTO_INCREMENT=0");
-        $this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11)");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " DROP PRIMARY KEY");
+        //$this->db->query("UPDATE " . DB_PREFIX . $basetable . " SET " . $field . "='0'");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " AUTO_INCREMENT=0");
+        //$this->db->query("ALTER TABLE " . DB_PREFIX . $basetable . " MODIFY " . $field . " INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
 
         return $count_of_defrag;
     }
 
     public function scavengery()
     {
-
         $categoryAttributes = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_attribute");
         $count_of_scavengery = 0;
         foreach ($categoryAttributes->rows as $attribute) {
@@ -80,139 +79,129 @@ class ModelCatalogAttributicoTools extends Model
         return $count_of_detached;
     }
 
-    private function createHoldkeys($attribute_group_id)
+    private function concateValues($val1, $val2, $splitter)
     {
-        // Create holdkeys of duplicates of attributes names (создается таблица образцов дубликатов имен в данной группе, id-шники берутся от первого по ходу атрибута)
-        $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "holdkeys");
-        $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "holdkeys
-                          SELECT a.attribute_id, `ad`.`language_id`, `ad`.`name`, count(*)
-                          FROM " . DB_PREFIX . "attribute a LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id)
-                          WHERE a.`attribute_group_id` = '" . (int) $attribute_group_id . "' GROUP BY `ad`.`name`, `ad`.`language_id` HAVING count(*)>1  ORDER BY a.attribute_id");
-        return;
+        $text = trim($val1);
+        $splitter_add = $text !== '' && $val2 !== '' ? $splitter : '';
+        $text .= $splitter_add . trim($val2);
+        $elements = explode($splitter, $text);
+        $values = array_unique($elements);
+        array_multisort($values);
+        $newtext = implode($splitter, $values);
+        return $newtext;
     }
 
-    private function getLostkeys($attribute_group_id)
+    private function getHoldkeys($attribute_group_id)
     {
-        // Create lostkeys of duplicates
-        $lostkeys = $this->db->query("SELECT  `ad1`.`attribute_id` FROM  " . DB_PREFIX . "attribute_description ad1
-                                        LEFT JOIN  " . DB_PREFIX . "attribute a1 ON (a1.attribute_id = ad1.attribute_id)
-                                        WHERE `ad1`.`name` IN
-                                       (SELECT `hk`.`name` FROM " . DB_PREFIX . "holdkeys hk ORDER BY hk.attribute_id) AND a1.`attribute_group_id` = '" . (int) $attribute_group_id . "'
-                                        AND `ad1`.`attribute_id`  NOT IN (SELECT hk1.attribute_id FROM  " . DB_PREFIX . "holdkeys hk1)
-                                        ORDER BY `ad1`.`attribute_id`");
-        return $lostkeys->rows;
+        // Поиск образцов дубликатов имен в данной группе, id-шники берутся от первого по ходу атрибута        
+        $holdkeys = $this->db->query("SELECT MIN(ad.attribute_id) AS attribute_id, ad.language_id, ad.name, ad.duty, count(*)
+                FROM " . DB_PREFIX . "attribute_description ad LEFT JOIN " . DB_PREFIX . "attribute a ON (a.attribute_id = ad.attribute_id)
+                WHERE a.attribute_group_id = '" . (int) $attribute_group_id . "'  GROUP BY ad.language_id, ad.name HAVING count(*) > 1  ORDER BY attribute_id");
+        return $holdkeys->rows;
     }
 
-    private function getLostdups($attribute_group_id, $lostkeys = array())
+    private function getDuplicates($attribute_group_id)
     {
-        $sql_lost = $lostkeys ? " (" . implode(",", $lostkeys) . ")" : "(SELECT `ad1`.`attribute_id` FROM  " . DB_PREFIX . "attribute_description ad1
-									LEFT JOIN " . DB_PREFIX . "attribute a1 ON (a1.attribute_id = ad1.attribute_id) WHERE `ad1`.`name` IN
-									(SELECT `hk`.`name` FROM " . DB_PREFIX . "holdkeys hk) AND a1.`attribute_group_id` = '" . (int) $attribute_group_id . "')
-									AND `pa`.`attribute_id` NOT IN (SELECT hk1.attribute_id FROM  " . DB_PREFIX . "holdkeys hk1)";
-        // Get lost of duplicates
-        $lostdups = $this->db->query("SELECT product_id, pa.attribute_id, pa.language_id, pa.text, ad2.name FROM  " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute_description ad2
-                                            ON (pa.attribute_id = ad2.attribute_id AND `pa`.`language_id`= `ad2`.`language_id`) WHERE `pa`.`attribute_id` IN " . $sql_lost .
-            " ORDER BY `pa`.product_id, `pa`.`attribute_id`, `pa`.`language_id`, `ad2`.`name`");
-        return $lostdups->rows;
+        $duplicates = $this->db->query("SELECT ad.* FROM " . DB_PREFIX . "attribute_description ad LEFT JOIN " . DB_PREFIX . "attribute a ON (a.attribute_id = ad.attribute_id) LEFT OUTER JOIN (SELECT MIN(ad1.attribute_id) AS id, ad1.language_id, ad1.name FROM " . DB_PREFIX . "attribute_description ad1 GROUP BY ad1.language_id, ad1.name) AS tmp ON ad.attribute_id = tmp.id WHERE tmp.id IS NULL AND a.attribute_group_id = '" . (int) $attribute_group_id . "'");
+
+        return $duplicates->rows;
+    }
+
+    private function getProddups($lostkeys = array())
+    {
+        // Товары, в которых надо изменить attribute_id на образец
+        if ($lostkeys) {
+            $lostdups = $this->db->query("SELECT product_id, pa.attribute_id, pa.language_id, pa.text, ad2.name FROM  " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute_description ad2 ON (pa.attribute_id = ad2.attribute_id AND pa.language_id = ad2.language_id) WHERE pa.attribute_id IN (" . implode(',', $lostkeys) . ") ORDER BY pa.product_id, pa.attribute_id, pa.language_id, ad2.name");
+            return $lostdups->rows;
+        } else {
+            return array();
+        }
     }
 
     public function deduplicate($attribute_group_id)
     {
         set_time_limit(600);
         $this->cache->delete('attributico');
-        //  $start_time = microtime(true);
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
-        // First step - concatination duplicates of not equal product_id. (if is not products for this attribute) Simple replace attribute_id.
-        $this->createHoldkeys($attribute_group_id);
-        $holdkeys = $this->db->query("SELECT * FROM " . DB_PREFIX . "holdkeys");
-        $count_of_duplicates = $holdkeys->num_rows;
-        $lostkeys = $this->getLostkeys($attribute_group_id);
-        $lostdups = $this->getLostdups($attribute_group_id, array_unique(array_column($lostkeys, 'attribute_id')));
-        foreach ($holdkeys->rows as $holdkey) {
-            foreach ($lostdups as $lostdup) {
-                if ($lostdup['attribute_id'] !== $holdkey['attribute_id'] && $lostdup['language_id'] == $holdkey['language_id'] && $lostdup['name'] == $holdkey['name']) {
-                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE product_id = '" . (int) $lostdup['product_id'] .
-                        "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
-                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostdup['attribute_id'] . "'");
-                }
-            }
-        }
-        if ($lostkeys) {
-            $this->detached($attribute_group_id, array_unique(array_column($lostkeys, 'attribute_id')));
-        }
-        // Second step - concat duplicates for equal product_id, Where product_id set as duplicate key.
-        $this->createHoldkeys($attribute_group_id);
-        $holdkeys = $this->db->query("SELECT * FROM " . DB_PREFIX . "holdkeys");
-        $lostkeys = $this->getLostkeys($attribute_group_id);
-        $lostdups = $this->getLostdups($attribute_group_id, array_unique(array_column($lostkeys, 'attribute_id')));
-        foreach ($holdkeys->rows as $holdkey) {
-            foreach ($lostdups as $lostdup) {
-                $holddups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $lostdup['product_id'] . "' AND attribute_id = '" . (int) $holdkey['attribute_id'] . "'
-				                              AND language_id = '" . (int) $holdkey['language_id'] . "'");
-                $holddup = $holddups->row;
-                if ($holddup) {
-                    $text = trim($holddup['text']);
-                    $splitter_add = $text !== '' && $lostdup['text'] !== '' ? $splitter : '';
-                    $text .= $splitter_add . trim($lostdup['text']);
-                    $elements = explode($splitter, $text);
-                    $values = array_unique($elements);
-                    array_multisort($values);
-                    $text = implode($splitter, $values);
+        $holdkeys = $this->getHoldkeys($attribute_group_id);
+        $duplicates = $this->getDuplicates($attribute_group_id);
+        $proddups = $this->getProddups(array_unique(array_column($duplicates, 'attribute_id')));
+        foreach ($holdkeys as $holdkey) {
+            foreach ($proddups as $lostproduct) {
+                // Проверим есть ли для этого товара уже образец. holdproduct - сохраняемый образец, lostproduct - удаляемый дубликат
+                $holddups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $lostproduct['product_id'] . "' AND attribute_id = '" . (int) $holdkey['attribute_id'] . "' AND language_id = '" . (int) $holdkey['language_id'] . "'");
+                $holdproduct = $holddups->row;
+                // Если уже есть, то дополним значения в образце 
+                if ($holdproduct) {
+                    $text = $this->concateValues($holdproduct['text'], $lostproduct['text'], $splitter);
                     //update remining
-                    $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $holddup['product_id'] .
-                        "' AND attribute_id = '" . (int) $holddup['attribute_id'] . "' AND language_id = '" . (int) $holddup['language_id'] . "'");
-                    // delete lost
-                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $lostdup['product_id'] .
-                        "' AND attribute_id = '" . (int) $lostdup['attribute_id'] . "' AND language_id = '" . (int) $lostdup['language_id'] . "'");
-                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holddup['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostdup['attribute_id'] . "'");
+                    $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $holdproduct['product_id'] . "' AND attribute_id = '" . (int) $holdproduct['attribute_id'] . "' AND language_id = '" . (int) $holdproduct['language_id'] . "'");
+                    // И удалим дубликат товара 
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $lostproduct['product_id'] .
+                        "' AND attribute_id = '" . (int) $lostproduct['attribute_id'] . "' AND language_id = '" . (int) $lostproduct['language_id'] . "'");
+                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holdproduct['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostproduct['attribute_id'] . "'");
+                } else {
+                    // Если образца нет, просто меняем ссылку на id-шник образца
+                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE product_id = '" . (int) $lostproduct['product_id'] . "' AND attribute_id = '" . (int) $lostproduct['attribute_id'] . "' AND language_id = '" . (int) $lostproduct['language_id'] . "'");
+
+                    $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $holdkey['attribute_id'] . "' WHERE attribute_id = '" . (int) $lostproduct['attribute_id'] . "'");
                 }
             }
         }
-        if ($lostkeys) {
-            $this->detached($attribute_group_id, array_unique(array_column($lostkeys, 'attribute_id')));
+        // Чтоб не потерять дежурные допишем их из удаляемых в образцы
+        foreach ($holdkeys as $holdkey) {
+            foreach ($duplicates as $duplicate) {
+                if ($duplicate['name'] === $holdkey['name'] && $duplicate['language_id'] === $holdkey['language_id'] && trim($duplicate['duty']) !== '') {
+                    $duty = $this->concateValues($holdkey['duty'], $duplicate['duty'], $splitter);
+                    $this->db->query("UPDATE " . DB_PREFIX . "attribute_description ad SET duty = '" . $duty . "' WHERE attribute_id = '" . (int) $holdkey['attribute_id'] . "' AND language_id = '" . (int) $holdkey['language_id'] . "'");
+                }
+            }
         }
-        // $diff_time = microtime(true) - $start_time;
-        //file_put_contents('attributico.txt', $diff_time, FILE_APPEND);
-        // file_put_contents('attributico.txt', PHP_EOL, FILE_APPEND);
-        return $count_of_duplicates;
+
+        if ($duplicates) {
+            $this->detached($attribute_group_id, array_unique(array_column($duplicates, 'attribute_id')));
+        }
+
+        return count($duplicates);
     }
 
-    public function mergeAttribute($target_id, $subject_id)
+    public function mergeAttribute($target_id, $source_id)
     {
         // in foreach
         $splitter = !($this->config->get('attributico_splitter') == '') ? $this->config->get('attributico_splitter') : '/';
 
-        $subjects = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        foreach ($subjects->rows as $subject) {
-            $dups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $subject['product_id'] . "' AND attribute_id = '" . (int) $target_id .
-                "' AND language_id = '" . (int) $subject['language_id'] . "'");
+        $source_products = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        foreach ($source_products->rows as $source_product) {
+            $dups = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int) $source_product['product_id'] . "' AND attribute_id = '" . (int) $target_id .
+                "' AND language_id = '" . (int) $source_product['language_id'] . "'");
             $dup = $dups->row; // perfect potentional dublicate - to-be error of keys sql, change attribute_id impossible
             if ($dup) {
-                $text = trim($dup['text']); // it is the target text
-                $splitter_add = $text !== '' && $subject['text'] !== '' ? $splitter : '';
-                $text .= $splitter_add . trim($subject['text']); // add subject text
-                $elements = explode($splitter, $text);
-                $values = array_unique($elements);
-                array_multisort($values);
-                $text = implode($splitter, $values);
+                $text = $this->concateValues($dup['text'], $source_product['text'], $splitter);
                 //update remining
                 $this->db->query("UPDATE " . DB_PREFIX . "product_attribute SET text = '" . $this->db->escape($text) . "' WHERE product_id = '" . (int) $dup['product_id'] .
                     "' AND attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $dup['language_id'] . "'");
-            } else { // this product not have in this attribute, then only change attribute_id
-                $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $target_id . "' WHERE product_id = '" . (int) $subject['product_id'] .
-                    "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+            } else {
+                // this product not have in this attribute, then only change attribute_id
+                $this->db->query("UPDATE IGNORE " . DB_PREFIX . "product_attribute SET attribute_id = '" . (int) $target_id . "' WHERE product_id = '" . (int) $source_product['product_id'] .
+                    "' AND attribute_id = '" . (int) $source_id . "' AND language_id = '" . (int) $source_product['language_id'] . "'");
             }
-
-            // delete old product references to subject_id
-            $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $subject['product_id'] .
-                "' AND attribute_id = '" . (int) $subject_id . "' AND language_id = '" . (int) $subject['language_id'] . "'");
+            // delete old product references to source_id
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute  WHERE product_id = '" . (int) $source_product['product_id'] .
+                "' AND attribute_id = '" . (int) $source_id . "' AND language_id = '" . (int) $source_product['language_id'] . "'");
         }
-        // kill subject references in category
-        $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $target_id . "' WHERE attribute_id = '" . (int) $subject_id . "'");
-        // delete subject attribute
-        $this->db->query("DELETE FROM " . DB_PREFIX . "category_attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute WHERE attribute_id = '" . (int) $subject_id . "'");
-        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $subject_id . "'");
+        // Concate duty
+        $source_duties = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $source_id . "'");
+        foreach ($source_duties->rows as $source_duty) {
+            $target_duty = $this->db->query("SELECT * FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $target_id . "'  AND language_id = '" . (int) $source_duty['language_id'] . "'");
+            $duty = $this->concateValues($target_duty->row['duty'], $source_duty['duty'], $splitter);
+            $this->db->query("UPDATE " . DB_PREFIX . "attribute_description ad SET duty = '" . $duty . "' WHERE attribute_id = '" . (int) $target_id . "' AND language_id = '" . (int) $source_duty['language_id'] . "'");
+        }
+        // kill source references in category
+        $this->db->query("UPDATE IGNORE " . DB_PREFIX . "category_attribute SET attribute_id = '" . (int) $target_id . "' WHERE attribute_id = '" . (int) $source_id . "'");
+        // delete source attribute
+        $this->db->query("DELETE FROM " . DB_PREFIX . "category_attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute WHERE attribute_id = '" . (int) $source_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "attribute_description WHERE attribute_id = '" . (int) $source_id . "'");
         return;
     }
 
@@ -368,7 +357,7 @@ class ModelCatalogAttributicoTools extends Model
                 }
                 $count_affected->attribute += round($this->db->countAffected() / 2);
             }
-        }        
+        }
 
         // Product Attribute = value
         if ($node['value']) {
@@ -411,7 +400,7 @@ class ModelCatalogAttributicoTools extends Model
                 WHERE attribute_id = '" . (int) $attribute['attribute_id'] . "' AND language_id = '" . (int) $target_lng . "'";
 
                 switch ($method) {
-                    case 'insert':                        
+                    case 'insert':
                         break;
                     case 'overwrite':
                         $this->db->query($overwrite_query);
@@ -427,7 +416,7 @@ class ModelCatalogAttributicoTools extends Model
                 }
                 $count_affected->duty += round($this->db->countAffected() / 2);
             }
-        }        
+        }
 
         return $count_affected;
     }

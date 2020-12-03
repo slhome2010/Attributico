@@ -210,11 +210,12 @@ class ModelCatalogAttributico extends Model
             $language_id = (int)$this->config->get('config_language_id');
         }
 
-        $sql = "SELECT ca.category_id, ca.attribute_id, a.attribute_group_id, ad.name AS attribute_description, ad.duty , ag.sort_order AS sort_attribute_group
+        $sql = "SELECT ca.category_id, ca.attribute_id, a.attribute_group_id, ad.name AS attribute_description, ad.duty , ag.sort_order AS sort_attribute_group, agd.name AS group_name 
           FROM " . DB_PREFIX . "category_attribute ca
           LEFT JOIN " . DB_PREFIX . "attribute a ON (a.attribute_id = ca.attribute_id)
           LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (ad.attribute_id = a.attribute_id AND ad.language_id = '" . (int)$language_id . "')
           LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (ag.attribute_group_id = a.attribute_group_id)
+          LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (agd.attribute_group_id = a.attribute_group_id AND agd.language_id = '" . (int)$language_id . "')
           WHERE ca.category_id = '" . (int)$data['category_id'] . "'";
 
         $sort_data = array(

@@ -87,16 +87,11 @@ module.exports = {
                 test: /\.(jpg|png)$/,
                 use: 'file-loader'
             },
-            ,
-        {
-            test: /\.tsx?$/,
-            exclude: /node_modules/,
-            use: [
-                {
-                    loader: 'typescript-loader'
-                }
-            ]
-        },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ]
     },
     plugins: [
