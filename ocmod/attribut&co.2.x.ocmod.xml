@@ -179,11 +179,11 @@
                                 $('#template-view').removeClass('btn-info');
                             }
 
-                            // Set filter values display mode when start
-                            $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").click(); 
+                            // Set filter values display mode when start and loadValues
+                            $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").trigger('change'); 
 
                             // Load values for all attributes and lang
-                            loadValues()
+                            // loadValues()
                         }
                     });  
 
@@ -236,6 +236,7 @@
                                     if ($(tr).find('[name *= attribute_id]').val() === attribute['attribute_id']) {                                      
                                       $(tr).remove()                                      
                                       product_attribute_id = product_attribute_id.filter( item => item !== attribute['attribute_id']);
+                                      attribute_row--
                                     }                                    
                                   })                                   
                                 });
@@ -397,7 +398,8 @@
 
                 // Event change filter mode for attribute values
                 $('#serv-panel').on('change', 'input[type=\'radio\']', function () {
-                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());                     
+                    localStorage.setItem('filter-values', $('input[name=filter-values]:checked').val());  
+                    product_attribute_id = []                   
                     loadValues()
                 });
 
@@ -405,7 +407,8 @@
                 $('#serv-panel').on('click', '#template-view', function () {
                     localStorage.setItem('display_attribute', 'template');
                     $(this).addClass('btn-info');
-                    $('#values-view').removeClass('btn-info');                    
+                    $('#values-view').removeClass('btn-info'); 
+                    product_attribute_id = []                   
                     loadValues()
                 });
 
@@ -413,7 +416,8 @@
                 $('#serv-panel').on('click', '#values-view', function () {
                     localStorage.setItem('display_attribute', 'values');                    
                     $(this).addClass('btn-info');
-                    $('#template-view').removeClass('btn-info');                                    
+                    $('#template-view').removeClass('btn-info');  
+                    product_attribute_id = []                                  
                     loadValues()
                 });                
                 
@@ -430,8 +434,18 @@
             ]]>            </add>
         </operation>
         <operation>
+            <search><![CDATA[$('input[name=\'product_attribute[' + attribute_row + '][name]\']').val(item['label']);]]></search>
+            <add position="before"><![CDATA[
+                let old_id = $('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val();                
+            ]]>            </add>
+        </operation>
+        <operation>
             <search><![CDATA[$('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(item['value']);]]></search>
             <add position="after"><![CDATA[
+                let index = product_attribute_id.indexOf(old_id)  
+                if (~index) {
+                    product_attribute_id[index] = item.value;
+                }      
 		        makeValuesList(item.value, attribute_row);
                 addAttributeDuty(item.value, attribute_row);
                 $('#group-name' + attribute_row).remove()
