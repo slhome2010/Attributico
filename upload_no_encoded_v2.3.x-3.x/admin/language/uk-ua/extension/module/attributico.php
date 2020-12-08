@@ -226,8 +226,10 @@ $_['help_clone_options'] = 'Можна скасувати клонування �
 
 // Entry
 $_['entry_attribute_groups'] = 'Групи атрибутів';
-$_['entry_attribute_template'] = 'Шаблони';
-$_['entry_attribute_values'] = 'Значення';
+$_['entry_groups'] = 'Групи';
+$_['entry_template'] = 'Шаблони';
+$_['entry_attribute_values'] = 'Значення атрибутів';
+$_['entry_values'] = 'Значення';
 $_['entry_flter_all'] = 'Всі';
 $_['entry_flter_category'] = 'Категорії';
 $_['entry_flter_duty'] = 'Чергові';
