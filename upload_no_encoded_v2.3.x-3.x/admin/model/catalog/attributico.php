@@ -589,20 +589,15 @@ class ModelCatalogAttributico extends Model
         return;
     }
 
-    public function sortAttribute($data)
-    {
-        $this->cache->delete('attributico');
+    public function sortAttribute($data) {
+        $this->cache->delete('attributico'); // TODO data['table']
 
         $target_id = $data['target_id'];
-        $target_sort_order = (int)$this->db->query("SELECT target.sort_order FROM " . DB_PREFIX . "attribute target WHERE target.attribute_id = '" . (int)$target_id . "'")->row['sort_order'];
+        $target_sort_order = (int) $this->db->query("SELECT target.sort_order FROM " . DB_PREFIX . "attribute target WHERE target.attribute_id = '" . (int) $target_id . "'")->row['sort_order'];
 
         if ($data['direct'] == 'after') {
-            $sql_spread = " a.sort_order = a.sort_order + 1  WHERE a.sort_order > " . $target_sort_order;
-            $sql_insert = " a.sort_order = " . $target_sort_order . " + 1";
             $dir = " ASC";
         } else {
-            $sql_spread = " a.sort_order = a.sort_order + 1  WHERE a.sort_order >= " . $target_sort_order;
-            $sql_insert = " a.sort_order = " . $target_sort_order . " - 1";
             $dir = " DESC";
         }
 
@@ -610,19 +605,39 @@ class ModelCatalogAttributico extends Model
 
 
         foreach ($sources->rows as $source) {
+            switch ($data['direct']) {
+                case 'after':
+                    if ((int) $source['sort_order'] > $target_sort_order) {
+                        $sql_spread = " a.sort_order = a.sort_order + 1  WHERE a.sort_order > " . $target_sort_order . " AND a.sort_order <= " . (int) $source['sort_order'];
+                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                    } else {
+                        $sql_spread = " a.sort_order = a.sort_order - 1  WHERE a.sort_order <= " . $target_sort_order . " AND a.sort_order >= " . (int) $source['sort_order'];
+                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                    }
+                    break;
+
+                case 'before':
+                    if ((int) $source['sort_order'] > $target_sort_order) {
+                        $sql_spread = " a.sort_order = a.sort_order + 1  WHERE a.sort_order >= " . $target_sort_order . " AND a.sort_order <= " . (int) $source['sort_order'];
+                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                    } else {
+                        $sql_spread = " a.sort_order = a.sort_order - 1  WHERE a.sort_order < " . $target_sort_order . " AND a.sort_order >= " . (int) $source['sort_order'];
+                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
             // раздвижка
             $this->db->query("UPDATE " . DB_PREFIX . "attribute a SET" . $sql_spread);
 
             // вставка
-            $this->db->query("UPDATE " . DB_PREFIX . "attribute a SET" . $sql_insert . " WHERE a.attribute_id='" . (int)$source['attribute_id'] . "'");
+            $this->db->query("UPDATE " . DB_PREFIX . "attribute a SET" . $sql_insert . " WHERE a.attribute_id='" . (int) $source['attribute_id'] . "'");
 
             $target_id = $source['attribute_id'];
         }
-        // прическа
-        /* $this->db->query("SET @num :=0");
-        $this->db->query("UPDATE " . DB_PREFIX . "attribute i,
-                          (SELECT j.*, @num :=@num+1 as nrec FROM " . DB_PREFIX . "attribute j ORDER BY j.sort_order) xxx
-                          SET i.sort_order = xxx.nrec WHERE i.attribute_id = xxx.attribute_id"); */
+        
         return;
     }
 
