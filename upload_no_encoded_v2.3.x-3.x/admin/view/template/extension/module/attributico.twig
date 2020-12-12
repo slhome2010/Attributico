@@ -488,6 +488,7 @@
                                             <li class="active"><a href="#tab-empty" data-toggle="pill"> {{tab_empty}} </a></li>
                                             <li><a href="#tab-scavengery" data-toggle="pill"> {{tab_scavengery}} </a></li>
                                             <li><a href="#tab-defrag" data-toggle="pill"> {{tab_defrag}} </a></li>
+                                            <li><a href="#tab-defrag" data-toggle="pill"> {{tab_defrag}} </a></li>
                                             <li><a href="#tab-detached" data-toggle="pill"> {{tab_detached}} </a></li>
                                             <li><a href="#tab-deduplicate" data-toggle="pill"> {{tab_deduplicate}} </a></li>
                                             <li><a href="#tab-category-attributes" data-toggle="pill"> {{tab_category_attributes}} </a></li>
@@ -583,6 +584,34 @@
                                                                     </div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('defrag')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                                                <td>
+                                                                    <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
+                                                                    <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab-sorting">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <colgroup>
+                                                            <col class="col-xs-12 col-md-10">
+                                                            <col class="col-xs-4 col-md-1">
+                                                            <col class="col-xs-4 col-md-1">
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{head_settings}}</th>
+                                                                <th>{{head_command}}</th>
+                                                                <th>{{head_status}}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="text-align: center;"> {{help_nosettings}} </th>
+                                                                <td><button type="button" onclick=" return tools('sorting')" data-toggle="tooltip" title="{{button_play}}" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
                                                                     <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
                                                                     <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>

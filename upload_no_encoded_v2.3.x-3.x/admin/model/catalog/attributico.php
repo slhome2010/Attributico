@@ -549,51 +549,27 @@ class ModelCatalogAttributico extends Model
                 }
             }
         }
-    }
+    }   
 
-    public function sortAttributeGroup($data)
+    public function sortAttribute($data)
     {
         $this->cache->delete('attributico');
 
-        if ($data['direct'] == 'after') {
-            $sql = " -" . strval(count($data['subject_id'])) . " WHERE i.sort_order <= x.sort_order";
-            $sql1 = " x.sort_order+1";
-            $dir = " ASC";
-        } else {
-            $sql = " +" . strval(count($data['subject_id'])) . " WHERE i.sort_order >= x.sort_order";
-            $sql1 = " x.sort_order-1";
-            $dir = " DESC";
+        switch ($data['table']) {
+            case 'attribute':
+                $data_table = DB_PREFIX . "attribute";
+                $id = "attribute_id";
+                break;
+            case 'group':
+                $data_table = DB_PREFIX . "attribute_group";
+                $id = "attribute_group_id";
+                break;
+            default:
+                break;
         }
-
-        $subjects = $this->db->query("SELECT z.* FROM " . DB_PREFIX . "attribute_group z  WHERE z.attribute_group_id IN (" . implode(",", $data['subject_id']) . ") ORDER BY z.sort_order" . $dir);
-
-        // раздвижка
-        $this->db->query("UPDATE " . DB_PREFIX . "attribute_group i
-                          INNER JOIN (SELECT j.sort_order FROM " . DB_PREFIX . "attribute_group j WHERE j.attribute_group_id = '" . (int)$data['target_id'] . "') x
-                          SET i.sort_order = i.sort_order" . $sql);
-
-        // вставка
-        foreach ($subjects->rows as $subject_id) {
-            $this->db->query("UPDATE " . DB_PREFIX . "attribute_group i
-                              INNER JOIN (SELECT j.sort_order FROM " . DB_PREFIX . "attribute_group j WHERE j.attribute_group_id = '" . (int)$data['target_id'] . "') x,
-                              (SELECT MAX(k.sort_order) AS maxorder FROM " . DB_PREFIX . "attribute_group k) xx
-                              SET i.sort_order = IF(x.sort_order < `xx`.maxorder, " . $sql1 . ", `xx`.maxorder + 1) WHERE i.`attribute_group_id` = '" . (int)$subject_id['attribute_group_id'] . "'");
-            $data['target_id'] = $subject_id['attribute_group_id'];
-        }
-        // прическа
-        $this->db->query("SET @num :=0");
-        $this->db->query("UPDATE " . DB_PREFIX . "attribute_group i,
-                          (SELECT j.*, @num :=@num+1 as nrec FROM " . DB_PREFIX . "attribute_group j ORDER BY j.sort_order) xxx
-                          SET i.sort_order = xxx.nrec WHERE i.attribute_group_id = xxx.attribute_group_id");
-
-        return;
-    }
-
-    public function sortAttribute($data) {
-        $this->cache->delete('attributico'); // TODO data['table']
 
         $target_id = $data['target_id'];
-        $target_sort_order = (int) $this->db->query("SELECT target.sort_order FROM " . DB_PREFIX . "attribute target WHERE target.attribute_id = '" . (int) $target_id . "'")->row['sort_order'];
+        $target_sort_order = (int) $this->db->query("SELECT target.sort_order FROM " . $data_table . " target WHERE target." . $id . " = '" . (int) $target_id . "'")->row['sort_order'];
 
         if ($data['direct'] == 'after') {
             $dir = " ASC";
@@ -601,7 +577,7 @@ class ModelCatalogAttributico extends Model
             $dir = " DESC";
         }
 
-        $sources = $this->db->query("SELECT z.* FROM " . DB_PREFIX . "attribute z  WHERE z.attribute_id IN (" . implode(",", $data['subject_id']) . ") ORDER BY z.sort_order" . $dir);
+        $sources = $this->db->query("SELECT a.* FROM " . $data_table . " a  WHERE a." . $id . " IN (" . implode(",", $data['subject_id']) . ") ORDER BY a.sort_order" . $dir);
 
 
         foreach ($sources->rows as $source) {
@@ -630,14 +606,14 @@ class ModelCatalogAttributico extends Model
                     break;
             }
             // раздвижка
-            $this->db->query("UPDATE " . DB_PREFIX . "attribute a SET" . $sql_spread);
+            $this->db->query("UPDATE " . $data_table . " a SET" . $sql_spread);
 
             // вставка
-            $this->db->query("UPDATE " . DB_PREFIX . "attribute a SET" . $sql_insert . " WHERE a.attribute_id='" . (int) $source['attribute_id'] . "'");
+            $this->db->query("UPDATE " . $data_table . " a SET" . $sql_insert . " WHERE a." . $id . " = '" . (int) $source[$id] . "'");
 
-            $target_id = $source['attribute_id'];
+            $target_id = $source[$id];
         }
-        
+
         return;
     }
 

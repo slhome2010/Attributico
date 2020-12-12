@@ -508,22 +508,15 @@
                                 <div class="row">
                                     <div class="col-lg-2 col-md-3" id="column-1">
                                         <ul class="nav nav-pills nav-stacked">
-                                            <li class="active"><a href="#tab-empty" data-toggle="pill">
-                                                    <?php echo $tab_empty; ?> </a></li>
-                                            <li><a href="#tab-scavengery" data-toggle="pill">
-                                                    <?php echo $tab_scavengery; ?> </a></li>
-                                            <li><a href="#tab-defrag" data-toggle="pill"> <?php echo $tab_defrag; ?>
-                                                </a></li>
-                                            <li><a href="#tab-detached" data-toggle="pill"> <?php echo $tab_detached; ?>
-                                                </a></li>
-                                            <li><a href="#tab-deduplicate" data-toggle="pill">
-                                                    <?php echo $tab_deduplicate; ?> </a></li>
-                                            <li><a href="#tab-category-attributes" data-toggle="pill">
-                                                    <?php echo $tab_category_attributes; ?> </a></li>
-                                            <li><a href="#tab-cache" data-toggle="pill"> <?php echo $tab_cache; ?> </a>
-                                            </li>
-                                            <li><a href="#tab-standart" data-toggle="pill"> <?php echo $tab_standart; ?>
-                                                </a></li>
+                                            <li class="active"><a href="#tab-empty" data-toggle="pill"> <?php echo $tab_empty; ?> </a></li>
+                                            <li><a href="#tab-scavengery" data-toggle="pill"> <?php echo $tab_scavengery; ?> </a></li>
+                                            <li><a href="#tab-defrag" data-toggle="pill"> <?php echo $tab_defrag; ?></a></li>
+                                            <li><a href="#tab-sorting" data-toggle="pill"><?php echo $tab_sorting; ?> </a></li>
+                                            <li><a href="#tab-detached" data-toggle="pill"> <?php echo $tab_detached; ?></a></li>
+                                            <li><a href="#tab-deduplicate" data-toggle="pill"><?php echo $tab_deduplicate; ?> </a></li>
+                                            <li><a href="#tab-category-attributes" data-toggle="pill"><?php echo $tab_category_attributes; ?> </a></li>
+                                            <li><a href="#tab-cache" data-toggle="pill"> <?php echo $tab_cache; ?> </a></li>
+                                            <li><a href="#tab-standart" data-toggle="pill"> <?php echo $tab_standart; ?></a></li>
                                         </ul>
                                     </div>
                                     <hr class="hidden-lg hidden-md">
@@ -621,6 +614,35 @@
                                                                     </div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('defrag')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                                                <td>
+                                                                    <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
+                                                                    <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab-sorting">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <colgroup>
+                                                            <col class="col-xs-12 col-md-10">
+                                                            <col class="col-xs-4 col-md-1">
+                                                            <col class="col-xs-4 col-md-1">
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th><?php echo $head_settings; ?></th>
+                                                                <th><?php echo $head_command; ?></th>
+                                                                <th><?php echo $head_status; ?></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="text-align: center;">
+                                                                    <?php echo $help_nosettings; ?> </th>
+                                                                <td><button type="button" onclick=" return tools('sorting')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
                                                                     <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
                                                                     <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
