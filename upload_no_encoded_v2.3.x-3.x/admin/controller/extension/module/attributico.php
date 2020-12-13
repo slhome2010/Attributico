@@ -109,7 +109,7 @@ class ControllerModuleAttributico extends Controller
 
         $this->data['duty_check'] = $this->duty_check();
         $this->data['status'] = $this->config->get('module_attributico_status');
-        if (!$this->data['status'] && !$this->data['duty_check']) {
+        if (!$this->data['status'] || !$this->data['duty_check']) {
             $this->error['warning'] = $this->language->get('error_status');
         }
 
@@ -1684,8 +1684,7 @@ class ControllerModuleAttributico extends Controller
         $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "category_attribute
 		(`category_id` INTEGER(11) NOT NULL,`attribute_id` INTEGER(11) NOT NULL, PRIMARY KEY (`category_id`,`attribute_id`) USING BTREE)
 		ENGINE=MyISAM ROW_FORMAT=FIXED CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
-
-        // $this->db->query("ALTER TABLE " . DB_PREFIX . "attribute_description ADD COLUMN IF NOT EXISTS `duty` TEXT NOT NULL");
+        
         if (!$this->duty_check()) {
             $this->dutyUpgrade();
         }
@@ -1702,11 +1701,7 @@ class ControllerModuleAttributico extends Controller
     }
 
     public function uninstall()
-    {
-        /* $this->db->query("DROP TABLE IF EXISTS " . DB_PREFIX . "category_attribute");
-        if ($this->duty_check()) {
-            $this->db->query("ALTER TABLE " . DB_PREFIX . "attribute_description DROP COLUMN `duty`");
-        } */
+    {        
         $data['module_attributico_status'] = 0;
 
         $this->load->model('setting/setting');
@@ -1733,18 +1728,11 @@ class ControllerModuleAttributico extends Controller
 
     // settings
     public function getChildrenSettings()
-    {
-        //   $extension = version_compare(VERSION, '2.3.0', '>=') ? "extension/" : "";
+    {       
         $language_id = isset($this->request->get['language_id']) ? $this->request->get['language_id'] : $this->config->get('config_language_id');
         $tree = isset($this->request->get['tree']) ? $this->request->get['tree'] : '';
 
         $children = $this->childrenSettings($tree);
-
-        /*  if ($this->config->get('attributico_children')) {
-            $settings = unserialize($this->config->get('attributico_children'));
-        } else {
-            $settings = $this->settings;
-        } */
 
         $rootData = array(
             "title" => $this->session->data['entry_attribute'][$language_id], "expanded" => true, "unselectable" => true, "checkbox" => false,
