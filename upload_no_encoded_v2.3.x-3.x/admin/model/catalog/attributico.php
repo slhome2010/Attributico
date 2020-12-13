@@ -582,11 +582,13 @@ class ModelCatalogAttributico extends Model
 
         foreach ($sources->rows as $source) {
             switch ($data['direct']) {
-                case 'after':
+                case 'after':                    
                     if ((int) $source['sort_order'] > $target_sort_order) {
+                        // Снизу вверх
                         $sql_spread = " a.sort_order = a.sort_order + 1  WHERE a.sort_order > " . $target_sort_order . " AND a.sort_order <= " . (int) $source['sort_order'];
-                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                        $sql_insert = " a.sort_order = " . ($target_sort_order + 1);
                     } else {
+                        // Сверху вниз
                         $sql_spread = " a.sort_order = a.sort_order - 1  WHERE a.sort_order <= " . $target_sort_order . " AND a.sort_order >= " . (int) $source['sort_order'];
                         $sql_insert = " a.sort_order = " . $target_sort_order;
                     }
@@ -598,7 +600,7 @@ class ModelCatalogAttributico extends Model
                         $sql_insert = " a.sort_order = " . $target_sort_order;
                     } else {
                         $sql_spread = " a.sort_order = a.sort_order - 1  WHERE a.sort_order < " . $target_sort_order . " AND a.sort_order >= " . (int) $source['sort_order'];
-                        $sql_insert = " a.sort_order = " . $target_sort_order;
+                        $sql_insert = " a.sort_order = " . ($target_sort_order - 1);
                     }
                     break;
 
