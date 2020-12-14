@@ -131,25 +131,33 @@ class ModelCatalogAttributico extends Model
         return $attribute_values_data;
     }
 
-    public function getAttributeInfo($attribute_id)
+    public function getAttributeInfo($attribute_id, $language_id = 0)
     {
-        $attribute_data = array();
-        $query = $this->db->query("SELECT *, (SELECT name FROM " . DB_PREFIX . "attribute_group_description agd WHERE a.`attribute_group_id` = agd.`attribute_group_id`
-                                                AND `agd`.`language_id` = `ad`.`language_id`) AS group_name
-                                   FROM " . DB_PREFIX . "attribute a LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id)
-                                   WHERE a.`attribute_id` = '" . (int)$attribute_id . "'");
+        $attribute_info = array();
+        if ($language_id) {
+            $sql_lang = " AND ad.language_id = '" . (int)$language_id . "'";
+        } else {
+            $sql_lang = '';
+        }
+
+        $query = $this->db->query("SELECT ad.language_id, a.attribute_id, ad.name, a.attribute_group_id, oagd.name AS group_name, a.sort_order, ad. duty  FROM " . DB_PREFIX . "attribute a LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_group_description oagd ON (a.attribute_group_id = oagd.attribute_group_id AND oagd.language_id = ad.language_id) WHERE a.attribute_id = '" . (int)$attribute_id . "'" . $sql_lang);
 
         foreach ($query->rows as $result) {
-            $attribute_data[$result['language_id']] = array(
+            $attribute_info[$result['language_id']] = array(
                 'attribute_id' => $result['attribute_id'],
                 'name' => $result['name'],
-                'group_name' => $result['group_name'],
                 'attribute_group_id' => $result['attribute_group_id'],
+                'group_name' => $result['group_name'],
                 'sort_order' => $result['sort_order'],
+                'duty' => $result['duty']
             );
         }
 
-        return $attribute_data;
+        if ($language_id) {
+            return $query->row;
+        } else {
+           return $attribute_info;
+        }
     }
 
     public function getAllCategories($non_hierarchical = false)
