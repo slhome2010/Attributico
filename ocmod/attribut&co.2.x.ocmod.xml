@@ -170,10 +170,11 @@
                             }
 
                             // Set filter values display mode when start and loadValues
-                            $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").trigger('change'); 
-
-                            // Load values for all attributes and lang
-                            // loadValues()
+                            if (localStorage.getItem('filter-values')) {
+                                $("input[value=\"" + localStorage.getItem('filter-values') + "\"]").trigger('change'); 
+                            } else {
+                                loadValues()
+                            }
                         }
                     });  
 
