@@ -221,7 +221,7 @@
                             $.each(json, function (language_id, select) {
                                 var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]'); 
                                 $('select[language_id="' + language_id + '"]', textarea.parent()).remove();
-                                textarea.before(select);
+                                textarea.before(select[0]);
                                 textarea.attr('rows', 3);
                             });
                         }

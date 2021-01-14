@@ -14,7 +14,7 @@
         <div class="heading">
             <h1><?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <a onclick="$('#form-attributico').submit();" class="button"><?php echo $button_save; ?></a>
+                <a onclick="submit()" class="button"><?php echo $button_save; ?></a>
                 <a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a>
             </div>
         </div>

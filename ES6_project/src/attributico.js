@@ -7,7 +7,7 @@ import 'jquery.fancytree';
 import buildFilter from './containers/BuildFilter'
 import initTrees from './containers/InitTrees'
 import tools from './functions/WindowContext/Tools'
-import apply from './functions/WindowContext/Apply'
+import { apply, submit } from './functions/WindowContext/Apply'
 import { checkForUpdates, dutyUpgrade } from './functions/WindowContext/Upgrade'
 import './functions/Plugin/Dropmenu.js';
 import buildDialog from './containers/BuildDialog';
@@ -19,6 +19,7 @@ import Observer from './observers';
 
 window.tools = tools;
 window.apply = apply;
+window.submit = submit;
 window.checkForUpdates = checkForUpdates;
 window.dutyUpgrade = dutyUpgrade;
 
