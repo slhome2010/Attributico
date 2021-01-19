@@ -154,11 +154,12 @@ class ControllerModuleAttributico extends Controller
         $this->data['tab_cache'] = $this->language->get('tab_cache');
         $this->data['tab_category_attributes'] = $this->language->get('tab_category_attributes');
 
-        $this->data['legend_general'] = $this->language->get('legend_general');
-        $this->data['legend_category'] = $this->language->get('legend_category');
-        $this->data['legend_algorithm'] = $this->language->get('legend_algorithm');
-        $this->data['legend_inherit'] = $this->language->get('legend_inherit');
-        $this->data['legend_children'] = $this->language->get('legend_children');
+        $this->data['settings_general'] = $this->language->get('settings_general');
+        $this->data['settings_category'] = $this->language->get('settings_category');
+        $this->data['settings_algorithm'] = $this->language->get('settings_algorithm');
+        $this->data['settings_inherit'] = $this->language->get('settings_inherit');
+        $this->data['settings_children'] = $this->language->get('settings_children');
+        $this->data['settings_replace'] = $this->language->get('settings_replace');
 
         $this->data['entry_splitter'] = $this->language->get('entry_splitter');
         $this->data['entry_sortorder'] = $this->language->get('entry_sortorder');
@@ -438,6 +439,14 @@ class ControllerModuleAttributico extends Controller
             $this->data['attributico_multistore'] = $this->config->get('attributico_multistore');
         } else {
             $this->data['attributico_multistore'] = 0;
+        }
+        
+        if (isset($this->request->post['attributico_replace_mode'])) {
+            $this->data['attributico_replace_mode'] = $this->request->post['attributico_replace_mode'];
+        } elseif (($this->config->get('attributico_replace_mode'))) {
+            $this->data['attributico_replace_mode'] = $this->config->get('attributico_replace_mode');
+        } else {
+            $this->data['attributico_replace_mode'] = 'substr';
         }
 
         if (version_compare(VERSION, '2.0.1', '>=')) {

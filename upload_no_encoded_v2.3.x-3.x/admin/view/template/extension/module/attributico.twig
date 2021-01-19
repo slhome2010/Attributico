@@ -5,7 +5,7 @@
             <div class="pull-right">
                 <a onclick="checkForUpdates(); $('#infoModal').modal('show');" class="btn btn-warning" data-toggle="tooltip" title="{{button_check_for_updates}}" data-placement="top"><i class="fa fa-cloud-download"></i></a>
                 <a onclick="apply()" class="btn btn-success" data-toggle="tooltip" title="{{button_apply}}" data-placement="top"><i class="fa fa-check"></i></a>
-                <a onclick="submit()" class="btn btn-primary" data-toggle="tooltip" title="{{button_save}}" data-placement="top"><i class="fa fa-save"></i></a>                
+                <a onclick="submit()" class="btn btn-primary" data-toggle="tooltip" title="{{button_save}}" data-placement="top"><i class="fa fa-save"></i></a>
                 <a href="{{cancel}}" data-toggle="tooltip" data-placement="top" title="{{button_cancel}}" class="btn btn-default"><i class="fa fa-reply"></i></a>
             </div>
             <h1>{{heading_title}}</h1>
@@ -17,6 +17,8 @@
         </div>
     </div>
     <div class="container-fluid">
+        <div id="root"></div>
+        <div id="portal"></div>
         {% if error_warning %}
         <div id="error_warning" class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{error_warning}}
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -59,17 +61,18 @@
                             <div class="tab-pane" id="tab-general">
                                 <div class="col-sm-3">
                                     <ul class="nav nav-tabs tabs-left" id="verticalTab">
-                                        <li><a href="#tab-common" data-toggle="tab">{{legend_general}}</a></li>
-                                        <li><a href="#tab-children" data-toggle="tab">{{legend_children}}</a></li>
-                                        <li><a href="#tab-ct" data-toggle="tab">{{legend_category}}</a></li>
-                                        <li><a href="#tab-inherit" data-toggle="tab">{{legend_inherit}}</a></li>
-                                        <li><a href="#tab-algorithm" data-toggle="tab">{{legend_algorithm}}</a></li>
+                                        <li><a href="#tab-common" data-toggle="tab">{{settings_general}}</a></li>
+                                        <li><a href="#tab-children" data-toggle="tab">{{settings_children}}</a></li>
+                                        <li><a href="#tab-ct" data-toggle="tab">{{settings_category}}</a></li>
+                                        <li><a href="#tab-inherit" data-toggle="tab">{{settings_inherit}}</a></li>
+                                        <li><a href="#tab-method" data-toggle="tab">{{settings_algorithm}}</a></li>
+                                        <li><a href="#tab-method" data-toggle="tab">{{settings_replace}}</a></li>
                                     </ul>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="tab-content">
                                         <div class="tab-pane" id="tab-common">
-                                            <legend>{{legend_general}}</legend>
+                                            <legend>{{settings_general}}</legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <label class="col-sm-4 control-label" for="input-attributico_splitter">{{entry_splitter}}</label>
@@ -178,7 +181,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-children">
-                                            <legend>{{legend_children}}</legend>
+                                            <legend>{{settings_children}}</legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -213,7 +216,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-ct">
-                                            <legend>{{legend_category}}</legend>
+                                            <legend>{{settings_category}}</legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -248,7 +251,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-inherit">
-                                            <legend>{{legend_inherit}}</legend>
+                                            <legend>{{settings_inherit}}</legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -296,8 +299,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="tab-algorithm">
-                                            <legend>{{legend_algorithm}}</legend>
+                                        <div class="tab-pane" id="tab-method">
+                                            <legend>{{settings_algorithm}}</legend>
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{help_product_text}}">{{entry_attribute_values}}</span></label>
                                                 <div class="col-sm-9">
@@ -781,15 +784,15 @@
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="insert" checked="checked" />
+                                                                                    <input type="radio" name="clone-language-mode" value="insert" checked="checked" />
                                                                                     {{text_insert}}
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overwrite" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overwrite" />
                                                                                     {{text_overwrite}}
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overifempty" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overifempty" />
                                                                                     {{text_overwrite_if_empty}}
                                                                                 </label>
                                                                             </div>

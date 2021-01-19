@@ -78,12 +78,13 @@
                                         <li><a href="#tab-inherit" data-toggle="tab"><?php echo $settings_inherit ?></a>
                                         </li>
                                         <li><a href="#tab-method" data-toggle="tab"><?php echo $settings_algorithm ?></a></li>
+                                        <li><a href="#tab-replace" data-toggle="tab"><?php echo $settings_replace ?></a></li>
                                     </ul>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="tab-content">
                                         <div class="tab-pane" id="tab-common">
-                                            <h3><?php echo $settings_general ?></h3>
+                                            <legend><?php echo $settings_general ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <label class="col-sm-4 control-label" for="input-attributico_splitter"><?php echo $entry_splitter; ?></label>
@@ -199,7 +200,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-children">
-                                            <h3><?php echo $settings_children ?></h3>
+                                            <legend><?php echo $settings_children ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -234,7 +235,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-ct">
-                                            <h3><?php echo $settings_category ?></h3>
+                                            <legend><?php echo $settings_category ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -269,7 +270,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-inherit">
-                                            <h3><?php echo $settings_inherit ?></h3>
+                                            <legend><?php echo $settings_inherit ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -318,7 +319,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-method">
-                                            <h3><?php echo $settings_algorithm ?></h3>
+                                            <legend><?php echo $settings_algorithm ?></legend>
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_attribute_values; ?></span></label>
                                                 <div class="col-sm-9">
@@ -366,6 +367,25 @@
                                                             <?php } ?>
                                                         </label>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="tab-replace">
+                                            <legend><?php echo $settings_replace ?></legend>
+                                            <div class="form-group">
+                                                <div class="radio">
+                                                    <label class="control-label">
+                                                        <input type="radio" name="attributico_replace_mode" value="substr" checked="checked" />
+                                                        <span data-toggle="tooltip" title="<?php echo $help_product_text;?>"><?php echo $text_insert; ?>
+                                                        </span>                                                        
+                                                    </label>                                                
+                                                </div>                
+                                                <div class="radio">
+                                                    <label class="control-label">
+                                                        <input type="radio" name="attributico_replace_mode" value="match" />
+                                                        <span data-toggle="tooltip" title="<?php echo $help_product_text;?>"><?php echo $text_overwrite;?>
+                                                        </span>                              
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
