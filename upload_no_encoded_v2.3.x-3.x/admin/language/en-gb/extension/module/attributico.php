@@ -15,6 +15,8 @@ $_['text_clear'] = 'Clear';
 $_['text_keep'] = 'Keep';
 $_['text_duty'] = 'Replace with duty';
 $_['text_duty_only'] = 'Only in empty';
+$_['text_replace_substr'] = 'By occurrence of a substring';
+$_['text_replace_match'] = 'By exact match';
 
 // Filter
 $_['text_autoCollapse'] = 'autoCollapse';
@@ -222,6 +224,8 @@ $_['help_cache'] = 'When loading attribute trees, the data will be retrieved fro
 $_['help_categories_options'] = 'Select the appropriate items to build a set of attributes for the categories you selected and place the attributes in the products. The placement will be done in accordance with the settings "Adding Attribute Values to the Product"';
 $_['help_multistore'] = 'Show categories for all stories';
 $_['help_clone_options'] = 'You can undo the clone of Groups, Attributes or Attribute values by uncheckmark from the corresponding item.';
+$_['help_replace_substr'] = 'Find and replace all occurrences of a sample in values.';
+$_['help_replace_match'] = 'Find and replace all values that match the sample.';
 
 // Entry
 $_['entry_attribute_groups'] = 'Attribute Groups';

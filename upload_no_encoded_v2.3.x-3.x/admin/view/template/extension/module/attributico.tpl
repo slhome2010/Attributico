@@ -70,13 +70,10 @@
                             <div class="tab-pane" id="tab-general">
                                 <div class="col-sm-3">
                                     <ul class="nav nav-tabs tabs-left" id="verticalTab">
-                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $settings_general ?></a>
-                                        </li>
-                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $settings_children ?></a>
-                                        </li>
+                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $settings_general ?></a></li>
+                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $settings_children ?></a></li>
                                         <li><a href="#tab-ct" data-toggle="tab"><?php echo $settings_category ?></a></li>
-                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $settings_inherit ?></a>
-                                        </li>
+                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $settings_inherit ?></a></li>
                                         <li><a href="#tab-method" data-toggle="tab"><?php echo $settings_algorithm ?></a></li>
                                         <li><a href="#tab-replace" data-toggle="tab"><?php echo $settings_replace ?></a></li>
                                     </ul>
@@ -375,15 +372,23 @@
                                             <div class="form-group">
                                                 <div class="radio">
                                                     <label class="control-label">
-                                                        <input type="radio" name="attributico_replace_mode" value="substr" checked="checked" />
-                                                        <span data-toggle="tooltip" title="<?php echo $help_product_text;?>"><?php echo $text_insert; ?>
+                                                        <?php if ($attributico_replace_mode == 'substr') { ?>        
+                                                            <input type="radio" name="attributico_replace_mode" value="substr" checked="checked"/>
+                                                        <?php } else { ?> 
+                                                            <input type="radio" name="attributico_replace_mode" value="substr"/>
+                                                        <?php } ?>  
+                                                        <span data-toggle="tooltip" title="<?php echo $help_replace_substr;?>"><?php echo $text_replace_substr; ?>
                                                         </span>                                                        
                                                     </label>                                                
                                                 </div>                
                                                 <div class="radio">
                                                     <label class="control-label">
-                                                        <input type="radio" name="attributico_replace_mode" value="match" />
-                                                        <span data-toggle="tooltip" title="<?php echo $help_product_text;?>"><?php echo $text_overwrite;?>
+                                                        <?php if ($attributico_replace_mode == 'match') { ?>        
+                                                            <input type="radio" name="attributico_replace_mode" value="match" checked="checked"/>
+                                                        <?php } else { ?> 
+                                                            <input type="radio" name="attributico_replace_mode" value="match"/>
+                                                        <?php } ?>
+                                                        <span data-toggle="tooltip" title="<?php echo $help_replace_match;?>"><?php echo $text_replace_match;?>
                                                         </span>                              
                                                     </label>
                                                 </div>

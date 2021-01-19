@@ -130,6 +130,8 @@ class ControllerModuleAttributico extends Controller
         $this->data['text_keep'] = $this->language->get('text_keep');
         $this->data['text_confirm'] = $this->language->get('text_confirm');
         $this->data['error_not_info'] = $this->language->get('error_not_info');
+        $this->data['text_replace_substr'] = $this->language->get('text_replace_substr');
+        $this->data['text_replace_match'] = $this->language->get('text_replace_match');
 
         $this->data['text_duty'] = $this->language->get('text_duty');
         $this->data['text_duty_only'] = $this->language->get('text_duty_only');
@@ -211,6 +213,8 @@ class ControllerModuleAttributico extends Controller
         $this->data['help_categories_options'] = $this->language->get('help_categories_options');
         $this->data['help_multistore'] = $this->language->get('help_multistore');
         $this->data['help_clone_options'] = $this->language->get('help_clone_options');
+        $this->data['help_replace_substr'] = $this->language->get('help_replace_substr');
+        $this->data['help_replace_match'] = $this->language->get('help_replace_match');
 
         $this->data['button_apply'] = $this->language->get('button_apply');
         $this->data['button_save'] = $this->language->get('button_save');
