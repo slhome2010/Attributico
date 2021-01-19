@@ -61,7 +61,7 @@ $_['text_confirm'] = 'Removing or merging items is irreversible. Are you sure?';
 
 // Support & Help
 $_['text_support'] = '<fieldset>
-        		<legend>Support</legend>
+        		<h3>Support</h3>
                             <address>
                                 For all questions related to the operation of the module, please contact:<br/>
 				<strong>E-mail:</strong> <a href="mailto:#">comtronics@mail.ru</a><br/>
@@ -287,12 +287,13 @@ $_['tab_category_attributes']  = 'Categories attributes';
 $_['tab_standart']          = 'Attributes standardization';
 $_['tab_cache']             = 'Trees cache cleaning';
 
-// Legend
-$_['legend_general'] = 'General settings';
-$_['legend_category'] = 'Adding / removing attributes in category';
-$_['legend_algorithm'] = 'Adding an attribute value to the product';
-$_['legend_inherit'] = 'Inheritance';
-$_['legend_children'] = 'Trees settings';
+// Settings
+$_['settings_general'] = 'General settings';
+$_['settings_category'] = 'Adding / removing attributes in category';
+$_['settings_algorithm'] = 'Adding an attribute value to the product';
+$_['settings_inherit'] = 'Inheritance';
+$_['settings_children'] = 'Trees settings';
+$_['settings_replace'] = 'Values update';
 
 // tools
 $_['button_play']  = 'Start task';

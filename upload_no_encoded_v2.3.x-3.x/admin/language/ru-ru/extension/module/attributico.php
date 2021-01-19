@@ -288,12 +288,13 @@ $_['tab_category_attributes']  = 'Атрибуты категорий';
 $_['tab_standart']     = 'Стандартизация атрибутов';
 $_['tab_cache']        = 'Очистить кэш деревьев';
 
-// Legend
-$_['legend_general'] = 'Общие настройки';
-$_['legend_category'] = 'Добавление / удаление атрибутов категории';
-$_['legend_inherit'] = 'Наследование';
-$_['legend_algorithm'] = 'Добавление значений атрибута в товар';
-$_['legend_children'] = 'Настройки деревьев';
+// Settings
+$_['settings_general'] = 'Общие настройки';
+$_['settings_category'] = 'Добавление / удаление атрибутов категории';
+$_['settings_inherit'] = 'Наследование';
+$_['settings_algorithm'] = 'Добавление значений атрибута в товар';
+$_['settings_children'] = 'Настройки деревьев';
+$_['settings_replace'] = 'Редактирование значений';
 
 // tools
 $_['button_play']  = 'Запустить задачу';

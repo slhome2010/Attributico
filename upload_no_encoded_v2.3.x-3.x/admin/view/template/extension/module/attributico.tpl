@@ -70,20 +70,20 @@
                             <div class="tab-pane" id="tab-general">
                                 <div class="col-sm-3">
                                     <ul class="nav nav-tabs tabs-left" id="verticalTab">
-                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $legend_general ?></a>
+                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $settings_general ?></a>
                                         </li>
-                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $legend_children ?></a>
+                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $settings_children ?></a>
                                         </li>
-                                        <li><a href="#tab-ct" data-toggle="tab"><?php echo $legend_category ?></a></li>
-                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $legend_inherit ?></a>
+                                        <li><a href="#tab-ct" data-toggle="tab"><?php echo $settings_category ?></a></li>
+                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $settings_inherit ?></a>
                                         </li>
-                                        <li><a href="#tab-algorithm" data-toggle="tab"><?php echo $legend_algorithm ?></a></li>
+                                        <li><a href="#tab-method" data-toggle="tab"><?php echo $settings_algorithm ?></a></li>
                                     </ul>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="tab-content">
                                         <div class="tab-pane" id="tab-common">
-                                            <legend><?php echo $legend_general ?></legend>
+                                            <h3><?php echo $settings_general ?></h3>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <label class="col-sm-4 control-label" for="input-attributico_splitter"><?php echo $entry_splitter; ?></label>
@@ -199,7 +199,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-children">
-                                            <legend><?php echo $legend_children ?></legend>
+                                            <h3><?php echo $settings_children ?></h3>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -234,7 +234,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-ct">
-                                            <legend><?php echo $legend_category ?></legend>
+                                            <h3><?php echo $settings_category ?></h3>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -269,7 +269,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-inherit">
-                                            <legend><?php echo $legend_inherit ?></legend>
+                                            <h3><?php echo $settings_inherit ?></h3>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -317,8 +317,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="tab-algorithm">
-                                            <legend><?php echo $legend_algorithm ?></legend>
+                                        <div class="tab-pane" id="tab-method">
+                                            <h3><?php echo $settings_algorithm ?></h3>
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_attribute_values; ?></span></label>
                                                 <div class="col-sm-9">
