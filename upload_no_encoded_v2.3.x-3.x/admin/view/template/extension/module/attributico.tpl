@@ -17,6 +17,8 @@
         </div>
     </div>
     <div class="container-fluid">
+        <div id="root"></div>
+        <div id="portal"></div>
         <?php if ($error_warning) { ?>
             <div id="error_warning" class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
                 <?php echo $error_warning; ?>
@@ -821,15 +823,15 @@
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="insert" checked="checked" />
+                                                                                    <input type="radio" name="clone-language-mode" value="insert" checked="checked" />
                                                                                     <?php echo $text_insert; ?>
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overwrite" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overwrite" />
                                                                                     <?php echo $text_overwrite; ?>
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overifempty" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overifempty" />
                                                                                     <?php echo $text_overwrite_if_empty; ?>
                                                                                 </label>
                                                                             </div>

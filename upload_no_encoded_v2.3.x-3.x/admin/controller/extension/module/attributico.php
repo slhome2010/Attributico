@@ -1877,7 +1877,7 @@ class ControllerModuleAttributico extends Controller
             case 'clone':
                 $source_lng = isset($options['clone-language-source']) ? $options['clone-language-source'] : $this->config->get('config_language_id');
                 $target_lng = isset($options['clone-language-target']) ? $options['clone-language-target'] : $this->config->get('config_language_id');
-                $method = isset($options['clone-language-method']) ? $options['clone-language-method'] : 'insert';
+                $mode = isset($options['clone-language-mode']) ? $options['clone-language-mode'] : 'insert';
                 $node = [
                     'group' => isset($options['clone-language-group']),
                     'attribute' => isset($options['clone-language-attribute']),
@@ -1886,7 +1886,7 @@ class ControllerModuleAttributico extends Controller
                 ];
 
                 if ($source_lng !== $target_lng) {
-                    $count_obj = $this->model_catalog_attributico_tools->cloneLanguage($source_lng, $target_lng, $method, $node);
+                    $count_obj = $this->model_catalog_attributico_tools->cloneLanguage($source_lng, $target_lng, $mode, $node);
 
                     $task_result .= $language->get('message_clone_group') . "  " . (string) $count_obj->group . " "
                         . $language->get('message_clone_attribute') . "  " . (string) $count_obj->attribute . " "
