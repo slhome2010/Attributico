@@ -530,15 +530,15 @@ class ModelCatalogAttributico extends Model
         $method = $this->config->get('attributico_product_text');
         $count_affected = 0;
         foreach ($products as $product) {
-            $text = $method == '2' ? "'" : "', text = '' ";
+            $text = $method == 'unchange' ? "'" : "', text = '' ";
             if (isset($data['category_attribute'])) {
                 foreach ($data['category_attribute'] as $attribute_id) {
                     foreach ($languages as $language) {
-                        if ($method == '3' || $method == '4') {
+                        if ($method == 'overwrite' || $method == 'ifempty') {
                             $duty = $this->whoisOnDuty($attribute_id, $language);
                             $text = $duty ? "', text = '" . $this->db->escape($duty) . "' " : "'";
                         }
-                        if ($method == '4') {
+                        if ($method == 'ifempty') {
                             $query = $this->db->query("SELECT text FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int)$product['product_id'] . "' AND attribute_id = '" . (int)$attribute_id . "'  AND language_id = '" . (int)$language['language_id'] . "'");
                             if (!empty($query->row['text'])) {
                                 $text = "'";

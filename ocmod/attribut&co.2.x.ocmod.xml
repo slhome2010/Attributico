@@ -292,16 +292,16 @@
                             $.each(json, function (language_id, duty) {
                                 var textarea = $('textarea[name="product_attribute\[' + attribute_row + '\]\[product_attribute_description\]\[' + language_id + '\]\[text\]"]');
                                 switch (method) {
-                                    case "1":                                    
+                                    case "clean":                                    
                                         textarea.val('');
                                         break;
-                                    case "2":                                        
+                                    case "unchange":                                        
                                         break;
-                                    case "3":
+                                    case "overwrite":
                                         if (duty != '')
                                              textarea.val(duty); 
                                         break;
-                                    case "4":
+                                    case "ifempty":
                                         if(textarea.val()=='')                                   
                                             textarea.val(duty);
                                         break;                                   

@@ -322,44 +322,44 @@
                                                 <div class="col-sm-9">
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '1') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="1" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'clean') { ?>
+                                                                <input type="radio" name="attributico_product_text" value="clean" checked="checked" />
                                                                 <?php echo $text_clear; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="1" />
+                                                                <input type="radio" name="attributico_product_text" value="clean" />
                                                                 <?php echo $text_clear; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '2') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="2" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'unchange') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='unchange' checked="checked" />
                                                                 <?php echo $text_keep; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="2" />
+                                                                <input type="radio" name="attributico_product_text" value='unchange' />
                                                                 <?php echo $text_keep; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '3') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="3" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'overwrite') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='overwrite' checked="checked" />
                                                                 <?php echo $text_duty; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="3" />
+                                                                <input type="radio" name="attributico_product_text" value='overwrite' />
                                                                 <?php echo $text_duty; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '4') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="4" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'ifempty') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='ifempty' checked="checked" />
                                                                 <?php echo $text_duty_only; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="4" />
+                                                                <input type="radio" name="attributico_product_text" value='ifempty' />
                                                                 <?php echo $text_duty_only; ?>
                                                             <?php } ?>
                                                         </label>

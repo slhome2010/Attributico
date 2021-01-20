@@ -358,7 +358,7 @@ class ControllerModuleAttributico extends Controller
         $this->assignData('attributico_autodel', 0);
         $this->assignData('attributico_autoadd_subcategory', 0);
         $this->assignData('attributico_autodel_subcategory', 0);
-        $this->assignData('attributico_product_text', 2);
+        $this->assignData('attributico_product_text', 'unchange');
         $this->assignData('attributico_about_blank', 0);
         $this->assignData('attributico_lazyload', 0);
         $this->assignData('attributico_cache', 0);
@@ -533,11 +533,11 @@ class ControllerModuleAttributico extends Controller
 
             $this->load->model('catalog/attributico');
 
-            if ($method == '3' || $method == '4')
+            if ($method == 'overwrite' || $method == 'ifempty')
                 foreach ($languages as $language) {
                     $json[$language['language_id']][] = $this->model_catalog_attributico->whoisOnDuty($attribute_id, $language);
                 }
-            if ($method == '1')
+            if ($method == 'clean')
                 foreach ($languages as $language) {
                     $json[$language['language_id']][] = '';
                 }
@@ -571,10 +571,10 @@ class ControllerModuleAttributico extends Controller
         $select = "<select class='form-control' id='method-view' style='margin-left:3px; font-weight:normal; width:27%'>";
         $option_style = "overflow:hidden; white-space:nowrap; text-overflow:ellipsis;";
         $method = $this->config->get('attributico_product_text');
-        $options =  "<option " . ($method == '1' ? "selected " : "") . "value='1' style=" . $option_style . ">" . $this->language->get('text_clear') . "</option>";
-        $options .= "<option " . ($method == '2' ? "selected " : "") . "value='2' style=" . $option_style . ">" . $this->language->get('text_keep') . "</option>";
-        $options .= "<option " . ($method == '3' ? "selected " : "") . "value='3' style=" . $option_style . ">" . $this->language->get('text_duty') . "</option>";
-        $options .= "<option " . ($method == '4' ? "selected " : "") . "value='4' style=" . $option_style . ">" . $this->language->get('text_duty_only') . "</option>";
+        $options =  "<option " . ($method == 'clean' ? "selected " : "") . "value='clean' style=" . $option_style . ">" . $this->language->get('text_clear') . "</option>";
+        $options .= "<option " . ($method == 'unchange' ? "selected " : "") . "value='unchange' style=" . $option_style . ">" . $this->language->get('text_keep') . "</option>";
+        $options .= "<option " . ($method == 'overwrite' ? "selected " : "") . "value='overwrite' style=" . $option_style . ">" . $this->language->get('text_duty') . "</option>";
+        $options .= "<option " . ($method == 'ifempty' ? "selected " : "") . "value='ifempty' style=" . $option_style . ">" . $this->language->get('text_duty_only') . "</option>";
 
         $select .= $options;
         $select .= "</select>";

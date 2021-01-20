@@ -241,7 +241,7 @@ class ModelCatalogAttributicoTools extends Model
                       ORDER BY p.product_id, hca.attribute_id";
 
         switch ($method) {
-            case '1':    // text = ''
+            case 'clean':    // text = ''
                 $sql = "INSERT INTO " . DB_PREFIX . "product_attribute(product_id, attribute_id, language_id, text)
                     SELECT p.product_id, hca.attribute_id, hl.language_id, '' FROM  " . DB_PREFIX . "product p
                     LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id)
@@ -251,10 +251,10 @@ class ModelCatalogAttributicoTools extends Model
                     ORDER BY p.product_id, hca.attribute_id
                     ON DUPLICATE KEY UPDATE text = ''";
                 break;
-            case '2': // text not write
+            case 'unchange': // text not write
                 $sql = $sql_not_change;
                 break;
-            case '3':
+            case 'overwrite':
                 /* Во всех записях поле Text будет заменено на непустой Duty */
                 $sql = "INSERT INTO " . DB_PREFIX . "product_attribute(product_id, attribute_id, language_id, text)
                         SELECT p.product_id, hca.attribute_id, hl.language_id, had.duty FROM " . DB_PREFIX . "product p
@@ -266,7 +266,7 @@ class ModelCatalogAttributicoTools extends Model
                         ORDER BY p.product_id, hca.attribute_id
                         ON DUPLICATE KEY UPDATE text = had.duty";
                 break;
-            case '4':
+            case 'ifempty':
                 /* Сначала вставляем записи с несовпадающими ключами */
                 $this->db->query($sql_not_change);
                 $count_affected = $this->db->countAffected();
