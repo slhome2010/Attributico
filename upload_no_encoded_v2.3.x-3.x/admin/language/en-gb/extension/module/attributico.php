@@ -224,8 +224,8 @@ $_['help_cache'] = 'When loading attribute trees, the data will be retrieved fro
 $_['help_categories_options'] = 'Select the appropriate items to build a set of attributes for the categories you selected and place the attributes in the products. The placement will be done in accordance with the settings "Adding Attribute Values to the Product"';
 $_['help_multistore'] = 'Show categories for all stories';
 $_['help_clone_options'] = 'You can undo the clone of Groups, Attributes or Attribute values by uncheckmark from the corresponding item.';
-$_['help_replace_substr'] = 'Find and replace all occurrences of a sample in values.';
-$_['help_replace_match'] = 'Find and replace all values that match the sample.';
+$_['help_replace_substr'] = 'Find and replace all occurrences of the edited sample in the value names.';
+$_['help_replace_match'] = 'Find and replace the names of values that exactly match the sample being edited.';
 
 // Entry
 $_['entry_attribute_groups'] = 'Attribute Groups';
