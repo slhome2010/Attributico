@@ -5,7 +5,7 @@
             <div class="pull-right">
                 <a onclick="checkForUpdates(); $('#infoModal').modal('show');" class="btn btn-warning" data-toggle="tooltip" title="<?php echo $button_check_for_updates; ?>" data-placement="top"><i class="fa fa-cloud-download"></i></a>
                 <a onclick="apply()" class="btn btn-success" data-toggle="tooltip" title="<?php echo $button_apply; ?>" data-placement="top"><i class="fa fa-check"></i></a>
-                <button type="button" form="form-attributico" onclick="$('#form-attributico').submit();" data-toggle="tooltip" data-placement="top" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a onclick="submit()" class="btn btn-primary" data-toggle="tooltip" title="<?php echo $button_save; ?>" data-placement="top"><i class="fa fa-save"></i></a>
                 <a href="<?php echo $cancel; ?>" data-toggle="tooltip" data-placement="top" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
             </div>
             <h1><?php echo $heading_title; ?></h1>
@@ -17,6 +17,8 @@
         </div>
     </div>
     <div class="container-fluid">
+        <div id="root"></div>
+        <div id="portal"></div>
         <?php if ($error_warning) { ?>
             <div id="error_warning" class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
                 <?php echo $error_warning; ?>
@@ -68,20 +70,18 @@
                             <div class="tab-pane" id="tab-general">
                                 <div class="col-sm-3">
                                     <ul class="nav nav-tabs tabs-left" id="verticalTab">
-                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $legend_general ?></a>
-                                        </li>
-                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $legend_children ?></a>
-                                        </li>
-                                        <li><a href="#tab-ct" data-toggle="tab"><?php echo $legend_category ?></a></li>
-                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $legend_inherit ?></a>
-                                        </li>
-                                        <li><a href="#tab-algorithm" data-toggle="tab"><?php echo $legend_algorithm ?></a></li>
+                                        <li><a href="#tab-common" data-toggle="tab"><?php echo $settings_general ?></a></li>
+                                        <li><a href="#tab-children" data-toggle="tab"><?php echo $settings_children ?></a></li>
+                                        <li><a href="#tab-ct" data-toggle="tab"><?php echo $settings_category ?></a></li>
+                                        <li><a href="#tab-inherit" data-toggle="tab"><?php echo $settings_inherit ?></a></li>
+                                        <li><a href="#tab-method" data-toggle="tab"><?php echo $settings_algorithm ?></a></li>
+                                        <li><a href="#tab-replace" data-toggle="tab"><?php echo $settings_replace ?></a></li>
                                     </ul>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="tab-content">
                                         <div class="tab-pane" id="tab-common">
-                                            <legend><?php echo $legend_general ?></legend>
+                                            <legend><?php echo $settings_general ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <label class="col-sm-4 control-label" for="input-attributico_splitter"><?php echo $entry_splitter; ?></label>
@@ -197,7 +197,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-children">
-                                            <legend><?php echo $legend_children ?></legend>
+                                            <legend><?php echo $settings_children ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -232,7 +232,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-ct">
-                                            <legend><?php echo $legend_category ?></legend>
+                                            <legend><?php echo $settings_category ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -267,7 +267,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-inherit">
-                                            <legend><?php echo $legend_inherit ?></legend>
+                                            <legend><?php echo $settings_inherit ?></legend>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -315,51 +315,51 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="tab-algorithm">
-                                            <legend><?php echo $legend_algorithm ?></legend>
+                                        <div class="tab-pane" id="tab-method">
+                                            <legend><?php echo $settings_algorithm ?></legend>
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?php echo $help_product_text; ?>"><?php echo $entry_attribute_values; ?></span></label>
                                                 <div class="col-sm-9">
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '1') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="1" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'clean') { ?>
+                                                                <input type="radio" name="attributico_product_text" value="clean" checked="checked" />
                                                                 <?php echo $text_clear; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="1" />
+                                                                <input type="radio" name="attributico_product_text" value="clean" />
                                                                 <?php echo $text_clear; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '2') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="2" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'unchange') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='unchange' checked="checked" />
                                                                 <?php echo $text_keep; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="2" />
+                                                                <input type="radio" name="attributico_product_text" value='unchange' />
                                                                 <?php echo $text_keep; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '3') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="3" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'overwrite') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='overwrite' checked="checked" />
                                                                 <?php echo $text_duty; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="3" />
+                                                                <input type="radio" name="attributico_product_text" value='overwrite' />
                                                                 <?php echo $text_duty; ?>
                                                             <?php } ?>
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <?php if ($attributico_product_text == '4') { ?>
-                                                                <input type="radio" name="attributico_product_text" value="4" checked="checked" />
+                                                            <?php if ($attributico_product_text == 'ifempty') { ?>
+                                                                <input type="radio" name="attributico_product_text" value='ifempty' checked="checked" />
                                                                 <?php echo $text_duty_only; ?>
                                                             <?php } else { ?>
-                                                                <input type="radio" name="attributico_product_text" value="4" />
+                                                                <input type="radio" name="attributico_product_text" value='ifempty' />
                                                                 <?php echo $text_duty_only; ?>
                                                             <?php } ?>
                                                         </label>
@@ -367,62 +367,73 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="tab-pane" id="tab-replace">
+                                            <legend><?php echo $settings_replace ?></legend>
+                                            <div class="form-group">
+                                                <div class="radio">
+                                                    <label class="control-label">
+                                                        <?php if ($attributico_replace_mode == 'substr') { ?>        
+                                                            <input type="radio" name="attributico_replace_mode" value="substr" checked="checked"/>
+                                                        <?php } else { ?> 
+                                                            <input type="radio" name="attributico_replace_mode" value="substr"/>
+                                                        <?php } ?>  
+                                                        <span data-toggle="tooltip" title="<?php echo $help_replace_substr;?>"><?php echo $text_replace_substr; ?>
+                                                        </span>                                                        
+                                                    </label>                                                
+                                                </div>                
+                                                <div class="radio">
+                                                    <label class="control-label">
+                                                        <?php if ($attributico_replace_mode == 'match') { ?>        
+                                                            <input type="radio" name="attributico_replace_mode" value="match" checked="checked"/>
+                                                        <?php } else { ?> 
+                                                            <input type="radio" name="attributico_replace_mode" value="match"/>
+                                                        <?php } ?>
+                                                        <span data-toggle="tooltip" title="<?php echo $help_replace_match;?>"><?php echo $text_replace_match;?>
+                                                        </span>                              
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane active" id="tab-attribute">
-                                <?php if ($duty_check) { ?>
-                                    <ul class="nav nav-tabs" id="tab-attribute_language">
-                                        <?php foreach ($languages as $language) { ?>
-                                            <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
-                                                    <?php echo $language['name']; ?></a></li>
-                                        <?php } ?>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <?php foreach ($languages as $language) { ?>
-                                            <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
-                                                <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
-                                                <div class="form-group">
-                                                    <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
-                                                </div>
-                                                <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
+                                <ul class="nav nav-tabs" id="tab-attribute_language">
+                                    <?php foreach ($languages as $language) { ?>
+                                        <li><a href="#tab-attribute_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
+                                                <?php echo $language['name']; ?></a></li>
+                                    <?php } ?>
+                                </ul>
+                                <div class="tab-content">
+                                    <?php foreach ($languages as $language) { ?>
+                                        <div class="tab-pane" id="tab-attribute_language<?php echo $language['language_id']; ?>">
+                                            <div class="fancyfilter" id="tab-attribute_filter<?php echo $language['language_id']; ?>"></div>
+                                            <div class="form-group">
+                                                <ul id="attribute_group_tree<?php echo $language['language_id']; ?>" name="attribute_group_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
                                             </div>
-                                        <?php } ?>
-                                    </div>
-                                <?php } else { ?>
-                                    <div class="jumbotron">
-                                        <h1><?php echo $text_attention; ?></h1>
-                                        <p><?php echo $help_upgrade; ?></p>
-                                        <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();"><?php echo $entry_upgrade; ?></a></p>
-                                    </div>
-                                <?php } ?>
+                                            <div class="dialog-options" id="options_attribute_group_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
                             </div>
                             <div class="tab-pane" id="tab-duty">
-                                <?php if ($duty_check) { ?>
-                                    <ul class="nav nav-tabs" id="tab-duty_language">
-                                        <?php foreach ($languages as $language) { ?>
-                                            <li><a href="#tab-duty_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
-                                                    <?php echo $language['name']; ?></a></li>
-                                        <?php } ?>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <?php foreach ($languages as $language) { ?>
-                                            <div class="tab-pane" id="tab-duty_language<?php echo $language['language_id']; ?>">
-                                                <div class="fancyfilter" id="tab-duty_filter<?php echo $language['language_id']; ?>"></div>
-                                                <div class="form-group">
-                                                    <ul id="duty_attribute_tree<?php echo $language['language_id']; ?>" name="duty_attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
-                                                </div>
-                                                <div class="dialog-options" id="options_duty_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
+                                <ul class="nav nav-tabs" id="tab-duty_language">
+                                    <?php foreach ($languages as $language) { ?>
+                                        <li><a href="#tab-duty_language<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="<?php echo $language['src']; ?>" title="<?php echo $language['name']; ?>" />
+                                                <?php echo $language['name']; ?></a></li>
+                                    <?php } ?>
+                                </ul>
+                                <div class="tab-content">
+                                    <?php foreach ($languages as $language) { ?>
+                                        <div class="tab-pane" id="tab-duty_language<?php echo $language['language_id']; ?>">
+                                            <div class="fancyfilter" id="tab-duty_filter<?php echo $language['language_id']; ?>"></div>
+                                            <div class="form-group">
+                                                <ul id="duty_attribute_tree<?php echo $language['language_id']; ?>" name="duty_attribute_tree<?php echo $language['language_id']; ?>" class="filetree"></ul>
                                             </div>
-                                        <?php } ?>
-                                    </div>
-                                <?php } else { ?>
-                                    <div class="jumbotron">
-                                        <h1><?php echo $text_attention; ?></h1>
-                                        <p><?php echo $help_upgrade; ?></p>
-                                        <p><a class="btn btn-primary btn-lg" role="button" OnClick="dutyUpgrade();"><?php echo $entry_upgrade; ?></a></p>
-                                    </div>
-                                <?php } ?>
+                                            <div class="dialog-options" id="options_duty_attribute_tree<?php echo $language['language_id']; ?>" title="<?php echo $text_Options[$language['language_id']]; ?>"></div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
                             </div>
                             <div class="tab-pane" id="tab-category">
                                 <ul class="nav nav-tabs" id="tab-category_language">
@@ -508,22 +519,15 @@
                                 <div class="row">
                                     <div class="col-lg-2 col-md-3" id="column-1">
                                         <ul class="nav nav-pills nav-stacked">
-                                            <li class="active"><a href="#tab-empty" data-toggle="pill">
-                                                    <?php echo $tab_empty; ?> </a></li>
-                                            <li><a href="#tab-scavengery" data-toggle="pill">
-                                                    <?php echo $tab_scavengery; ?> </a></li>
-                                            <li><a href="#tab-defrag" data-toggle="pill"> <?php echo $tab_defrag; ?>
-                                                </a></li>
-                                            <li><a href="#tab-detached" data-toggle="pill"> <?php echo $tab_detached; ?>
-                                                </a></li>
-                                            <li><a href="#tab-deduplicate" data-toggle="pill">
-                                                    <?php echo $tab_deduplicate; ?> </a></li>
-                                            <li><a href="#tab-category-attributes" data-toggle="pill">
-                                                    <?php echo $tab_category_attributes; ?> </a></li>
-                                            <li><a href="#tab-cache" data-toggle="pill"> <?php echo $tab_cache; ?> </a>
-                                            </li>
-                                            <li><a href="#tab-standart" data-toggle="pill"> <?php echo $tab_standart; ?>
-                                                </a></li>
+                                            <li class="active"><a href="#tab-empty" data-toggle="pill"> <?php echo $tab_empty; ?> </a></li>
+                                            <li><a href="#tab-scavengery" data-toggle="pill"> <?php echo $tab_scavengery; ?> </a></li>
+                                            <li><a href="#tab-defrag" data-toggle="pill"> <?php echo $tab_defrag; ?></a></li>
+                                            <li><a href="#tab-sorting" data-toggle="pill"><?php echo $tab_sorting; ?> </a></li>
+                                            <li><a href="#tab-detached" data-toggle="pill"> <?php echo $tab_detached; ?></a></li>
+                                            <li><a href="#tab-deduplicate" data-toggle="pill"><?php echo $tab_deduplicate; ?> </a></li>
+                                            <li><a href="#tab-category-attributes" data-toggle="pill"><?php echo $tab_category_attributes; ?> </a></li>
+                                            <li><a href="#tab-cache" data-toggle="pill"> <?php echo $tab_cache; ?> </a></li>
+                                            <li><a href="#tab-standart" data-toggle="pill"> <?php echo $tab_standart; ?></a></li>
                                         </ul>
                                     </div>
                                     <hr class="hidden-lg hidden-md">
@@ -621,6 +625,35 @@
                                                                     </div>
                                                                 </td>
                                                                 <td><button type="button" onclick=" return tools('defrag')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
+                                                                <td>
+                                                                    <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
+                                                                    <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab-sorting">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <colgroup>
+                                                            <col class="col-xs-12 col-md-10">
+                                                            <col class="col-xs-4 col-md-1">
+                                                            <col class="col-xs-4 col-md-1">
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th><?php echo $head_settings; ?></th>
+                                                                <th><?php echo $head_command; ?></th>
+                                                                <th><?php echo $head_status; ?></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="text-align: center;">
+                                                                    <?php echo $help_nosettings; ?> </th>
+                                                                <td><button type="button" onclick=" return tools('sorting')" data-toggle="tooltip" title="<?php echo $button_play; ?>" class="btn btn-warning"><i class="fa fa-play"></i></button></td>
                                                                 <td>
                                                                     <div class="ajax-loader"><img class="loader-img" src="view/javascript/fancytree/skin-win7/loading.gif" style="display:none;" /></div>
                                                                     <div class="task-complete"><img class="complete-img" src="view/javascript/fancytree/skin-custom/accept.png" style="display:none;" /></div>
@@ -815,15 +848,15 @@
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="insert" checked="checked" />
+                                                                                    <input type="radio" name="clone-language-mode" value="insert" checked="checked" />
                                                                                     <?php echo $text_insert; ?>
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overwrite" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overwrite" />
                                                                                     <?php echo $text_overwrite; ?>
                                                                                 </label>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="clone-language-method" value="overifempty" />
+                                                                                    <input type="radio" name="clone-language-mode" value="overifempty" />
                                                                                     <?php echo $text_overwrite_if_empty; ?>
                                                                                 </label>
                                                                             </div>
