@@ -343,115 +343,27 @@ class ControllerModuleAttributico extends Controller
         $this->data['action'] = $this->url->link($extension . 'module/attributico', $token_name . '=' . $this->token, $ssl);
         $this->data['cancel'] = $this->url->link($link, $token_name . '=' . $this->token . '&type=module', $ssl);
 
-        if (isset($this->request->post['attributico_splitter'])) {
-            $this->data['attributico_splitter'] = $this->request->post['attributico_splitter'];
-        } else {
-            $this->data['attributico_splitter'] = $this->config->get('attributico_splitter');
-        }
-        if (isset($this->request->post['attributico_sortorder'])) {
-            $this->data['attributico_sortorder'] = $this->request->post['attributico_sortorder'];
-        } elseif (($this->config->get('attributico_sortorder'))) {
-            $this->data['attributico_sortorder'] = $this->config->get('attributico_sortorder');
-        } else {
-            $this->data['attributico_sortorder'] = 0;
-        }
-        if (isset($this->request->post['attributico_smart_scroll'])) {
-            $this->data['attributico_smart_scroll'] = $this->request->post['attributico_smart_scroll'];
-        } elseif (($this->config->get('attributico_smart_scroll'))) {
-            $this->data['attributico_smart_scroll'] = $this->config->get('attributico_smart_scroll');
-        } else {
-            $this->data['attributico_smart_scroll'] = 0;
-        }
-        if (isset($this->request->post['attributico_multiselect'])) {
-            $this->data['attributico_multiselect'] = $this->request->post['attributico_multiselect'];
-        } elseif (($this->config->get('attributico_multiselect'))) {
-            $this->data['attributico_multiselect'] = $this->config->get('attributico_multiselect');
-        } else {
-            $this->data['attributico_multiselect'] = 0;
-        }
-        if (isset($this->request->post['attributico_empty'])) {
-            $this->data['attributico_empty'] = $this->request->post['attributico_empty'];
-        } elseif (($this->config->get('attributico_empty'))) {
-            $this->data['attributico_empty'] = $this->config->get('attributico_empty');
-        } else {
-            $this->data['attributico_empty'] = 0;
-        }
-        if (isset($this->request->post['attributico_autoadd'])) {
-            $this->data['attributico_autoadd'] = $this->request->post['attributico_autoadd'];
-        } elseif (($this->config->get('attributico_autoadd'))) {
-            $this->data['attributico_autoadd'] = $this->config->get('attributico_autoadd');
-        } else {
-            $this->data['attributico_autoadd'] = 0;
-        }
-        if (isset($this->request->post['attributico_autodel'])) {
-            $this->data['attributico_autodel'] = $this->request->post['attributico_autodel'];
-        } elseif (($this->config->get('attributico_autodel'))) {
-            $this->data['attributico_autodel'] = $this->config->get('attributico_autodel');
-        } else {
-            $this->data['attributico_autodel'] = 0;
-        }
-        if (isset($this->request->post['attributico_autoadd_subcategory'])) {
-            $this->data['attributico_autoadd_subcategory'] = $this->request->post['attributico_autoadd_subcategory'];
-        } elseif (($this->config->get('attributico_autoadd_subcategory'))) {
-            $this->data['attributico_autoadd_subcategory'] = $this->config->get('attributico_autoadd_subcategory');
-        } else {
-            $this->data['attributico_autoadd_subcategory'] = 0;
-        }
-        if (isset($this->request->post['attributico_autodel_subcategory'])) {
-            $this->data['attributico_autodel_subcategory'] = $this->request->post['attributico_autodel_subcategory'];
-        } elseif (($this->config->get('attributico_autodel_subcategory'))) {
-            $this->data['attributico_autodel_subcategory'] = $this->config->get('attributico_autodel_subcategory');
-        } else {
-            $this->data['attributico_autodel_subcategory'] = 0;
-        }
-        if (isset($this->request->post['attributico_product_text'])) {
-            $this->data['attributico_product_text'] = $this->request->post['attributico_product_text'];
-        } elseif (($this->config->get('attributico_product_text'))) {
-            $this->data['attributico_product_text'] = $this->config->get('attributico_product_text');
-        } else {
-            $this->data['attributico_product_text'] = 2;
-        }
         if ($this->config->get('attributico_filter')) {
             $this->data['filter_settings'] = unserialize($this->config->get('attributico_filter'));
         } else {
             $this->data['filter_settings'] = $default_settings;
         }
-        if (isset($this->request->post['attributico_about_blank'])) {
-            $this->data['attributico_about_blank'] = $this->request->post['attributico_about_blank'];
-        } elseif (($this->config->get('attributico_about_blank'))) {
-            $this->data['attributico_about_blank'] = $this->config->get('attributico_about_blank');
-        } else {
-            $this->data['attributico_about_blank'] = 0;
-        }
-        if (isset($this->request->post['attributico_lazyload'])) {
-            $this->data['attributico_lazyload'] = $this->request->post['attributico_lazyload'];
-        } elseif (($this->config->get('attributico_lazyload'))) {
-            $this->data['attributico_lazyload'] = $this->config->get('attributico_lazyload');
-        } else {
-            $this->data['attributico_lazyload'] = 0;
-        }
-        if (isset($this->request->post['attributico_cache'])) {
-            $this->data['attributico_cache'] = $this->request->post['attributico_cache'];
-        } elseif (($this->config->get('attributico_cache'))) {
-            $this->data['attributico_cache'] = $this->config->get('attributico_cache');
-        } else {
-            $this->data['attributico_cache'] = 0;
-        }
-        if (isset($this->request->post['attributico_multistore'])) {
-            $this->data['attributico_multistore'] = $this->request->post['attributico_multistore'];
-        } elseif (($this->config->get('attributico_multistore'))) {
-            $this->data['attributico_multistore'] = $this->config->get('attributico_multistore');
-        } else {
-            $this->data['attributico_multistore'] = 0;
-        }
-        
-        if (isset($this->request->post['attributico_replace_mode'])) {
-            $this->data['attributico_replace_mode'] = $this->request->post['attributico_replace_mode'];
-        } elseif (($this->config->get('attributico_replace_mode'))) {
-            $this->data['attributico_replace_mode'] = $this->config->get('attributico_replace_mode');
-        } else {
-            $this->data['attributico_replace_mode'] = 'substr';
-        }
+
+        $this->assignData('attributico_splitter', '/');
+        $this->assignData('attributico_sortorder', 0);
+        $this->assignData('attributico_smart_scroll', 0);
+        $this->assignData('attributico_multiselect', 0);
+        $this->assignData('attributico_empty', 0);
+        $this->assignData('attributico_autoadd', 0);
+        $this->assignData('attributico_autodel', 0);
+        $this->assignData('attributico_autoadd_subcategory', 0);
+        $this->assignData('attributico_autodel_subcategory', 0);
+        $this->assignData('attributico_product_text', 2);
+        $this->assignData('attributico_about_blank', 0);
+        $this->assignData('attributico_lazyload', 0);
+        $this->assignData('attributico_cache', 0);
+        $this->assignData('attributico_multistore', 0);
+        $this->assignData('attributico_replace_mode', 'substr'); 
 
         if (version_compare(VERSION, '2.0.1', '>=')) {
             $this->data['header'] = $this->load->controller('common/header');
@@ -477,6 +389,16 @@ class ControllerModuleAttributico extends Controller
             $this->error['warning'] = $this->language->get('error_permission');
         }
         return !$this->error;
+    }
+
+    protected function assignData( $key, $default_value) {
+        if (isset($this->request->post[$key])) {
+            $this->data[$key] = $this->request->post[$key];
+        } elseif (($this->config->get($key))) {
+            $this->data[$key] = $this->config->get($key);
+        } else {
+            $this->data[$key] = $default_value;
+        }
     }
 
     /** Fuction for product form integration */
