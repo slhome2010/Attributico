@@ -490,7 +490,7 @@
         <operation error="skip">
             <search><![CDATA[$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);]]></search>
             <add position="replace"><![CDATA[
-		        $attribute_info = $this->model_catalog_attributico->getAttributeInfo($product_attribute['attribute_id'], [$this->config->get('config_language_id')]);
+		        $attribute_info = $this->model_catalog_attributico->getAttributeInfo($product_attribute['attribute_id'], $this->config->get('config_language_id'));
             ]]>            </add>
         </operation>
         <operation error="skip">
